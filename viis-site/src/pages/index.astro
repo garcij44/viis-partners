@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sections = [
+	{
+		label: 'SECURE',
+		title: "Secure what you've built",
+		text: "Most small businesses run on systems no one has reviewed in years: access left open, backups never tested, accounts never closed. We find the gaps and close them, then give you a security posture you can stand behind — identity and access done right, monitoring that means something, and a plan for the day something goes wrong.",
+	},
+	{
+		label: 'ADOPT',
+		title: 'Adopt AI without the exposure',
+		text: "AI is the fastest way for a small business to move quicker — and the fastest way to leak everything it knows. We help you put it to work safely: what's safe to feed it, where your data goes, which tools earn their place, and how to stay in control as you grow. Set up, governed, and managed, so you get the upside without becoming the cautionary tale.",
+	},
+	{
+		label: 'BUILD',
+		title: "Build what you can't buy",
+		text: 'When off-the-shelf won\'t do, we design and build it — applications, internal tools, and sites, engineered properly and owned entirely by you. This is premium custom work: it costs what real software costs, and at the end it is yours, source and all. No lock-in, no per-seat tax, no rented platform holding your business hostage.',
+	},
+	{
+		label: 'ADVISE',
+		title: 'Stay in the room',
+		text: 'Technology decisions don\'t stop at launch. We stay on as your senior technical bench — the people you call before you sign the vendor contract, wire the money, or click the link. On-call judgment, without the cost of a full-time hire.',
+	},
+	{
+		label: 'ENGAGE',
+		title: 'How we work',
+		text: 'We take on a few clients at a time and commit fully for the length of the need: senior attention instead of a junior team learning on your budget, a fixed monthly engagement instead of a meter running on every question, outcomes instead of tickets. When the work is done, it is genuinely done — documented, handed over, and yours to run.',
+	},
+];
+---
+
+<Layout
+	title="VIIS — A technology practice for owner-led businesses"
+	description="VIIS secures the systems you depend on, helps you adopt AI without exposing your business, and builds the software you can't buy off the shelf. One senior team, a few clients at a time."
+>
+	<header class="site-header">
+		<div class="bar header-inner">
+			<a class="logotype" href="/">VIIS</a>
+			<span class="header-meta">San Antonio, Texas</span>
+		</div>
+	</header>
+
+	<main>
+		<section class="hero grid">
+			<div class="col-1-9">
+				<h1 class="type-h1 hero-lead">
+					VIIS is a technology practice <br class="hero-break" />for businesses that have outgrown
+					guesswork.
+				</h1>
+				<p class="type-body hero-support measure">
+					We secure the systems you depend on, help you adopt AI without exposing your business,
+					and build the software you can't buy off the shelf — one senior team, a few clients at a
+					time, engaged fully for as long as the work demands.
+				</p>
+			</div>
+		</section>
+
+		{
+			sections.map((section) => (
+				<section class="section grid">
+					<div class="col-1-3 section-label">
+						<span class="type-label">{section.label}</span>
+					</div>
+					<div class="col-4-11">
+						<h2 class="type-h3 section-heading">{section.title}</h2>
+						<p class="type-body measure">{section.text}</p>
+					</div>
+				</section>
+			))
+		}
+
+		<section class="closing grid">
+			<div class="col-1-9">
+				<p class="type-h2">
+					For owner-led businesses that take their systems seriously — and would rather pay once
+					for something done right than repeatedly for something done cheap.
+				</p>
+			</div>
+		</section>
+
+		<section class="contact grid">
+			<div class="col-1-9">
+				<p class="type-h3 contact-lede">Reach out directly.</p>
+				<a class="cta" href="mailto:jgarcia@viispartners.com">
+					jgarcia@viispartners.com
+					<span class="cta-arrow" aria-hidden="true">&rarr;</span>
+				</a>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="bar footer-inner">
+			<p class="footer-line">VIIS · Jadrin Garcia, Principal · San Antonio, Texas</p>
+			<p class="footer-line">viispartners.com</p>
+		</div>
+	</footer>
+</Layout>
