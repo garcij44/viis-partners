@@ -2,10 +2,13 @@
 /* Fonts — self-hosted, no third-party requests at runtime           */
 /* ---------------------------------------------------------------- */
 
+/* WHY: these are variable fonts. Declaring the true weight axis lets the
+   browser render real 440/500/etc. instead of synthesizing (faux) bold from
+   a single 400 master, which smears on dark backgrounds. */
 @font-face {
   font-family: 'Fraunces';
   font-style: normal;
-  font-weight: 300 600;
+  font-weight: 100 900;
   font-display: swap;
   src: url('/fonts/fraunces-variable.woff2') format('woff2');
 }
@@ -13,7 +16,7 @@
 @font-face {
   font-family: 'Geist';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
   src: url('/fonts/geist-sans-variable.woff2') format('woff2');
 }
@@ -21,7 +24,7 @@
 @font-face {
   font-family: 'Geist Mono';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
   src: url('/fonts/geist-mono-variable.woff2') format('woff2');
 }
@@ -36,6 +39,9 @@
   --paper: #ece7db;
   --paper-dim: #9a968c;
   --rule: #2a2b33;
+  /* The one warm value on the page. Spent in exactly one place: the hairline
+     that closes the hero (see .hero-rule). Never a fill, never used twice. */
+  --brass: #b79663;
 
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Geist', -apple-system, 'Segoe UI', sans-serif;
@@ -268,20 +274,45 @@ button:focus-visible {
 /* ---------------------------------------------------------------- */
 
 .hero {
-  padding-block: var(--sp-8);
+  padding-top: var(--sp-8);
+  padding-bottom: var(--sp-7);
 }
 
 .hero-lead {
   margin-bottom: var(--sp-4);
 }
 
+/* Composed, not dumped: a paper lead clause over a dimmed qualifier, each a
+   single short line. Replaces the original 45-word block that restated the
+   service sections below it. */
 .hero-support {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.hero-support-lead {
+  color: var(--paper);
+}
+
+.hero-support-sub {
   color: var(--paper-dim);
+}
+
+/* The signature moment. The one warm stroke on the page: a brass hairline that
+   closes the hero and spans only the hero's own columns, so it stops exactly
+   where the deliberate right margin begins. Every other rule on the page is the
+   near-invisible --rule; this is the one that proves the restraint was chosen. */
+.hero-rule {
+  margin-top: var(--sp-6);
+  border: 0;
+  border-top: 1px solid var(--brass);
 }
 
 @media (max-width: 640px) {
   .hero {
-    padding-block: var(--sp-6);
+    padding-top: var(--sp-6);
+    padding-bottom: var(--sp-6);
   }
 }
 
@@ -289,9 +320,16 @@ button:focus-visible {
 /* Sections                                                           */
 /* ---------------------------------------------------------------- */
 
+/* WHY: the original rule set padding-top only, so the last line of each
+   paragraph sat flush against the next section's hairline. Symmetric --sp-8
+   both sides would open a 256px void between sections; asymmetric 96/64 keeps
+   the rhythm generous but not slack, and the slightly larger top padding lets
+   each hairline read as the start of the block below it, not the end of the one
+   above. */
 .section {
   border-top: 1px solid var(--rule);
-  padding-top: var(--sp-8);
+  padding-top: var(--sp-7);
+  padding-bottom: var(--sp-6);
 }
 
 .section-label {
@@ -312,6 +350,35 @@ button:focus-visible {
 @media (max-width: 640px) {
   .section {
     padding-top: var(--sp-6);
+    padding-bottom: var(--sp-5);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Engage — process, not a service. Deliberately breaks the service  */
+/* anatomy: a raised band, label stacked above a larger heading,     */
+/* copy at hero measure rather than indented into cols 4-11.         */
+/* ---------------------------------------------------------------- */
+
+.engage {
+  background: var(--ink-raised);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding-block: var(--sp-7);
+}
+
+.engage-label {
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+
+.engage-heading {
+  margin-bottom: var(--sp-3);
+}
+
+@media (max-width: 640px) {
+  .engage {
+    padding-block: var(--sp-6);
   }
 }
 
@@ -345,7 +412,7 @@ button:focus-visible {
 
 .cta {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--sp-1);
   font-family: var(--font-mono);
   font-size: 18px;
