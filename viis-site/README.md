@@ -208,12 +208,29 @@ type-check. No runtime dependencies ship to the browser.
   `.github/workflows/azure-static-web-apps-salmon-coast-018dde90f.yml`
   (`app_location: viis-site`, `output_location: dist`, no API yet).
 - **Preview URL:** https://salmon-coast-018dde90f.7.azurestaticapps.net
-- **Production domain:** `viispartners.com` — not yet pointed at the app.
+- **Production domain:** `viispartners.com` — live. The preview URL 301s to it.
 - PRs to the workflow's tracked branches get an SWA preview environment; merges
   deploy production. Roll back by reverting the merge (redeploys the prior build).
-- Set `PUBLIC_FORM_ENDPOINT` in the SWA configuration (Portal → Configuration or
-  the workflow) for production; the `/api/contact` fallback only works once an
-  API is added.
+
+### Build-time env vars go in the workflow, never the Portal
+
+`PUBLIC_FORM_ENDPOINT` and `PUBLIC_FORM_ACCESS_KEY` are set in the `env:` block
+of the `Build And Deploy` step, **not** in Azure Portal → Configuration.
+
+Astro inlines `import.meta.env` at **build** time, and the build runs inside the
+GitHub Actions job. Portal application settings are injected at **request** time
+into a running managed API — which this static site does not have — so they
+never reach the bundle. Setting them in the Portal yields a form that posts to
+the `/api/contact` fallback and silently drops every lead, while looking
+completely correct in the Portal UI.
+
+`PUBLIC_FORM_ACCESS_KEY` is stored in GitHub Secrets. It is public by design
+once rendered into the HTML; the secret exists so it can be rotated without a
+commit, not because it is confidential.
+
+**Verify the endpoint in the build output, not the source:** after a build,
+`grep -o 'action="[^"]*"' dist/index.html` must show the Web3Forms URL. If it
+shows `/api/contact`, the env var did not reach the build.
 
 ### Share image
 

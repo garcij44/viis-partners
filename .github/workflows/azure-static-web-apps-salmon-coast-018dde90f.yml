@@ -22,6 +22,17 @@ jobs:
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
+        # WHY these live here and not in the Azure Portal: Astro inlines
+        # import.meta.env at BUILD time, and the build runs in this job. Portal
+        # application settings are injected at request time into a running API,
+        # which this static site does not have — they would never reach the
+        # bundle. Setting them in the Portal produces a form that posts to the
+        # fallback endpoint and silently drops every lead.
+        env:
+          PUBLIC_FORM_ENDPOINT: https://api.web3forms.com/submit
+          # Public by design (it is rendered into the HTML) but kept in GitHub
+          # Secrets so it can be rotated without a commit.
+          PUBLIC_FORM_ACCESS_KEY: ${{ secrets.PUBLIC_FORM_ACCESS_KEY }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_COAST_018DDE90F }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
