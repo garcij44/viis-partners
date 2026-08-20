@@ -1,10 +1,20 @@
 ---
+/**
+ * Confirmation page for the no-JavaScript submit path.
+ *
+ * With JS on, the form confirms inline and never navigates here. With JS off
+ * the browser performs a real cross-origin POST, and the form backend's own
+ * response is raw JSON — so the form passes a `redirect` field pointing here
+ * and the visitor lands on something that belongs to the site.
+ *
+ * Reuses the utility-page shell (see 404.astro); no page-specific CSS.
+ */
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-	title="Page not found — VIIS Partners"
-	description="The page you were looking for isn't here."
+	title="Inquiry received — VIIS Partners"
+	description="Your inquiry has been received. Jadrin will read it and reply directly."
 	noindex
 >
 	<header class="site-header">
@@ -17,10 +27,10 @@ import Layout from '../layouts/Layout.astro';
 	<main id="main">
 		<section class="hero grid">
 			<div class="col-1-9">
-				<span class="type-label notice-label">ERROR 404</span>
-				<h1 class="type-h1 notice-lead">This page isn't here.</h1>
+				<span class="type-label notice-label">RECEIVED</span>
+				<h1 class="type-h1 notice-lead">Your inquiry is in.</h1>
 				<p class="type-body measure notice-sub">
-					The link may be old, or the address slightly off. Nothing is broken.
+					Jadrin reads every message and will reply to you directly.
 				</p>
 				<a class="cta notice-cta" href="/">
 					Back to the start

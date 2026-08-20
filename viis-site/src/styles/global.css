@@ -338,18 +338,19 @@ button:focus-visible {
   color: var(--paper-dim);
 }
 
-/* 404 — same hero shell, composed rather than an error dump. */
-.notfound-label {
+/* Utility pages (404, /thanks) — the hero shell, composed rather
+   than dumped. Shared so neither page carries the other's naming. */
+.notice-label {
   display: block;
   margin-bottom: var(--sp-3);
 }
 
-.notfound-sub {
+.notice-sub {
   margin-top: var(--sp-3);
   color: var(--paper-dim);
 }
 
-.notfound-cta {
+.notice-cta {
   margin-top: var(--sp-5);
 }
 

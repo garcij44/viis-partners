@@ -8,9 +8,18 @@ interface Props {
   image?: string;
   /** OpenGraph type; "website" for the homepage, "article" etc. elsewhere. */
   ogType?: string;
+  /** Keep the page out of the index. For utility pages (404, /thanks) that
+      have no search value but should still pass link equity onward. */
+  noindex?: boolean;
 }
 
-const { title, description, image = '/og-image.png', ogType = 'website' } = Astro.props;
+const {
+  title,
+  description,
+  image = '/og-image.png',
+  ogType = 'website',
+  noindex = false,
+} = Astro.props;
 
 // Absolute URLs are required for canonical + OG tags. Astro.site is the
 // configured origin; without it these would silently emit relative URLs.
@@ -43,6 +52,7 @@ const jsonLd = {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
+		{noindex && <meta name="robots" content="noindex, follow" />}
 		<meta name="theme-color" content="#121319" />
 		<title>{title}</title>
 		<meta name="description" content={description} />

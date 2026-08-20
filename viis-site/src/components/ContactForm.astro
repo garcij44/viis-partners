@@ -17,11 +17,16 @@
  */
 const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '/api/contact';
 const accessKey = import.meta.env.PUBLIC_FORM_ACCESS_KEY ?? '';
+const isWeb3Forms = endpoint.includes('web3forms.com');
+
+// Absolute URL: the no-JS POST is cross-origin, so the backend needs a full
+// origin to redirect back to.
+const thanksUrl = new URL('/thanks', Astro.site).href;
 
 // WHY: this repo has already shipped a form that posted into a 404 for weeks.
 // A missing access key produces a form that looks perfect and drops every lead
 // silently, so it fails the build instead of reaching production.
-if (endpoint.includes('web3forms.com') && !accessKey) {
+if (isWeb3Forms && !accessKey) {
   throw new Error(
     'PUBLIC_FORM_ACCESS_KEY is required when PUBLIC_FORM_ENDPOINT points at Web3Forms. ' +
       'Set it in the workflow env: block — see README → Deployment.',
@@ -43,12 +48,24 @@ const services = [
   action={endpoint}
   aria-labelledby="inquiry-heading"
 >
-  {/* Web3Forms routing fields. The access key is public by design — it
-      identifies the form, it does not authorise anything. Anyone can POST to
-      it, which is what botcheck and the server-side filter are for. */}
-  {accessKey && <input type="hidden" name="access_key" value={accessKey} />}
-  <input type="hidden" name="subject" value="New inquiry — viispartners.com" />
-  <input type="hidden" name="from_name" value="VIIS site" />
+  {/* Web3Forms routing fields, gated so sprint 3's same-origin Azure Function
+      does not inherit another vendor's conventions. The access key is public by
+      design — it identifies the form, it authorises nothing. Anyone can POST to
+      it, which is what botcheck and server-side filtering are for.
+
+      `redirect` matters only on the no-JS path: that submit is a real
+      cross-origin navigation, and without it the visitor lands on the
+      endpoint's raw JSON response instead of a page belonging to this site. */}
+  {
+    isWeb3Forms && (
+      <>
+        <input type="hidden" name="access_key" value={accessKey} />
+        <input type="hidden" name="subject" value="New inquiry — viispartners.com" />
+        <input type="hidden" name="from_name" value="VIIS site" />
+        <input type="hidden" name="redirect" value={thanksUrl} />
+      </>
+    )
+  }
 
   {/* Honeypot. A checkbox, not a text input: password managers autofill text
       fields that look like company/URL fields, and a filled honeypot used to
