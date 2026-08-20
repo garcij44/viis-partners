@@ -321,7 +321,20 @@ button:focus-visible {
 /* The differentiator as one flowing line. The original's first clause restated
    the SECURE/ADOPT/BUILD sections directly below it; that half is cut, and the
    line that actually says why VIIS (senior, embedded, few clients) is kept. */
+/* WHY: the support line is composed, not dumped — a flex stack keeps the lead
+   clause and its qualifier on separate lines at every width, so neither ever
+   runs past ~9 words. See ART-DIRECTION.md "Composition rules". */
 .hero-support {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.hero-support-lead {
+  color: var(--paper);
+}
+
+.hero-support-sub {
   color: var(--paper-dim);
 }
 
