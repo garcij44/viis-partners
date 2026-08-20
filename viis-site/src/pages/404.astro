@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+	title="Page not found — VIIS Partners"
+	description="The page you were looking for isn't here."
+>
+	<header class="site-header">
+		<div class="bar header-inner">
+			<a class="logotype" href="/">VIIS</a>
+			<span class="header-meta">San Antonio, Texas</span>
+		</div>
+	</header>
+
+	<main id="main">
+		<section class="hero grid">
+			<div class="col-1-9">
+				<span class="type-label notfound-label">ERROR 404</span>
+				<h1 class="type-h1 notfound-lead">This page isn't here.</h1>
+				<p class="type-body measure notfound-sub">
+					The link may be old, or the address slightly off. Nothing is broken.
+				</p>
+				<a class="cta notfound-cta" href="/">
+					Back to the start
+					<svg class="cta-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+						<path d="M1 7.5h11M8 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" />
+					</svg>
+				</a>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="bar footer-inner">
+			<p class="footer-line">VIIS · Jadrin Garcia, Principal · San Antonio, Texas</p>
+			<p class="footer-line">viispartners.com</p>
+		</div>
+	</footer>
+</Layout>

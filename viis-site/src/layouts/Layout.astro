@@ -4,28 +4,81 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  /** Path to the social share image, resolved against the site origin. */
+  image?: string;
+  /** OpenGraph type; "website" for the homepage, "article" etc. elsewhere. */
+  ogType?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image = '/og-image.png', ogType = 'website' } = Astro.props;
+
+// Absolute URLs are required for canonical + OG tags. Astro.site is the
+// configured origin; without it these would silently emit relative URLs.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imageUrl = new URL(image, Astro.site).href;
+const siteName = 'VIIS Partners';
+
+// ProfessionalService structured data. Only facts the business supports:
+// name, locality, and contact email. No invented phone/street/claims.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: siteName,
+  description,
+  url: new URL('/', Astro.site).href,
+  email: 'jgarcia@viispartners.com',
+  areaServed: 'San Antonio, Texas',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'San Antonio',
+    addressRegion: 'TX',
+    addressCountry: 'US',
+  },
+  founder: { '@type': 'Person', name: 'Jadrin Garcia' },
+};
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#121319" />
+		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+
+		<!-- OpenGraph -->
+		<meta property="og:type" content={ogType} />
+		<meta property="og:site_name" content={siteName} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="VIIS Partners" />
+		<meta property="og:locale" content="en_US" />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
+
+		<!-- Fonts. Mono is preloaded too: it is the signature face and renders
+		     above the fold (logotype + location line). -->
 		<link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/geist-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
-		<!-- WHY: the mono face is the site's signature (logotype + location line render
-		     above the fold in it). Without preload it FOUTs to a fallback monospace on
-		     every cold load. -->
 		<link rel="preload" href="/fonts/geist-mono-variable.woff2" as="font" type="font/woff2" crossorigin />
-		<title>{title}</title>
+
+		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	</head>
 	<body>
+		<a class="skip" href="#main">Skip to content</a>
 		<slot />
 	</body>
 </html>

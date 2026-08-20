@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm.astro';
 
 // The four parallel services. ENGAGE is deliberately NOT in this array: it is
 // process, not an offering, and gets a structurally different treatment below.
@@ -26,6 +27,28 @@ const services = [
 	},
 ];
 
+// Full-lifecycle capability. Structured from the owner's provided taxonomy;
+// wording is intentionally terse and factual, pending final owner sign-off.
+// Middle phase is "Deliver" (not "Build") to avoid colliding with the BUILD
+// service label above.
+const lifecycle = [
+	{
+		label: 'DEFINE',
+		lede: 'Before anything is built.',
+		items: 'Technical discovery and requirements. Risk assessment. Architecture and technology selection.',
+	},
+	{
+		label: 'DELIVER',
+		lede: 'Built securely from the start.',
+		items: 'Secure implementation. Cloud and platform configuration. Identity and access. Data handling. Integration and testing.',
+	},
+	{
+		label: 'LAUNCH',
+		lede: 'Into production, and beyond.',
+		items: 'Production-readiness and security review. Deployment and monitoring. Operational handoff and post-launch support.',
+	},
+];
+
 const engageText =
 	'We take on a few clients at a time and commit fully for the length of the need: senior attention instead of a junior team learning on your budget, a fixed monthly engagement instead of a meter running on every question, outcomes instead of tickets. When the work is done, it is genuinely done — documented, handed over, and yours to run.';
 ---
@@ -41,7 +64,7 @@ const engageText =
 		</div>
 	</header>
 
-	<main>
+	<main id="main">
 		<section class="hero grid">
 			<div class="col-1-9">
 				<h1 class="type-h1 hero-lead">
@@ -49,8 +72,7 @@ const engageText =
 					outgrown guesswork.
 				</h1>
 				<p class="type-body hero-support measure">
-					<span class="hero-support-lead">One senior team. A few clients at a time.</span>
-					<span class="hero-support-sub">Embedded fully, for as long as the work demands.</span>
+					One senior team, a few clients at a time, engaged fully for as long as the work demands.
 				</p>
 				<hr class="hero-rule" />
 			</div>
@@ -69,6 +91,29 @@ const engageText =
 				</section>
 			))
 		}
+
+		<section class="lifecycle grid">
+			<div class="col-1-9 lifecycle-head">
+				<span class="type-label lifecycle-label">APPROACH</span>
+				<h2 class="type-h2">From first decision to production.</h2>
+				<p class="type-body measure lifecycle-sub">
+					One disciplined arc for every engagement, whether we're hardening what you already run or
+					building something new: decisions made responsibly, execution done securely, and the work
+					carried all the way to launch and handoff.
+				</p>
+			</div>
+			<div class="col-1-12 phases">
+				{
+					lifecycle.map((phase) => (
+						<div class="phase">
+							<span class="type-label phase-label">{phase.label}</span>
+							<p class="type-h3 phase-lede">{phase.lede}</p>
+							<p class="type-body phase-items">{phase.items}</p>
+						</div>
+					))
+				}
+			</div>
+		</section>
 
 		<section class="engage">
 			<div class="grid">
@@ -89,27 +134,28 @@ const engageText =
 			</div>
 		</section>
 
-		<section class="contact grid">
-			<div class="col-1-9">
-				<p class="type-h3 contact-lede">Reach out directly.</p>
-				<a class="cta" href="mailto:jgarcia@viispartners.com">
-					jgarcia@viispartners.com
-					<svg
-						class="cta-arrow"
-						width="15"
-						height="15"
-						viewBox="0 0 15 15"
-						fill="none"
-						aria-hidden="true"
-					>
-						<path
-							d="M1 7.5h11M8 3.5l4 4-4 4"
-							stroke="currentColor"
-							stroke-width="1.25"
-							stroke-linecap="square"
-						/>
-					</svg>
-				</a>
+		<section class="contact grid" id="contact">
+			<div class="col-1-3 section-label">
+				<span class="type-label">CONTACT</span>
+			</div>
+			<div class="col-4-11">
+				<h2 class="type-h2 contact-lede" id="inquiry-heading">Start a conversation.</h2>
+				<p class="type-body measure contact-intro">
+					Tell us what you're working on. If it's a fit, we'll set up a call to talk it through;
+					if it isn't, we'll say so and point you somewhere better.
+				</p>
+
+				<ContactForm />
+
+				<p class="type-small contact-alt">
+					Prefer email?{' '}
+					<a class="cta cta-inline" href="mailto:jgarcia@viispartners.com">
+						jgarcia@viispartners.com
+						<svg class="cta-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+							<path d="M1 7.5h11M8 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" />
+						</svg>
+					</a>
+				</p>
 			</div>
 		</section>
 	</main>

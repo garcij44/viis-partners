@@ -1,0 +1,146 @@
+---
+/**
+ * ContactForm — the site's primary conversion point.
+ *
+ * Works with zero JavaScript: it is a plain <form method="post"> that posts to
+ * PUBLIC_FORM_ENDPOINT. The inline script only *enhances* it (inline states,
+ * client validation, anti-bot timing) — it is never the only line of defence.
+ *
+ * SECURITY NOTE: client validation here is for usability only. The endpoint
+ * that receives this MUST independently validate, normalise, length-limit, and
+ * output-encode every field server-side, and enforce rate limiting + the
+ * honeypot/timestamp checks. See README → "Form architecture" + "Security".
+ */
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '/api/contact';
+---
+
+<form
+  class="inquiry"
+  method="post"
+  action={endpoint}
+  novalidate
+  aria-labelledby="inquiry-heading"
+>
+  {/* Honeypot: present in the DOM but hidden from sight, keyboard, and AT.
+      Not display:none (some bots skip those). A real person never fills it. */}
+  <div class="hp" aria-hidden="true">
+    <label for="company_url">Company URL</label>
+    <input id="company_url" name="company_url" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  {/* Anti-bot timing: stamped with load time by the enhancement script; the
+      backend rejects submissions that arrive implausibly fast. Empty without JS. */}
+  <input type="hidden" name="form_render_ts" value="" data-render-ts />
+
+  <div class="field">
+    <label class="field-label" for="name">Name</label>
+    <input
+      class="field-input"
+      id="name"
+      name="name"
+      type="text"
+      required
+      maxlength="100"
+      autocomplete="name"
+      aria-required="true"
+      aria-describedby="name-error"
+    />
+    <p class="field-error" id="name-error" data-error hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="email">Work email</label>
+    <input
+      class="field-input"
+      id="email"
+      name="email"
+      type="email"
+      required
+      maxlength="200"
+      autocomplete="email"
+      inputmode="email"
+      aria-required="true"
+      aria-describedby="email-error"
+    />
+    <p class="field-error" id="email-error" data-error hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="company">
+      Company <span class="field-optional">optional</span>
+    </label>
+    <input
+      class="field-input"
+      id="company"
+      name="company"
+      type="text"
+      maxlength="120"
+      autocomplete="organization"
+      aria-describedby="company-error"
+    />
+    <p class="field-error" id="company-error" data-error hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="project">Project or challenge</label>
+    <textarea
+      class="field-input field-textarea"
+      id="project"
+      name="project"
+      rows="4"
+      required
+      maxlength="1500"
+      aria-required="true"
+      aria-describedby="project-hint project-error"></textarea>
+    <p class="field-hint type-small" id="project-hint">
+      What you're trying to do, and where you're stuck. A few sentences is plenty.
+    </p>
+    <p class="field-error" id="project-error" data-error hidden></p>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="timeline">
+      Timeline <span class="field-optional">optional</span>
+    </label>
+    <input
+      class="field-input"
+      id="timeline"
+      name="timeline"
+      type="text"
+      maxlength="80"
+      aria-describedby="timeline-hint timeline-error"
+    />
+    <p class="field-hint type-small" id="timeline-hint">
+      e.g. exploring now, or a specific launch date.
+    </p>
+    <p class="field-error" id="timeline-error" data-error hidden></p>
+  </div>
+
+  {/* CAPTCHA INSERTION POINT ------------------------------------------------
+      Drop a Cloudflare Turnstile or hCaptcha widget here, e.g.
+        <div class="cf-turnstile" data-sitekey="YOUR_SITEKEY"></div>
+      Then add the widget's script + frame origins to script-src / frame-src /
+      connect-src in public/staticwebapp.config.json's CSP. Nothing renders here
+      until that is done. --------------------------------------------------- */}
+
+  <div class="inquiry-actions">
+    <button class="cta cta-submit" type="submit" data-submit>
+      <span data-submit-label>Request a consultation</span>
+      <svg class="cta-arrow" width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+        <path d="M1 7.5h11M8 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" />
+      </svg>
+    </button>
+  </div>
+
+  {/* Single live region for submit state. Announced politely; never a toast. */}
+  <p class="inquiry-status" role="status" aria-live="polite" data-status hidden></p>
+
+  <p class="inquiry-note type-small">
+    We use what you send only to reply to your inquiry. No newsletter, no third
+    parties, no tracking. Jadrin reads every message and replies personally.
+  </p>
+</form>
+
+<!-- Enhancement served as a static, same-origin module so the strict CSP
+     (script-src 'self') allows it with no hash or nonce. -->
+<script is:inline type="module" src="/scripts/inquiry.js"></script>

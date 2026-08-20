@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  VIIS social share image — 1200x630. Source of truth; edit here.
+  Monochrome, matching the site: Fraunces + Geist Mono on --ink, with the one
+  brass hairline echoing the hero signature.
+
+  To rasterize to og-image.png (referenced by the OG/Twitter meta tags), see
+  README -> "Share image". Text renders with the site's fonts only where those
+  fonts are installed/available to the renderer; the documented method loads the
+  self-hosted woff2 files so the PNG matches the site exactly.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#121319"/>
+  <text x="96" y="126" font-family="Geist Mono, ui-monospace, monospace" font-size="26" letter-spacing="2.2" fill="#ECE7DB">VIIS</text>
+  <text x="1104" y="126" text-anchor="end" font-family="Geist Mono, ui-monospace, monospace" font-size="19" letter-spacing="1.6" fill="#9A968C">SAN ANTONIO, TEXAS</text>
+  <text x="94" y="330" font-family="Fraunces, Georgia, serif" font-size="74" font-weight="440" letter-spacing="-1" fill="#ECE7DB">A technology practice for</text>
+  <text x="94" y="416" font-family="Fraunces, Georgia, serif" font-size="74" font-weight="440" letter-spacing="-1" fill="#ECE7DB">owner-led businesses.</text>
+  <line x1="96" y1="474" x2="612" y2="474" stroke="#B79663" stroke-width="2"/>
+  <text x="96" y="556" font-family="Geist Mono, ui-monospace, monospace" font-size="22" letter-spacing="1.4" fill="#9A968C">viispartners.com</text>
+</svg>

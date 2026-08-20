@@ -91,9 +91,37 @@ once on the page.
 
 Section labels: mono, 13px, uppercase, +0.08em, --paper-dim, in the left margin column.
 
-Contact: no form. A short serif line inviting direct email, then jgarcia@viispartners.com
-as a plain mailto in the mono face (underline+arrow treatment, not a button). Optionally
-one quiet booking link beside it.
+Contact: one form is permitted, and only in the closing contact section. This rule was
+originally "no form." It was amended deliberately on 2026-08-19 because the mailto-only
+treatment loses any lead on a phone or a locked-down work machine, and lead capture is
+the page's commercial job. The restraint the original rule protected is preserved by the
+constraints below, not by the absence of a form. Do not read this amendment as a general
+loosening.
+
+The mailto stays. jgarcia@viispartners.com remains beside the form as a plain mailto in
+the mono face (underline+arrow treatment, not a button), for anyone who would rather
+write directly. Optionally one quiet booking link beside it.
+
+The form must not look like a form:
+
+- No boxed inputs, no rounded rectangles, no drop shadows, no placeholder-as-label.
+- Inputs are baseline-ruled on the --rule hairline. Focus thickens or brightens that
+  rule; it never introduces an outline box, a glow, or a layout shift.
+- Labels use the existing section-label treatment: mono, 13px, uppercase, +0.08em,
+  --paper-dim.
+- The submit control is the existing .cta treatment — underlined text link with the
+  arrow. Never a button, never a pill, never a filled block.
+- The whole thing should read as filling in a well-set document, not as a web form.
+
+Field discipline: six fields is the ceiling and the current spec. Name, Email, and
+Service of interest are required; Phone, Company, and Project are optional. Adding a
+seventh field requires amending this file first, not a code review waiver.
+
+Widths: the form obeys the grid and --measure like everything else. No bespoke
+max-width values — that is what the anti-pattern list already forbids.
+
+States: idle, submitting, success, error, handled inline with no layout shift and no
+modals or toasts. On success, move keyboard focus to the status message.
 
 Footer: quiet, mono, --paper-dim, low contrast — reads like a system readout, not a
 marketing band.
@@ -129,7 +157,8 @@ means it's not done:
 - Is there any value on screen — color, size, spacing — not in the scales above?
 - Is anything centered, pilled, or bright-accented?
 - Would Klim or Commercial Type ship this, or cut something first?
-Passes all six → done. Otherwise fix and re-audit.
+- Does the contact form read as a boxed web form rather than a ruled document?
+Passes all seven → done. Otherwise fix and re-audit.
 
 ## Anti-patterns — never ship these
 

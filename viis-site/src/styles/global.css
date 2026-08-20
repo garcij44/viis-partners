@@ -120,6 +120,34 @@ button:focus-visible {
   outline-offset: 4px;
 }
 
+/* Skip link: off-screen until focused, then pinned top-left in the mono voice. */
+.skip {
+  position: absolute;
+  left: var(--sp-2);
+  top: -4rem;
+  z-index: 10;
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--ink-raised);
+  border: 1px solid var(--rule);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip:focus {
+  top: var(--sp-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip {
+    transition: none;
+  }
+}
+
 /* ---------------------------------------------------------------- */
 /* Grid                                                               */
 /* ---------------------------------------------------------------- */
@@ -187,7 +215,9 @@ button:focus-visible {
   line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--paper);
-  text-wrap: pretty;
+  /* WHY: balance evens the rag across a display heading's few lines, so no
+     single word is left hanging on the last line. */
+  text-wrap: balance;
 }
 
 .type-h3 {
@@ -196,6 +226,7 @@ button:focus-visible {
   font-size: 21px;
   line-height: 1.3;
   color: var(--paper);
+  text-wrap: balance;
 }
 
 .type-body {
@@ -226,11 +257,16 @@ button:focus-visible {
   max-width: var(--measure);
 }
 
-@media (max-width: 640px) {
+/* WHY: the 12-col grid collapses at 800px, so the hero column narrows there,
+   not at 640. Drop the display face to its mobile size at the same breakpoint
+   or 56px overflows the collapsed column in the 640-800 band. */
+@media (max-width: 800px) {
   .type-h1 {
     font-size: 40px;
   }
+}
 
+@media (max-width: 640px) {
   .hero-break {
     display: none;
   }
@@ -282,21 +318,26 @@ button:focus-visible {
   margin-bottom: var(--sp-4);
 }
 
-/* Composed, not dumped: a paper lead clause over a dimmed qualifier, each a
-   single short line. Replaces the original 45-word block that restated the
-   service sections below it. */
+/* The differentiator as one flowing line. The original's first clause restated
+   the SECURE/ADOPT/BUILD sections directly below it; that half is cut, and the
+   line that actually says why VIIS (senior, embedded, few clients) is kept. */
 .hero-support {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-}
-
-.hero-support-lead {
-  color: var(--paper);
-}
-
-.hero-support-sub {
   color: var(--paper-dim);
+}
+
+/* 404 — same hero shell, composed rather than an error dump. */
+.notfound-label {
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+
+.notfound-sub {
+  margin-top: var(--sp-3);
+  color: var(--paper-dim);
+}
+
+.notfound-cta {
+  margin-top: var(--sp-5);
 }
 
 /* The signature moment. The one warm stroke on the page: a brass hairline that
@@ -349,6 +390,64 @@ button:focus-visible {
 
 @media (max-width: 640px) {
   .section {
+    padding-top: var(--sp-6);
+    padding-bottom: var(--sp-5);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Lifecycle — the full arc of a project, as three typographic phases */
+/* (not cards, not an icon grid). A different layout family from the  */
+/* label-left services, so it reads as breadth, not another offering. */
+/* ---------------------------------------------------------------- */
+
+.lifecycle {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--sp-7);
+  padding-bottom: var(--sp-6);
+}
+
+.lifecycle-label {
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+
+.lifecycle-sub {
+  margin-top: var(--sp-3);
+  color: var(--paper-dim);
+}
+
+.phases {
+  margin-top: var(--sp-6);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-5);
+}
+
+.phase-label {
+  display: block;
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--sp-3);
+}
+
+.phase-lede {
+  margin-bottom: var(--sp-2);
+}
+
+.phase-items {
+  color: var(--paper-dim);
+}
+
+@media (max-width: 800px) {
+  .phases {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .lifecycle {
     padding-top: var(--sp-6);
     padding-bottom: var(--sp-5);
   }
@@ -410,6 +509,20 @@ button:focus-visible {
   margin-bottom: var(--sp-3);
 }
 
+.contact-intro {
+  color: var(--paper-dim);
+}
+
+.contact-alt {
+  margin-top: var(--sp-5);
+  color: var(--paper-dim);
+}
+
+/* Inline mailto fallback: smaller than the standalone CTA, sits in a sentence. */
+.cta-inline {
+  font-size: 15px;
+}
+
 .cta {
   display: inline-flex;
   align-items: center;
@@ -445,6 +558,136 @@ button:focus-visible {
 }
 
 /* ---------------------------------------------------------------- */
+/* Inquiry form — reads as a well-set document, not a form. Baseline- */
+/* ruled inputs on the --rule hairline, mono labels, focus brightens  */
+/* the rule with no layout shift.                                     */
+/* ---------------------------------------------------------------- */
+
+.inquiry {
+  margin-top: var(--sp-5);
+  max-width: 34rem;
+}
+
+.field {
+  margin-bottom: var(--sp-4);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+
+/* Lowercase (vs the uppercase label) is what marks it optional — no off-scale
+   type size needed; it inherits the 13px mono label. */
+.field-optional {
+  margin-left: var(--sp-1);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--paper-dim);
+}
+
+.field-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: var(--sp-1) 0;
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.65;
+  letter-spacing: 0.005em;
+  /* WHY: box-shadow (not border-width) carries the focus "thickening" so the
+     input never changes box size — zero layout shift between rest and focus. */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: var(--sp-7);
+}
+
+.field-input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--paper);
+  box-shadow: inset 0 -1px 0 0 var(--paper);
+}
+
+/* Error is signalled by text (below) + a dimmed rule, never by colour alone. */
+.field-input[aria-invalid='true'] {
+  border-bottom-color: var(--paper-dim);
+}
+
+.field-hint {
+  margin-top: var(--sp-1);
+  color: var(--paper-dim);
+}
+
+.field-error {
+  margin-top: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: normal;
+  color: var(--paper);
+}
+
+.cta-submit {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cta-submit:disabled {
+  cursor: default;
+  color: var(--paper-dim);
+}
+
+.inquiry-actions {
+  margin-top: var(--sp-5);
+}
+
+.inquiry-status {
+  margin-top: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: var(--paper);
+  max-width: var(--measure);
+}
+
+.inquiry-status[data-tone='working'] {
+  color: var(--paper-dim);
+}
+
+.inquiry-note {
+  margin-top: var(--sp-4);
+  max-width: var(--measure);
+}
+
+/* Visually hidden but present in the DOM (honeypot). Not display:none. */
+.hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- */
 /* Footer                                                             */
 /* ---------------------------------------------------------------- */
 
@@ -465,13 +708,14 @@ button:focus-visible {
 .footer-line {
   font-family: var(--font-mono);
   font-size: 13px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   color: var(--paper-dim);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cta,
-  .cta-arrow {
+  .cta-arrow,
+  .field-input {
     transition: none;
   }
 }
