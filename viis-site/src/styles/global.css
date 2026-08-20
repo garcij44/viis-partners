@@ -653,8 +653,12 @@ button:focus-visible {
   color: var(--paper-dim);
   cursor: pointer;
   padding-bottom: var(--sp-1);
-  /* Transparent at rest so selection adds no layout shift. */
-  border-bottom: 1px solid transparent;
+  /* WHY: each option carries the same --rule hairline the text inputs sit on.
+     Without it the row reads as five more labels rather than five choices,
+     because the legend above uses the identical mono treatment. Selection then
+     brightens the rule exactly as focus does on an input — same language, and
+     no layout shift, since the border exists at rest. */
+  border-bottom: 1px solid var(--rule);
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
