@@ -3,65 +3,84 @@
 // it without a hash or nonce. Without this script the form still submits as a
 // normal POST and the browser's native validation applies.
 //
-// SECURITY: everything here is usability + first-pass bot friction only. The
-// endpoint that receives the POST MUST independently validate, normalise,
-// length-limit, output-encode, rate-limit, and re-check the honeypot/timestamp.
+// SECURITY: everything here is usability only. The endpoint that receives the
+// POST MUST independently validate, normalise, length-limit, output-encode,
+// rate-limit, and apply its own spam filtering. This script deliberately does
+// NOT block any submission on a bot heuristic — see the note on `botcheck`.
 
 const form = document.querySelector('form.inquiry');
 
 if (form) {
+  // WHY: novalidate is set here rather than in the markup. With JS off, native
+  // validation is the only thing stopping an incomplete cross-origin POST that
+  // would strand the visitor on the endpoint's raw JSON response. With JS on,
+  // we suppress it so the inline mono errors below own the presentation instead
+  // of the browser's bubbles.
+  form.noValidate = true;
+
   const statusEl = form.querySelector('[data-status]');
   const submitBtn = form.querySelector('[data-submit]');
   const submitLabel = form.querySelector('[data-submit-label]');
   const tsField = form.querySelector('[data-render-ts]');
-  const honeypot = form.querySelector('#company_url');
+  const serviceGroup = form.querySelector('.field-group');
+  const submitIdleLabel = submitLabel ? submitLabel.textContent : '';
   const renderedAt = Date.now();
+
+  // Timing signal for the backend. Advisory only: this script never rejects on
+  // it, and a backend must treat an empty value (JS off) as "no signal".
   if (tsField) tsField.value = String(renderedAt);
 
-  const MIN_FILL_MS = 3000; // faster than this = almost certainly a bot
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // The status element is never toggled with `hidden`. An aria-live region only
+  // announces mutations that happen while it is rendered, so it stays in the
+  // DOM permanently and collapses to zero height while empty (see :empty in
+  // global.css). Toggling it is how the first message goes silent.
   const setStatus = (message, tone) => {
     if (!statusEl) return;
-    statusEl.textContent = message;
     statusEl.dataset.tone = tone;
-    statusEl.hidden = false;
+    statusEl.textContent = message;
   };
 
-  const showFieldError = (input, message) => {
-    const errorEl = document.getElementById(`${input.id}-error`);
-    input.setAttribute('aria-invalid', 'true');
-    if (errorEl) {
-      errorEl.textContent = message;
-      errorEl.hidden = false;
-    }
-  };
-
-  const clearFieldError = (input) => {
-    const errorEl = document.getElementById(`${input.id}-error`);
-    input.removeAttribute('aria-invalid');
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.hidden = true;
-    }
+  const setFieldError = (errorId, message, targets) => {
+    const errorEl = document.getElementById(errorId);
+    targets.forEach((el) => {
+      if (message) el.setAttribute('aria-invalid', 'true');
+      else el.removeAttribute('aria-invalid');
+    });
+    if (!errorEl) return;
+    errorEl.textContent = message || '';
+    errorEl.hidden = !message;
   };
 
   const validate = () => {
-    let firstInvalid = null;
-    const check = (input, message, ok) => {
-      if (ok) {
-        clearFieldError(input);
-      } else {
-        showFieldError(input, message);
-        if (!firstInvalid) firstInvalid = input;
-      }
-    };
     const name = form.querySelector('#name');
     const email = form.querySelector('#email');
-    const project = form.querySelector('#project');
-    check(name, 'Enter your name.', name.value.trim().length > 0);
-    check(email, 'Enter a valid work email.', EMAIL_RE.test(email.value.trim()));
-    check(project, 'Tell us a little about the project.', project.value.trim().length > 0);
+    const service = form.querySelector('input[name="service"]:checked');
+    const firstService = form.querySelector('input[name="service"]');
+    let firstInvalid = null;
+
+    const check = (ok, errorId, message, targets, focusEl) => {
+      setFieldError(errorId, ok ? '' : message, targets);
+      if (!ok && !firstInvalid) firstInvalid = focusEl;
+    };
+
+    check(name.value.trim().length > 0, 'name-error', 'Enter your name.', [name], name);
+    check(
+      EMAIL_RE.test(email.value.trim()),
+      'email-error',
+      'Enter a valid work email.',
+      [email],
+      email,
+    );
+    check(
+      Boolean(service),
+      'service-error',
+      'Choose the service you are interested in.',
+      serviceGroup ? [serviceGroup] : [],
+      firstService,
+    );
+
     if (firstInvalid) firstInvalid.focus();
     return !firstInvalid;
   };
@@ -69,38 +88,53 @@ if (form) {
   // Clear a field's error as soon as the user starts correcting it.
   form.querySelectorAll('.field-input').forEach((input) => {
     input.addEventListener('input', () => {
-      if (input.getAttribute('aria-invalid') === 'true') clearFieldError(input);
+      if (input.getAttribute('aria-invalid') === 'true') {
+        setFieldError(`${input.id}-error`, '', [input]);
+      }
     });
   });
 
-  const absorbAsBot = () => {
-    // Show the same confirmation a human sees, but never actually submit.
-    setStatus('Thank you. Your inquiry has been received.', 'ok');
-    form.querySelectorAll('input, textarea, button').forEach((el) => {
-      el.disabled = true;
+  form.querySelectorAll('input[name="service"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      setFieldError('service-error', '', serviceGroup ? [serviceGroup] : []);
     });
+  });
+
+  const onSuccess = () => {
+    // Replace the form body with the confirmation, then move focus to it. The
+    // submit button is about to be removed and focus would otherwise fall to
+    // <body>, losing a keyboard user's place entirely.
+    form.querySelectorAll('.field, .inquiry-actions').forEach((el) => el.remove());
+    setStatus(
+      'Thank you. Your inquiry is in. Jadrin will read it and reply to you directly.',
+      'ok',
+    );
+    if (statusEl) statusEl.focus();
+  };
+
+  const onFailure = () => {
+    if (submitBtn) submitBtn.disabled = false;
+    if (submitLabel) submitLabel.textContent = submitIdleLabel;
+    setStatus(
+      'That did not go through. Please email jgarcia@viispartners.com directly and it will reach us.',
+      'error',
+    );
   };
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // 1. Honeypot filled = bot. Absorb silently before doing anything else.
-    if (honeypot && honeypot.value) {
-      absorbAsBot();
-      return;
-    }
-
-    // 2. Validate for humans, so an incomplete form always gets real feedback.
     if (!validate()) {
       setStatus('Please correct the fields above.', 'error');
       return;
     }
 
-    // 3. Valid data submitted faster than any human could type it = bot.
-    if (Date.now() - renderedAt < MIN_FILL_MS) {
-      absorbAsBot();
-      return;
-    }
+    // NOTE: there is deliberately no client-side bot gate here. The previous
+    // version showed a success message and silently discarded the submission
+    // when a honeypot or timing heuristic tripped — which meant an autofilled
+    // field could make a real lead vanish behind a confirmation. Spam filtering
+    // belongs server-side, where a false positive costs an inbox entry rather
+    // than a customer.
 
     if (submitBtn) submitBtn.disabled = true;
     if (submitLabel) submitLabel.textContent = 'Sending';
@@ -113,16 +147,9 @@ if (form) {
         headers: { Accept: 'application/json' },
       });
       if (!response.ok) throw new Error(`Endpoint returned ${response.status}`);
-      // Success: replace the form body with a confirmation.
-      form.querySelectorAll('.field, .inquiry-actions').forEach((el) => el.remove());
-      setStatus('Thank you. Your inquiry is in. Jadrin will read it and reply to you directly.', 'ok');
+      onSuccess();
     } catch {
-      if (submitBtn) submitBtn.disabled = false;
-      if (submitLabel) submitLabel.textContent = 'Request a consultation';
-      setStatus(
-        'That did not go through. Please email jgarcia@viispartners.com directly and it will reach us.',
-        'error',
-      );
+      onFailure();
     }
   });
 }

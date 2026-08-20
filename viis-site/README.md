@@ -37,7 +37,8 @@ security headers were validated.
 
 | Variable               | Public? | Purpose                                             |
 | ---------------------- | ------- | --------------------------------------------------- |
-| `PUBLIC_FORM_ENDPOINT` | Yes     | URL the contact form POSTs to. Falls back to `/api/contact`. |
+| `PUBLIC_FORM_ENDPOINT`   | Yes     | URL the contact form POSTs to. Falls back to `/api/contact`. |
+| `PUBLIC_FORM_ACCESS_KEY` | Yes     | Web3Forms form identifier. Public by design — it identifies the form, it authorises nothing. Required when the endpoint is Web3Forms; the build fails without it. |
 
 `PUBLIC_`-prefixed vars are inlined into the client bundle by Astro and are
 visible in the browser **by design**. Never put a secret, key, or token in one.
@@ -54,41 +55,106 @@ layers, degrading safely:
    The browser's native validation applies and the POST still fires.
 2. **Enhancement** — [`public/scripts/inquiry.js`](./public/scripts/inquiry.js)
    (a static, same-origin module so the CSP allows it with no hash/nonce) adds
-   inline validation, inline submit states (idle / sending / success / error,
-   no layout shift, no modal/toast), and first-pass bot friction.
-3. **Backend** — not built yet. The form posts to `PUBLIC_FORM_ENDPOINT`
-   (default `/api/contact`, intended as a same-origin Azure Function).
+   inline validation and inline submit states (idle / sending / success / error,
+   no layout shift, no modal/toast).
+3. **Backend** — Web3Forms for launch; an Azure Function + Microsoft Graph in
+   sprint 3. See `BUSINESS-NEXT-STEPS.md`.
 
-### The backend is a required, unbuilt piece
+`novalidate` is **not** in the markup — `inquiry.js` sets `form.noValidate` at
+runtime instead. With JS off, native validation is the only thing stopping an
+incomplete cross-origin POST that would strand the visitor on the endpoint's raw
+JSON response. With JS on, it is suppressed so the inline mono errors own the
+presentation rather than the browser's bubbles. Do not move it back into the
+markup without re-reading this paragraph.
 
-`inquiry.js` does client-side validation and two bot heuristics (a hidden
-honeypot field and a submit-timing check). **These are usability and first-pass
-friction only — they are not security.** Whatever receives the POST MUST, server-side:
+### Field contract
 
-- validate and **normalise** every field; enforce the same length caps
-  (name 100, email 200, company 120, project 1500, timeline 80);
+Six fields, which is the ceiling set by `ART-DIRECTION.md` → "Field discipline".
+Adding a seventh requires amending that file first.
+
+| Field     | Name        | Required | Cap  | Notes                              |
+| --------- | ----------- | -------- | ---- | ---------------------------------- |
+| Name      | `name`      | Yes      | 100  |                                    |
+| Work email| `email`     | Yes      | 200  | shape-checked only, never verified |
+| Service   | `service`   | Yes      | —    | radio; one of the five values below|
+| Phone     | `phone`     | No       | 40   | no mask, no pattern — see below     |
+| Company   | `company`   | No       | 120  |                                    |
+| Project   | `project`   | No       | 1500 | textarea                            |
+
+`service` is one of exactly: `Secure`, `Adopt`, `Build`, `Advise`,
+`Not sure yet`. A backend should reject any other value rather than storing it.
+
+`phone` carries no format mask and no client-side pattern **by design**:
+international numbering varies enough that validation rejects real numbers more
+often than it catches typos, and the field is optional.
+
+Non-visible fields posted alongside them:
+
+| Field            | Purpose                                                     |
+| ---------------- | ----------------------------------------------------------- |
+| `access_key`     | Web3Forms form identifier. Public by design; authorises nothing. |
+| `subject`        | Fixed email subject line.                                    |
+| `from_name`      | Fixed sender display name.                                   |
+| `botcheck`       | Honeypot **checkbox**. Checked ⇒ treat as spam.               |
+| `form_render_ts` | Page-render epoch ms. **Empty when JS is off — see below.**   |
+
+#### `form_render_ts` carve-out (binding on the sprint-3 backend)
+
+`form_render_ts` is stamped by `inquiry.js`. With JavaScript disabled it is
+submitted **empty**. A backend that treats "too fast" as spam MUST therefore:
+
+- accept an empty `form_render_ts` as *no signal* and continue processing;
+- only apply the timing rule when the value is a parseable integer;
+- never reject solely on a missing or unparseable value.
+
+Rejecting on empty would silently drop every no-JS submission. This is written
+down now because the backend that will consume it does not exist yet.
+
+#### The honeypot is a checkbox, deliberately
+
+It used to be a text input named `company_url`. Password managers ignore
+`autocomplete="off"` and autofill fields that look like company or URL fields,
+so a real visitor could trip it. A checkbox is never autofilled.
+
+`inquiry.js` also **does not block any submission** on a bot heuristic. An
+earlier version showed "Thank you. Your inquiry has been received." and silently
+discarded the POST when the honeypot or timing check tripped — a false positive
+cost a customer. Spam filtering belongs server-side, where a false positive
+costs an inbox entry instead.
+
+### The backend must still do the real work
+
+Client-side validation is usability only. Whatever receives the POST MUST,
+server-side:
+
+- validate and **normalise** every field; enforce the caps in the table above;
 - **output-encode** any field before it is ever rendered (email body, admin UI);
-- reject on filled honeypot (`company_url`) or a `form_render_ts` younger than ~3s;
+- treat a checked `botcheck` as spam; apply the `form_render_ts` carve-out above;
 - **rate-limit / throttle** submissions per IP;
-- add a CAPTCHA if spam appears (insertion point is marked in `ContactForm.astro`;
-  remember to add the widget's origins to the CSP — see below);
 - return `2xx` on success, non-`2xx` on failure (the client shows the email
   fallback on failure);
 - never log full lead PII; never expose the recipient address or credentials to
   the browser.
 
-Until that endpoint exists, the form validates and reaches the "sending" state,
-then shows the error path (which points the visitor at the mailto). It does not
-fake success.
+### Where leads go
 
-### Where leads go — decide before launch
+**Now:** Web3Forms (`https://api.web3forms.com/submit`) relays the submission by
+email to `jgarcia@viispartners.com`. Free tier, 250 submissions/month.
 
-Not yet decided. Options: an Azure Function that emails `jgarcia@viispartners.com`;
-a hosted form backend (Formspree/Basin/etc.); or a Function + table storage.
-Document, before launch: recipient, storage, who can access, and retention. If
-you choose a **third-party** backend on a different origin, add that origin to
-`form-action` and `connect-src` in the CSP (below) or the browser will block the
-submission.
+**The tradeoff, stated plainly:** a third party is in the path of every lead's
+name, email, phone, company, and description of their problem. `BUSINESS-NEXT-STEPS.md`
+judges this acceptable to launch on and not acceptable to still be running in six
+months. The form's on-page note says so in visitor-facing terms — it claims no
+newsletter and no tracking, and no longer claims "no third parties", because that
+would be false while this is the backend.
+
+**Sprint 3:** Azure Function + Microsoft Graph, same origin, no third party in the
+path. Migrating is a change to `PUBLIC_FORM_ENDPOINT` plus removing the Web3Forms
+routing fields from `ContactForm.astro`.
+
+A third-party backend on a different origin must be in **both** `form-action` and
+`connect-src` in the CSP or the browser blocks the submission. Missing
+`connect-src` alone breaks only the JS path, and only in production.
 
 ---
 

@@ -578,7 +578,7 @@ button:focus-visible {
 
 .inquiry {
   margin-top: var(--sp-5);
-  max-width: 34rem;
+  max-width: var(--measure);
 }
 
 .field {
@@ -603,6 +603,76 @@ button:focus-visible {
   letter-spacing: normal;
   text-transform: none;
   color: var(--paper-dim);
+}
+
+/* Service choice. A radio group painted as a mono row rather than a <select>:
+   the open state of a native select is OS-rendered and cannot be styled, which
+   would break the "reads as a document" rule at the moment of interaction. The
+   row reuses the section-label treatment so the choice rhymes with the sections
+   it names. */
+.field-group {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+  margin-bottom: var(--sp-4);
+  /* WHY: fieldset defaults to min-inline-size:min-content, which stops the row
+     from wrapping inside a narrow column. */
+  min-inline-size: 0;
+}
+
+.field-group > .field-label {
+  padding: 0;
+}
+
+.option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-3);
+  padding-top: var(--sp-1);
+}
+
+/* The input is removed from view but stays focusable and in the accessibility
+   tree; the label carries the whole visual treatment. */
+.option-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.option-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  cursor: pointer;
+  padding-bottom: var(--sp-1);
+  /* Transparent at rest so selection adds no layout shift. */
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Selected carries two signals, never colour alone: it brightens to --paper and
+   takes the hairline. */
+.option-input:checked + .option-label {
+  color: var(--paper);
+  border-bottom-color: var(--paper);
+}
+
+.option-input:focus-visible + .option-label {
+  outline: 1px solid var(--paper);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) {
+  .option-label:hover {
+    color: var(--paper);
+  }
 }
 
 .field-input {
@@ -671,10 +741,22 @@ button:focus-visible {
   margin-top: var(--sp-3);
   font-family: var(--font-mono);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.4;
   letter-spacing: normal;
   color: var(--paper);
   max-width: var(--measure);
+}
+
+/* WHY: the live region is never toggled with `hidden` — an aria-live region
+   only announces mutations made while it is rendered. It stays in the DOM and
+   costs nothing while empty. */
+.inquiry-status:empty {
+  margin-top: 0;
+}
+
+.inquiry-status:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 4px;
 }
 
 .inquiry-status[data-tone='working'] {
@@ -728,7 +810,8 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .cta,
   .cta-arrow,
-  .field-input {
+  .field-input,
+  .option-label {
     transition: none;
   }
 }
