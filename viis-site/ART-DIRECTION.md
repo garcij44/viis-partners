@@ -66,6 +66,14 @@ line-height go below 1.05.
 ## Spacing
 
 8px base. Use only these steps: 8, 16, 24, 32, 48, 64, 96, 128 px.
+
+One narrow exception, so it stops being re-flagged on every audit: **optical offsets are
+not layout spacing.** `outline-offset`, `text-underline-offset`, and hairline widths may
+use sub-8px values, and 4px is the site's standing convention for all three — the CTA
+treatment below already specifies "a thin underline offset ~4px". Use 4px, use it
+everywhere, and do not invent a second optical value. This exception covers offsets and
+rules only; it does not extend to padding, margin, gap, or any dimension that moves
+layout.
 - Between major sections: 96–128px desktop, 64px mobile. Generous and consistent.
 - The whitespace is most of what makes this look expensive. Don't tighten it to fit more.
 - Watch CSS specificity between section- and element-level selectors so section padding

@@ -1,0 +1,11 @@
+# Claude Code local settings — machine-specific, may contain local paths and
+# permission grants. This repo is public; keep it out of history.
+.claude/settings.local.json
+
+# Environment files. Never commit real values; see viis-site/.env.example.
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
