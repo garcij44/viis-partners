@@ -100,16 +100,28 @@ if (form) {
     });
   });
 
+  const heading = document.getElementById('inquiry-heading');
+  const intro = document.querySelector('.contact-intro');
+
   const onSuccess = () => {
-    // Replace the form body with the confirmation, then move focus to it. The
-    // submit button is about to be removed and focus would otherwise fall to
-    // <body>, losing a keyboard user's place entirely.
+    // One idea per section: the invitation is replaced by the confirmation
+    // rather than left standing above it, so the section does not hold an
+    // invitation and a completion at the same time.
     form.querySelectorAll('.field, .inquiry-actions').forEach((el) => el.remove());
-    setStatus(
-      'Thank you. Your inquiry is in. Jadrin will read it and reply to you directly.',
-      'ok',
-    );
-    if (statusEl) statusEl.focus();
+    if (intro) intro.remove();
+    if (heading) heading.textContent = 'Your inquiry is in.';
+    setStatus('Jadrin reads every message and will reply to you directly.', 'ok');
+
+    // WHY the heading and not the live region: role="status" takes no accessible
+    // name from its content, so focusing it drops a keyboard or screen-reader
+    // user onto a nameless element. The submit button is gone by now, so focus
+    // would otherwise fall to <body>.
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus();
+    } else if (statusEl) {
+      statusEl.focus();
+    }
   };
 
   const onFailure = () => {

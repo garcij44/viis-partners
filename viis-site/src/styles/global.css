@@ -583,6 +583,7 @@ button:focus-visible {
 }
 
 .field {
+  position: relative;
   margin-bottom: var(--sp-4);
 }
 
@@ -645,6 +646,7 @@ button:focus-visible {
 }
 
 .option-label {
+  position: relative;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.4;
@@ -669,9 +671,35 @@ button:focus-visible {
   border-bottom-color: var(--paper);
 }
 
+/* Focus, without an outline box (AD:116-117). Two channels, because selection
+   already spends "brighten the rule": the rule thickens to 2px via box-shadow
+   (no layout shift), AND a marker appears. The marker is what makes
+   selected-vs-selected-and-focused legible — otherwise a keyboard user arrowing
+   through the group is asked to perceive a one-pixel difference. */
 .option-input:focus-visible + .option-label {
-  outline: 1px solid var(--paper);
-  outline-offset: 4px;
+  color: var(--paper);
+  box-shadow: inset 0 -2px 0 0 currentColor;
+}
+
+/* WHY content:'' and not a glyph: pseudo-element text content is announced by
+   some screen readers, and this marker is decoration for a state the radio
+   already conveys programmatically. Absolutely positioned so presence costs
+   nothing in layout. */
+.option-label::before {
+  content: '';
+  position: absolute;
+  /* WHY --sp-1 and not --sp-2: the row gap is --sp-3, so a --sp-2 offset would
+     leave the marker nearer the PREVIOUS option than the one it marks. */
+  left: calc(var(--sp-1) * -1);
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: var(--paper);
+  opacity: 0;
+}
+
+.option-input:focus-visible + .option-label::before {
+  opacity: 1;
 }
 
 @media (hover: hover) {
@@ -717,7 +745,14 @@ button:focus-visible {
   color: var(--paper-dim);
 }
 
+/* WHY absolute: revealing three error lines at once previously pushed the submit
+   control down 78.6px — out from under the pointer at the moment it is clicked.
+   The error sits in the space the field's own bottom margin already reserves, so
+   idle -> error costs zero layout movement (AD:131). */
 .field-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
   margin-top: var(--sp-1);
   font-family: var(--font-mono);
   font-size: 13px;
@@ -743,6 +778,7 @@ button:focus-visible {
 }
 
 .inquiry-status {
+  min-height: calc(13px * 1.4);
   margin-top: var(--sp-3);
   font-family: var(--font-mono);
   font-size: 13px;
@@ -752,12 +788,10 @@ button:focus-visible {
   max-width: var(--measure);
 }
 
-/* WHY: the live region is never toggled with `hidden` — an aria-live region
-   only announces mutations made while it is rendered. It stays in the DOM and
-   costs nothing while empty. */
-.inquiry-status:empty {
-  margin-top: 0;
-}
+/* WHY min-height: the live region is never toggled with `hidden` — an aria-live
+   region only announces mutations made while it is rendered. Reserving exactly
+   one mono line means filling it costs no layout movement either, so idle ->
+   sending -> error/success never shifts anything below it (AD:131). */
 
 .inquiry-status:focus-visible {
   outline: 1px solid var(--paper);
@@ -769,7 +803,7 @@ button:focus-visible {
 }
 
 .inquiry-note {
-  margin-top: var(--sp-4);
+  margin-top: var(--sp-2);
   max-width: var(--measure);
 }
 

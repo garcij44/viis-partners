@@ -124,3 +124,81 @@ definition list, or set it after the closing line rather than in the service run
 5. Pick the signature moment (#7)
 6. Restructure "How we work" (#8)
 7. Polish pass, then re-run the six-question self-audit in `ART-DIRECTION.md:120`
+
+---
+
+# Open findings — sprint 2 review (2026-08-20)
+
+Raised by `design-auditor`, `form-integrity-reviewer` and `azure-swa-engineer`
+against `92bf9a5..HEAD`. Everything below is **open**; closed items are not
+listed. File:line refs are against the branch head at time of review.
+
+## Deferred by decision
+
+### V5 — `/thanks` and `404` strand the footer over dead ink
+`src/pages/thanks.astro`, `src/pages/404.astro`; no min-height on the shell
+(`src/layouts/Layout.astro:90-93`, `src/styles/global.css:86-98`).
+
+Measured at 1440×900: content ends at 614.9px, leaving **285.1px** of bare
+`--ink` below the `--ink-raised` footer band. At 375 the footer ends around 58%
+of viewport height and the bottom ~42% is empty ink. The raised band reads as a
+stripe abandoned mid-page rather than the foot of the page.
+
+`/thanks` is the landing page for every no-JS submit — the phone path. Not a
+named rule violation, but it fails ART-DIRECTION's "would Klim ship this" and
+undercuts the footer-as-quiet-system-readout intent.
+
+### V6 — `var(--measure)` yields three different rag edges in one column
+`src/styles/global.css` — `.inquiry`, `.inquiry-status`, `.inquiry-note`.
+
+`ch` resolves against each element's own font, so one token produces three
+physical widths in the same column: **763.8px** (18px Geist, clamped by the
+760px column), **636.5px** (`.inquiry-note`, 15px Geist), **499.2px**
+(`.inquiry-status`, 13px Geist Mono). The intro, privacy note and success
+message each rag at an unrelated edge.
+
+The letter of the rule is kept — the token is used, no bespoke value — but the
+effect is three bespoke widths arrived at by accident. `--measure` is a *body*
+measure; applying it to 13px mono is what produces the odd 499px.
+
+## Open, no decision yet
+
+### A1 — `text-transform: uppercase` leaks into accessible names
+`src/styles/global.css` — `.field-label`, `.option-label`.
+
+Chrome computes the accessible names as `"NAME"`, `"WORK EMAIL"`, `"ADOPT"`.
+CSS text-transform is applied to the accname in Chrome and WebKit, and short
+all-caps tokens are read letter-by-letter as initialisms by some screen readers.
+The source text is already sentence case, so this is inherent to the technique
+rather than a typo. **Needs a real assistive-technology check before launch**;
+`aria-label` on the affected controls is the escape hatch if it reads badly.
+
+### H2 — a tripped `botcheck` is unobservable
+Nothing logs, surfaces or counts a bot rejection, and Web3Forms does not
+document its response to one. Low likelihood (a checkbox is not autofilled) but
+it is the one remaining path where a submission could disappear without a trace.
+
+### H3 — CAPTCHA would break the CSP claims
+Adding hCaptcha or Turnstile requires widening `script-src`, `frame-src` and
+`connect-src`, and both vendors inject inline `<style>` — which would force
+`style-src 'unsafe-inline'` and invalidate the "no unsafe-inline" claim in
+README → Security controls. Write the tradeoff down before reaching for one.
+
+### ART-DIRECTION clauses that need resolving
+- The 2026-08-20 spacing amendment says 4px is the convention for "all three"
+  including hairline widths, but every hairline is 1px and the CTA thickens to
+  2px. Reword so 4px binds `outline-offset` and `text-underline-offset` only.
+- AD:131 "no layout shift" does not say whether it governs only a control's
+  rest→focus transition or also the reveal of inline error text. Resolved in
+  code for now by treating the stricter reading as binding.
+
+### Azure / platform
+- **Fork PRs fail at the build guard**, not at deploy, because a public repo
+  passes no secrets to fork-triggered runs. Not a regression — fork PRs could
+  never deploy — but the error reads as a misconfiguration.
+- **`.webmanifest` mimeType and `manifest-src 'self'` are dead config.** No
+  manifest is built and no page carries `rel="manifest"`.
+- **`$schema` in `staticwebapp.config.json` is not in Microsoft's documented key
+  list.** Widely used in practice, but unverifiable until a deploy — and if SWA
+  rejected the file it would silently ignore *all* of it. The post-merge
+  `curl -I` covers this.
