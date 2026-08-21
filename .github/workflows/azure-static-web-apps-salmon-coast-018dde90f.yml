@@ -9,13 +9,25 @@ on:
     branches:
       - main
 
+# Least privilege: the deploy needs to read the tree, and the SWA action needs
+# to write the PR preview comment. Nothing here should write to the repo.
+permissions:
+  contents: read
+  pull-requests: write
+
+# WHY: two quick pushes to main otherwise race two deployments and whichever
+# finishes last wins, which is not necessarily the newer commit.
+concurrency:
+  group: swa-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           lfs: false
@@ -29,6 +41,12 @@ jobs:
         # bundle. Setting them in the Portal produces a form that posts to the
         # fallback endpoint and silently drops every lead.
         env:
+          # LOAD-BEARING LITERAL — do not move this into GitHub Secrets.
+          # ContactForm.astro's build guard only fires when this value contains
+          # "web3forms.com". If it becomes an empty secret the guard silently
+          # disarms, the build goes green, and the site ships a form posting to
+          # the /api/contact fallback that drops every lead. Verified: with both
+          # vars unset the build exits 0 and bakes action="/api/contact".
           PUBLIC_FORM_ENDPOINT: https://api.web3forms.com/submit
           # Public by design (it is rendered into the HTML) but kept in GitHub
           # Secrets so it can be rotated without a commit.

@@ -21,7 +21,7 @@ const isWeb3Forms = endpoint.includes('web3forms.com');
 
 // Absolute URL: the no-JS POST is cross-origin, so the backend needs a full
 // origin to redirect back to.
-const thanksUrl = new URL('/thanks', Astro.site).href;
+const thanksUrl = new URL('/thanks/', Astro.site).href;
 
 // WHY: this repo has already shipped a form that posted into a 404 for weeks.
 // A missing access key produces a form that looks perfect and drops every lead

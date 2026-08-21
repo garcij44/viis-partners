@@ -121,6 +121,38 @@ if (form) {
     );
   };
 
+  // Everything that decides whether the endpoint actually accepted the lead.
+  const deliver = async () => {
+    const payload = new FormData(form);
+    // WHY: `redirect` is a no-JS-only field. The endpoint answers it with a 303,
+    // fetch follows that redirect cross-origin, the followed request carries no
+    // CORS grant, and the resulting rejection would report a lead that WAS
+    // delivered as a failure. Send it on the navigation path only.
+    payload.delete('redirect');
+
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: payload,
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) throw new Error(`Endpoint returned ${response.status}`);
+
+    // WHY: a 2xx is not acceptance. Quota exhaustion and spam classification can
+    // both answer 200 with {"success": false}; relaying that as a confirmation
+    // would thank someone for a message nobody received — the same silent loss
+    // this form was rebuilt to remove, just moved to the server side.
+    try {
+      const body = await response.json();
+      if (body && body.success === false) {
+        throw new Error(`Endpoint reported: ${body.message || 'success:false'}`);
+      }
+    } catch (error) {
+      // Swallow only an unparseable body, where the 2xx is the best signal
+      // available. Anything else is a real rejection and must surface.
+      if (!(error instanceof SyntaxError)) throw error;
+    }
+  };
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -141,12 +173,7 @@ if (form) {
     setStatus('Sending your inquiry.', 'working');
 
     try {
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { Accept: 'application/json' },
-      });
-      if (!response.ok) throw new Error(`Endpoint returned ${response.status}`);
+      await deliver();
       onSuccess();
     } catch {
       onFailure();
