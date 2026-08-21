@@ -275,6 +275,11 @@ Platform:
       `env:` block. **Not** the Azure Portal — see "Build-time env vars" above.
 - [ ] Confirm security headers are live (`curl -I https://viispartners.com`).
 - [ ] Add form-delivery monitoring / uptime check.
+- [ ] **After this branch merges**, add `.gitattributes` with `* text=auto eol=lf`
+      and renormalise, as its own commit so the mechanical diff never mixes
+      with functional change. `main` is currently CRLF. This blocks sprint 3:
+      a shell script committed with CRLF fails on the Ubuntu runner with a
+      `bad interpreter` error that reads like a missing binary.
 - [ ] Decide whether any privacy-conscious, cookieless analytics is wanted
       (none is installed; adding one requires a CSP update and a note here).
 
