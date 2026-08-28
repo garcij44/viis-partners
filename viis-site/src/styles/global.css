@@ -128,14 +128,19 @@ button:focus-visible {
   z-index: 10;
   padding: var(--sp-1) var(--sp-2);
   background: var(--ink-raised);
-  border: 1px solid var(--rule);
+  /* --paper-dim, not --rule: this is the visible boundary of an interactive
+     control and must clear 3:1. --rule is 1.22:1 on --ink-raised. The focus
+     outline is the identifying indicator, but the same token error was
+     corrected on .field-input and .option-row and belongs here too. */
+  border: 1px solid var(--paper-dim);
   color: var(--paper);
   font-family: var(--font-mono);
   font-size: 13px;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: top 0.15s ease;
+  transition: top 0.2s ease;
 }
 
 .skip:focus {
@@ -225,7 +230,26 @@ button:focus-visible {
   font-weight: 500;
   font-size: 21px;
   line-height: 1.3;
+  /* WHY restated: body sets 0.005em, which inherits as the COMPUTED ABSOLUTE
+     0.09px regardless of this element's font-size. The scale says normal. */
+  letter-spacing: normal;
   color: var(--paper);
+  text-wrap: balance;
+}
+
+/* WHY pretty here and balance on .type-h2 generally: balance is specified for
+   short headings and Chromium stops balancing past roughly six lines. The
+   closing statement runs 8 lines at 375 and 10 at 320, so the balance it
+   inherited was measurably inert — byte-identical to text-wrap: normal — and it
+   widowed "cheap." at 320. pretty keeps working at any length because it only
+   protects the last line, which is the failure this element actually has. */
+.closing-statement {
+  text-wrap: pretty;
+}
+
+/* N5 — .type-h1 sets pretty for the long site hero; these two are short headings
+   and take balance like every other short heading on the site. */
+.notice-heading {
   text-wrap: balance;
 }
 
@@ -241,6 +265,8 @@ button:focus-visible {
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
+  /* See .type-h3 — body's 0.005em inherits as an absolute 0.09px. */
+  letter-spacing: normal;
   color: var(--paper-dim);
 }
 
@@ -257,20 +283,22 @@ button:focus-visible {
   max-width: var(--measure);
 }
 
-/* WHY: the 12-col grid collapses at 800px, so the hero column narrows there,
-   not at 640. Drop the display face to its mobile size at the same breakpoint
-   or 56px overflows the collapsed column in the 640-800 band. */
-@media (max-width: 800px) {
+/* WHY 900 and not 800: crossing 800 -> 801 the 12-col grid engages and the hero
+   column COLLAPSES from 657px to 487px — it narrows by 170px as the viewport
+   widens by 1px. Stepping the display face up at 800 therefore put 56px into
+   the narrowest column on the page, which set five lines and left "guesswork."
+   alone. Measured: 56px rags clean from 850px up (2 words on the last line) and
+   widows from 801 to 842. The step now happens where cols 1-9 can actually
+   carry it, with margin.
+   This threshold is a function of the hero copy's length — shorten the copy and
+   it moves. Re-measure the 801-900 band before trusting it again. */
+@media (max-width: 900px) {
   .type-h1 {
     font-size: 40px;
   }
 }
 
-@media (max-width: 640px) {
-  .hero-break {
-    display: none;
-  }
-}
+
 
 /* ---------------------------------------------------------------- */
 /* Header                                                             */
@@ -291,6 +319,7 @@ button:focus-visible {
 .logotype {
   font-family: var(--font-mono);
   font-size: 13px;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--paper);
@@ -300,6 +329,7 @@ button:focus-visible {
 .header-meta {
   font-family: var(--font-mono);
   font-size: 13px;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--paper-dim);
@@ -314,8 +344,21 @@ button:focus-visible {
   padding-bottom: var(--sp-7);
 }
 
+/* The hard <br> is gone. It was removed only below 640px, which left it
+   destructive between ~800 and ~1090px, where the column is too narrow to hold
+   "VIIS is a technology practice" and the break orphaned "practice" on a line of
+   its own — across iPad landscape and every scaled laptop window.
+   The composition is now held by the column span (cols 1-9) plus text-wrap:
+   balance, which works at every width instead of two. balance (not the h1
+   default, pretty) because pretty only protects the LAST line; balance evens
+   all of them, which is what stops both the orphan and the trailing widow.
+   A `max-width: 26ch` cap was added here and then removed: 26ch of Fraunces is
+   928px at 56px, and the hero column never exceeds 858px, so the cap never
+   bound at any width and described a mechanism that did nothing. cols 1-9 is
+   what limits the line length. */
 .hero-lead {
   margin-bottom: var(--sp-4);
+  text-wrap: balance;
 }
 
 /* The differentiator as one flowing line. The original's first clause restated
@@ -330,12 +373,20 @@ button:focus-visible {
   gap: var(--sp-1);
 }
 
+/* WHY text-wrap on both spans: these were the only elements in the hero with no
+   wrap treatment, so they wrapped greedily and widowed a single word — "time."
+   at 375, "demands." at 414. The hero composition clause is written about this
+   stack, and it was the one part of it left to the browser's default.
+   balance, not pretty: measured at 320/375/414, balance holds a 4-word minimum
+   on every line of both spans; pretty clears the widow but only reaches 2. */
 .hero-support-lead {
   color: var(--paper);
+  text-wrap: balance;
 }
 
 .hero-support-sub {
   color: var(--paper-dim);
+  text-wrap: balance;
 }
 
 /* Utility pages (404, /thanks) — the hero shell, composed rather
@@ -356,10 +407,18 @@ button:focus-visible {
 
 /* The signature moment. The one warm stroke on the page: a brass hairline that
    closes the hero and spans only the hero's own columns, so it stops exactly
-   where the deliberate right margin begins. Every other rule on the page is the
-   near-invisible --rule; this is the one that proves the restraint was chosen. */
+   where the deliberate right margin begins. Every other DIVIDER on the page is
+   the near-invisible --rule; this is the one that proves the restraint was
+   chosen. (Interactive boundaries in the form use --paper-dim and are held to
+   3:1 — a different job, a different token.) */
 .hero-rule {
   margin-top: var(--sp-6);
+  /* WHY explicit: the UA gives <hr> margin-block-end: 0.5em, which computes
+     against the inherited 18px body size to 9px — off the 8px scale, and on the
+     one element the whole page is built around. It was adding 9px to the gap
+     below the signature stroke (105px at 1440 where 96 was intended, 73px at 375
+     where 64 was). */
+  margin-bottom: 0;
   border: 0;
   border-top: 1px solid var(--brass);
 }
@@ -532,17 +591,23 @@ button:focus-visible {
   color: var(--paper-dim);
 }
 
-/* Inline mailto fallback: smaller than the standalone CTA, sits in a sentence. */
-.cta-inline {
-  font-size: 15px;
-}
-
 .cta {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
   font-family: var(--font-mono);
   font-size: 18px;
+  /* WHY an explicit line-height: without one this class rendered at three
+     different heights depending on the element wearing it — `normal` on the
+     submit <button> (UA default), 28.8px on the inline mailto (1.6 inherited
+     from .type-small), 29.7px on a bare .cta (1.65 from body). Mono/utility is
+     1.4 in the type scale; the CTA row is the 18px mono entry. */
+  line-height: 1.4;
+  /* Explicit, not inherited: .cta-submit gets `normal` from the UA button reset
+     and .cta-inline gets it from .type-small, so the computed value looked right
+     without either being stated. A .cta placed anywhere else would have picked
+     up body's 0.005em as an absolute 0.09px. The Utility/CTA row says normal. */
+  letter-spacing: normal;
   color: var(--paper);
   text-decoration-line: underline;
   text-decoration-color: var(--paper-dim);
@@ -551,18 +616,44 @@ button:focus-visible {
   transition: text-decoration-color 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
+/* Inline mailto fallback: smaller than the standalone CTA, sits in a sentence.
+   WHY it is declared AFTER .cta: both are single class selectors, so both are
+   specificity (0,1,0) and source order decides. Declared first, this rule lost
+   every property it shares with .cta, and the mailto rendered at .cta's 18px
+   inside a 15px sentence — 20% oversized, in the page's closing move, visible
+   only in the built cascade. */
+.cta-inline {
+  font-size: 15px;
+}
+
+/* WHY em and not px: one hard-coded 15px box served both CTA sizes, so it was
+   proportioned for the 18px standalone and oversized against the 15px inline
+   mailto. Sizing from the CTA's own font-size makes the arrow track whichever
+   row it sits in, and removes the four literal 15s from four templates.
+   0.85em holds the standalone arrow at its current size (15.3px against 18px)
+   and takes the inline one to 12.75px. This is a ratio derived from the type
+   scale, not a new size value, so it needs no exception. */
 .cta-arrow {
   display: inline-block;
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
   transition: transform 0.2s ease;
 }
 
-.cta:hover {
-  text-decoration-color: var(--paper);
-  text-decoration-thickness: 2px;
-}
+/* WHY (hover: hover): .cta covers the form's submit control and the mailto
+   beside it. Unscoped, a tap on a phone latches this state — thickened
+   underline, arrow held 4px right — until something else is tapped. The resting
+   treatment is the affordance; this is desktop refinement only. */
+@media (hover: hover) {
+  .cta:hover {
+    text-decoration-color: var(--paper);
+    text-decoration-thickness: 2px;
+  }
 
-.cta:hover .cta-arrow {
-  transform: translateX(4px);
+  .cta:hover .cta-arrow {
+    transform: translateX(4px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -573,8 +664,9 @@ button:focus-visible {
 
 /* ---------------------------------------------------------------- */
 /* Inquiry form — reads as a well-set document, not a form. Baseline- */
-/* ruled inputs on the --rule hairline, mono labels, focus brightens  */
-/* the rule with no layout shift.                                     */
+/* ruled inputs on --paper-dim (NOT --rule: an interactive boundary    */
+/* must clear 3:1; --rule is 1.32:1 — see the ladder at .field-input), */
+/* mono labels, focus brightens the rule with no layout shift.         */
 /* ---------------------------------------------------------------- */
 
 .inquiry {
@@ -626,11 +718,31 @@ button:focus-visible {
   padding: 0;
 }
 
+/* The field rule belongs to the ROW, not to each option — this is the whole
+   convergence on the input treatment. Measured: a field rule runs 760px
+   continuous; per-option rules were five word-width stubs (53/44/44/53/106px),
+   and a row of word-width underlines is the visual signature of navigation no
+   matter what colour or offset it carries. One continuous rule under the row
+   reads as one field whose value happens to be a choice, exactly like the
+   textarea's rule sits under a multi-line field. */
 .option-row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2) var(--sp-3);
-  padding-top: var(--sp-1);
+  padding-block: var(--sp-1);
+  /* WHY the left inset: the selection marker and the focus ring both sit to the
+     LEFT of their option. At >=800px they land in the 24px column gap and are
+     invisible as a problem, but below 800 the grid collapses, the row starts at
+     the 24px page gutter, and the marker for whichever option is first on its
+     line rendered at x=16 — 8px outside the left edge every other element on the
+     page holds, and the only thing on the site hanging into the gutter. This
+     reserves that channel inside the row instead of borrowing it from the
+     gutter. The row's rule still starts at the grid line, so it stays aligned
+     with the field rules above and below; only the words are inset, which reads
+     as the options making room for their own state channel. */
+  padding-left: var(--sp-1);
+  border-bottom: 1px solid var(--paper-dim);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* The input is removed from view but stays focusable and in the accessibility
@@ -654,31 +766,44 @@ button:focus-visible {
   text-transform: uppercase;
   color: var(--paper-dim);
   cursor: pointer;
-  padding-bottom: var(--sp-1);
-  /* WHY: each option carries the same --rule hairline the text inputs sit on.
-     Without it the row reads as five more labels rather than five choices,
-     because the legend above uses the identical mono treatment. Selection then
-     brightens the rule exactly as focus does on an input — same language, and
-     no layout shift, since the border exists at rest. */
-  border-bottom: 1px solid var(--rule);
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
-/* Selected carries two signals, never colour alone: it brightens to --paper and
-   takes the hairline. */
+/* Selected carries two signals, never colour alone: the word brightens to
+   --paper and takes the marker bar. dim -> bright alone is only a 2.39:1 step,
+   which is why a second channel is needed.
+   WHY the bar and not an underline segment: an underline is anchored to a
+   shared baseline, and this row wraps to two lines at every width <= 414px. A
+   segment under a word on line 1 then floats ~42px above the row's rule with
+   nothing beneath it — which is precisely the word-width-stub signature that
+   moving the rule to the row was meant to remove, only brighter. It also
+   stacked: the label's inset shadow paints inside the label box, whose edge is
+   the INNER edge of the row's border, so 2px --paper sat on top of 1px
+   --paper-dim and rendered a 3px stroke in two colours. The bar travels with
+   its own word, so it is correct on any line and never touches the rule. */
 .option-input:checked + .option-label {
   color: var(--paper);
-  border-bottom-color: var(--paper);
 }
 
-/* Focus, without an outline box (AD:116-117). Two channels, because selection
-   already spends "brighten the rule": the rule thickens to 2px via box-shadow
-   (no layout shift), AND a marker appears. The marker is what makes
-   selected-vs-selected-and-focused legible — otherwise a keyboard user arrowing
-   through the group is asked to perceive a one-pixel difference. */
-.option-input:focus-visible + .option-label {
+.option-input:checked + .option-label::before {
+  opacity: 1;
+}
+
+/* Focus uses the site's own link/button focus treatment (see a:focus-visible),
+   not the field ladder. The marker now signals SELECTION, so focus needs its
+   own channel, and it must not be the rule: validate() focuses the first radio
+   — unchecked, that being why validation failed — so any treatment shared with
+   selection would tell a sighted user that option is now chosen.
+   The AD bars an outline box on INPUTS, where it would box a ruled field. Here
+   it rings one uppercase mono word and matches every other focusable thing on
+   the page, which is the more consistent answer.
+   WHY :focus and not :focus-visible: after a pointer-driven submit, browsers do
+   not match :focus-visible on a programmatically focused radio, so the mouse
+   user recovering from a validation error would get no indicator at all. */
+.option-input:focus + .option-label {
   color: var(--paper);
-  box-shadow: inset 0 -2px 0 0 currentColor;
+  outline: 1px solid var(--paper);
+  outline-offset: 4px;
 }
 
 /* WHY content:'' and not a glyph: pseudo-element text content is announced by
@@ -698,29 +823,60 @@ button:focus-visible {
   opacity: 0;
 }
 
-.option-input:focus-visible + .option-label::before {
-  opacity: 1;
-}
-
+/* Hover belongs to the OPTION, not the row. A row-level rule hover was tried and
+   reverted: .option-row is a full-width flex container, so at 1440 roughly 400px
+   of it is empty space to the right of the last option — hovering dead space
+   would brighten the field rule with no control under the pointer. The row's
+   rule answers to rest and error only.
+   Hover shares the colour channel with selection deliberately. Focus may not
+   (the pointer is absent, so a user cannot tell focus from selection), but on
+   hover the pointer is physically on the word — and selection additionally
+   carries the marker bar, whose presence is a binary, not a contrast judgement.
+   Hover is never the affordance here; see the hover clause in ART-DIRECTION. */
 @media (hover: hover) {
   .option-label:hover {
     color: var(--paper);
   }
 }
 
+/* The radio row's error state, matching the text inputs: 2px --paper-dim.
+   Without this the group was the one required field with no visual error
+   signal at all, despite the ladder claiming to cover it.
+   It targets the ROW's rule, not the individual options, so it does not compete
+   with selection or focus — those live on the label. border-bottom-color is
+   restated so error also overrides the row hover above, which sets the same
+   property; without it a hovered invalid row renders two pixels in two colours,
+   a state the ladder does not define. */
+.field-group[aria-invalid='true'] .option-row {
+  border-bottom-color: var(--paper-dim);
+  box-shadow: inset 0 -1px 0 0 var(--paper-dim);
+}
+
+/* State ladder — two orthogonal channels, so no state is colour alone:
+     colour   --paper-dim (6.28:1) -> --paper (15.02:1)
+     weight   1px -> 2px, always via inset box-shadow, never border-width
+   rest 1px dim / hover 1px bright / error 2px dim / focus 2px bright.
+   Declaration order below IS the cascade: these selectors are all specificity
+   (0,2,0), so later wins. Focus must stay last — it has to beat error, or the
+   focus indicator gets downgraded on the very field being corrected. */
 .field-input {
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--rule);
+  /* WHY --paper-dim and not --rule: this hairline is the input's only visible
+     boundary, which WCAG 2.2 SC 1.4.11 requires to clear 3:1 against --ink.
+     --rule is 1.32:1 — not a quiet boundary, an absent one. --paper-dim is
+     6.28:1. --rule remains correct for dividers, which are decorative and
+     exempt. See ART-DIRECTION.md, Components (corrected 2026-08-27). */
+  border-bottom: 1px solid var(--paper-dim);
   padding: var(--sp-1) 0;
   color: var(--paper);
   font-family: var(--font-body);
   font-size: 18px;
   line-height: 1.65;
   letter-spacing: 0.005em;
-  /* WHY: box-shadow (not border-width) carries the focus "thickening" so the
-     input never changes box size — zero layout shift between rest and focus. */
+  /* WHY: box-shadow (not border-width) carries every "thickening" so the input
+     never changes box size — zero layout shift across the whole ladder. */
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -729,15 +885,33 @@ button:focus-visible {
   min-height: var(--sp-7);
 }
 
+/* WHY (hover: hover): on touch, :hover latches after a tap and the field stays
+   stuck bright until something else is tapped — a state the user can't clear.
+   Hover is a desktop refinement only; it is never the affordance. The resting
+   rule above is sufficient on its own, which is what most inbound traffic
+   (QR code -> phone) will ever see. */
+@media (hover: hover) {
+  .field-input:hover {
+    border-bottom-color: var(--paper);
+  }
+}
+
+/* Error: text (below) + a doubled rule. WHY weight and not colour: with rest
+   correctly at --paper-dim, the old dimmed-rule error is now identical to rest.
+   Brass would read, but AD caps it at one use per screen and three fields can
+   fail validation at once. */
+.field-input[aria-invalid='true'] {
+  /* border-bottom-color is restated so error also overrides :hover above — which
+     sets the same property and would otherwise leave a rule whose two pixels are
+     different colours, a state the ladder does not define. */
+  border-bottom-color: var(--paper-dim);
+  box-shadow: inset 0 -1px 0 0 var(--paper-dim);
+}
+
 .field-input:focus-visible {
   outline: none;
   border-bottom-color: var(--paper);
   box-shadow: inset 0 -1px 0 0 var(--paper);
-}
-
-/* Error is signalled by text (below) + a dimmed rule, never by colour alone. */
-.field-input[aria-invalid='true'] {
-  border-bottom-color: var(--paper-dim);
 }
 
 .field-hint {
@@ -748,7 +922,7 @@ button:focus-visible {
 /* WHY absolute: revealing three error lines at once previously pushed the submit
    control down 78.6px — out from under the pointer at the moment it is clicked.
    The error sits in the space the field's own bottom margin already reserves, so
-   idle -> error costs zero layout movement (AD:131). */
+   idle -> error costs zero layout movement (AD Components/States: "no layout shift"). */
 .field-error {
   position: absolute;
   top: 100%;
@@ -791,7 +965,13 @@ button:focus-visible {
 /* WHY min-height: the live region is never toggled with `hidden` — an aria-live
    region only announces mutations made while it is rendered. Reserving exactly
    one mono line means filling it costs no layout movement either, so idle ->
-   sending -> error/success never shifts anything below it (AD:131). */
+   sending -> error/success never shifts anything below it
+   (AD Components/States: "no layout shift").
+   This holds ONLY because every status string is held to 40 characters — the
+   measured one-line budget at 375px, which is the binding width. It is not a
+   property of the reserve; it is a constraint on the copy, enforced at the
+   setStatus call site in inquiry.js. A longer string silently reintroduces an
+   18.2px shift, which is what the 92-character failure copy used to do. */
 
 .inquiry-status:focus-visible {
   outline: 1px solid var(--paper);
@@ -842,6 +1022,7 @@ button:focus-visible {
 .footer-line {
   font-family: var(--font-mono);
   font-size: 13px;
+  line-height: 1.4;
   letter-spacing: 0.08em;
   color: var(--paper-dim);
 }
@@ -850,7 +1031,41 @@ button:focus-visible {
   .cta,
   .cta-arrow,
   .field-input,
+  .option-row,
   .option-label {
     transition: none;
+  }
+}
+
+/* Forced colors (Windows high contrast). The mode suppresses box-shadow
+   outright, and box-shadow is the sole carrier of every "thickening" in the
+   form's state ladder — so focus, error, and selection would all silently
+   vanish, and `outline: none` on the inputs would leave no focus indicator at
+   all. Restored below with properties the mode preserves: outline, border-style,
+   and system colour keywords, which are honoured where author colours are not.
+   The AD's "no outline box on focus" rule is an aesthetic constraint on our
+   palette; in forced colors the user has replaced that palette deliberately and
+   a visible focus indicator outranks it. Nothing here shifts layout: outline
+   does not affect box size and border-STYLE is not border-width. */
+@media (forced-colors: active) {
+  .field-input:focus-visible,
+  .option-input:focus + .option-label {
+    outline: 2px solid Highlight;
+    outline-offset: 4px;
+  }
+
+  .field-input[aria-invalid='true'],
+  .field-group[aria-invalid='true'] .option-row {
+    border-bottom-style: dashed;
+  }
+
+  .option-input:checked + .option-label {
+    color: Highlight;
+  }
+
+  /* background is forced to Canvas in this mode, so the marker would vanish */
+  .option-input:checked + .option-label::before {
+    background: Highlight;
+    forced-color-adjust: none;
   }
 }

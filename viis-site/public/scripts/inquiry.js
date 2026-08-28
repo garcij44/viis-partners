@@ -34,14 +34,26 @@ if (form) {
 
   // The status element is never toggled with `hidden`. An aria-live region only
   // announces mutations that happen while it is rendered, so it stays in the
-  // DOM permanently and collapses to zero height while empty (see :empty in
-  // global.css). Toggling it is how the first message goes silent.
+  // DOM permanently and holds one reserved mono line via min-height. Toggling
+  // it is how the first message goes silent.
+  // Every string passed here MUST fit 40 characters. That reserve is one line,
+  // and the no-layout-shift rule is at its most load bearing on a failed submit
+  // — the worst possible moment to move the page.
+  // Budget measured, not estimated: at 375px the region is 327px wide (375 less
+  // the two 24px gutters) and Geist Mono at 13px advances 7.8px/char, giving
+  // 41.9. Capped at 40: a desktop viewport with a classic scrollbar measures
+  // 312px / 40.0, so 40 is the figure that holds in both cases.
   const setStatus = (message, tone) => {
     if (!statusEl) return;
     statusEl.dataset.tone = tone;
     statusEl.textContent = message;
   };
 
+  // Field error strings are capped at 40 characters, the same measured budget as
+  // setStatus. This cap is the stricter of the two in consequence: .field-error
+  // is absolutely positioned (so revealing one costs no layout movement), which
+  // means an overlong string does not reflow — it OVERLAPS the next field's
+  // label. Longest current string is 25ch.
   const setFieldError = (errorId, message, targets) => {
     const errorEl = document.getElementById(errorId);
     targets.forEach((el) => {
@@ -76,7 +88,7 @@ if (form) {
     check(
       Boolean(service),
       'service-error',
-      'Choose the service you are interested in.',
+      'Choose a service.',
       serviceGroup ? [serviceGroup] : [],
       firstService,
     );
@@ -110,7 +122,7 @@ if (form) {
     form.querySelectorAll('.field, .inquiry-actions').forEach((el) => el.remove());
     if (intro) intro.remove();
     if (heading) heading.textContent = 'Your inquiry is in.';
-    setStatus('Jadrin reads every message and will reply to you directly.', 'ok');
+    setStatus('Jadrin will reply to you directly.', 'ok'); // 34 chars
 
     // WHY the heading and not the live region: role="status" takes no accessible
     // name from its content, so focusing it drops a keyboard or screen-reader
@@ -128,7 +140,10 @@ if (form) {
     if (submitBtn) submitBtn.disabled = false;
     if (submitLabel) submitLabel.textContent = submitIdleLabel;
     setStatus(
-      'That did not go through. Please email jgarcia@viispartners.com directly and it will reach us.',
+      // 38 chars — within the 40-char one-line budget (see setStatus). The
+      // address itself is 24 chars and cannot fit alongside any instruction, so
+      // this points at the mailto that sits directly below the form instead.
+      "Didn't send. Use the email link below.",
       'error',
     );
   };
