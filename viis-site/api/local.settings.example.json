@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+
+    "LEADS_TABLE_CONNECTION_STRING": "UseDevelopmentStorage=true",
+    "LEADS_TABLE_NAME": "leads",
+
+    "MAIL_TRANSPORT": "log",
+    "MAIL_CONNECTION_STRING": "",
+    "MAIL_FROM": "",
+    "MAIL_NOTIFY_TO": "jgarcia@viispartners.com",
+
+    "RATE_LIMIT_PER_HOUR": "5"
+  }
+}

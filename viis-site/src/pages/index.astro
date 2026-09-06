@@ -2,11 +2,10 @@
 /**
  * Homepage — redesign brief §2, built in the brief's order (§6).
  * Sections in place: 1 (hero), 2 (capability row), 3 (reframe), 4 (method),
- * and 10 (closing CTA). Sections 5–9 follow.
+ * 8 (the audit), and 10 (closing CTA). Sections 5, 6, 7, and 9 follow.
  *
- * The header is SiteHeader (logotype, audit CTA, no nav links). The
- * footer is carried-over chrome: the brief specifies none, so it holds only
- * what the old page already said, on the new tokens, until one is designed.
+ * Chrome is SiteHeader (logotype, audit CTA, no nav links) and SiteFooter
+ * (carried over; the brief specifies no footer).
  */
 import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
@@ -15,6 +14,8 @@ import HeroBand from '../components/sections/HeroBand.astro';
 import CapabilityRow from '../components/sections/CapabilityRow.astro';
 import Reframe from '../components/sections/Reframe.astro';
 import Method from '../components/sections/Method.astro';
+import Audit from '../components/sections/Audit.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 ---
 
 <Layout
@@ -37,31 +38,15 @@ import Method from '../components/sections/Method.astro';
 		<CapabilityRow />
 		<Reframe />
 		<Method />
+		<Audit />
 
 		<HeroBand variant="closing" id="closing" />
 	</main>
 
-	<footer class="site-footer">
-		<div class="container footer-inner">
-			<p class="t-mono fg-2">VIIS · Jadrin Garcia, Principal · San Antonio, Texas</p>
-			<p class="t-mono fg-2">viispartners.com</p>
-		</div>
-	</footer>
+	<SiteFooter />
 </Layout>
 
 <style>
-	.site-footer {
-		border-top: 1px solid var(--hairline);
-		padding-block: var(--sp-6);
-	}
-
-	.footer-inner {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: var(--sp-2) var(--sp-5);
-	}
-
 	.artifact-placeholder {
 		display: flex;
 		flex-direction: column;

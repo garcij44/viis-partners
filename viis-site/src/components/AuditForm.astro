@@ -1,0 +1,190 @@
+---
+/**
+ * AuditForm — the site's primary conversion point (brief §2.8). Five fields
+ * and nothing else. It works with zero JavaScript as a plain POST to the
+ * managed function at /api/audit, which answers a navigation submit with a
+ * redirect to /thanks/ and a fetch submit with JSON. public/scripts/audit.js
+ * only enhances it: inline errors, inline states, no browser bubbles, and
+ * never a client-side bot gate.
+ *
+ * SECURITY: every check here is usability. api/src/lib/validate.ts is the
+ * boundary; it normalises, length-limits, rejects, and rate-limits.
+ */
+import Button from './Button.astro';
+
+interface Field {
+  id: string;
+  name: string;
+  label: string;
+  type: 'text' | 'email';
+  autocomplete: string;
+  inputmode?: 'email' | 'url';
+  max: number;
+  required: boolean;
+}
+
+const fields: Field[] = [
+  { id: 'audit-name', name: 'name', label: 'Name', type: 'text', autocomplete: 'name', max: 100, required: true },
+  { id: 'audit-business', name: 'business', label: 'Business name', type: 'text', autocomplete: 'organization', max: 120, required: true },
+  { id: 'audit-email', name: 'email', label: 'Email', type: 'email', autocomplete: 'email', inputmode: 'email', max: 200, required: true },
+  { id: 'audit-website', name: 'website', label: 'Website URL', type: 'text', autocomplete: 'url', inputmode: 'url', max: 200, required: true },
+  { id: 'audit-note', name: 'note', label: "What's bothering you about it?", type: 'text', autocomplete: 'off', max: 300, required: false },
+];
+---
+
+<form class="audit-form" method="post" action="/api/audit" aria-labelledby="audit-heading" data-audit-form>
+  {/* Honeypot. A checkbox, not a text input: password managers autofill text
+      fields that look like company or URL fields; a checkbox is never
+      autofilled. Evaluated server-side only. */}
+  <div class="hp" aria-hidden="true">
+    <label for="audit-botcheck">Leave this unchecked</label>
+    <input id="audit-botcheck" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" />
+  </div>
+
+  {
+    fields.map((field) => (
+      <div class="field">
+        <label class="label t-label" for={field.id}>
+          {field.label}
+          {!field.required && <span class="optional">optional</span>}
+        </label>
+        <input
+          class="input t-ui"
+          id={field.id}
+          name={field.name}
+          type={field.type}
+          required={field.required}
+          maxlength={field.max}
+          autocomplete={field.autocomplete}
+          inputmode={field.inputmode}
+          aria-describedby={`${field.id}-error`}
+        />
+        <p class="error t-mono" id={`${field.id}-error`} data-error hidden></p>
+      </div>
+    ))
+  }
+
+  <div class="actions">
+    <Button type="submit" data-submit>
+      <span data-submit-label>Get your free site audit</span>
+    </Button>
+    <p class="status t-mono" role="status" aria-live="polite" data-status></p>
+  </div>
+
+  <p class="note t-small fg-3">
+    We use what you send only to run the audit and reply. No newsletter, no tracking.
+  </p>
+</form>
+
+<!-- Enhancement served as a static, same-origin module so the strict CSP
+     (script-src 'self') allows it with no hash or nonce. -->
+<script is:inline type="module" src="/scripts/audit.js"></script>
+
+<style>
+  .audit-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  /* Visually hidden, present in the DOM and the POST. Not display:none. */
+  .hp {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .label {
+    color: var(--fg-2);
+  }
+
+  /* Lowercase against the uppercase label is what marks it optional. */
+  .optional {
+    margin-left: var(--sp-2);
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--fg-3);
+  }
+
+  /* A well in the card: ink inside surface, boundary on --cream-faint, which
+     clears 3:1 on both (WCAG 1.4.11). Focus is the site-wide ring from
+     base.css. Error thickens the boundary via inset shadow so the box never
+     changes size, and pairs with the message below: never colour alone. */
+  .input {
+    width: 100%;
+    min-height: var(--sp-7);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--ink);
+    color: var(--fg);
+    border: 1px solid var(--cream-faint);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      box-shadow var(--dur-fast) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .input:hover {
+      border-color: var(--fg-2);
+    }
+  }
+
+  .input[aria-invalid='true'] {
+    border-color: var(--fg);
+    box-shadow: inset 0 0 0 1px var(--fg);
+  }
+
+  /* WHY: Chrome paints autofilled fields with its own light background,
+     which on this form reads as a broken box. The inset shadow covers the
+     paint and the long transition stops it flashing back. */
+  .input:-webkit-autofill {
+    -webkit-text-fill-color: var(--fg);
+    -webkit-box-shadow: 0 0 0 1000px var(--ink) inset;
+    transition: background-color 9999s ease-out;
+  }
+
+  .error {
+    color: var(--fg);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4) var(--sp-5);
+    margin-top: var(--sp-2);
+  }
+
+  .status {
+    color: var(--fg-2);
+    /* One mono line reserved so idle -> sending -> error never moves the button. */
+    min-height: calc(var(--text-mono) * var(--lh-mono));
+  }
+
+  .status[data-tone='error'] {
+    color: var(--fg);
+  }
+
+  .status :global(a) {
+    color: var(--fg);
+    text-decoration-color: var(--link-rule);
+    text-underline-offset: 4px;
+  }
+
+  @media (max-width: 767px) {
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

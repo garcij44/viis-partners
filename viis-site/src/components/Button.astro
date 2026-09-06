@@ -20,6 +20,7 @@ const {
   arrow = variant === 'primary',
   type = 'button',
   class: className = '',
+  ...rest
 } = Astro.props;
 
 const classes = ['btn', `btn--${variant}`, className].filter(Boolean).join(' ');
@@ -27,12 +28,12 @@ const classes = ['btn', `btn--${variant}`, className].filter(Boolean).join(' ');
 
 {
   href ? (
-    <a class={classes} href={href}>
+    <a class={classes} href={href} {...rest}>
       <slot />
       {arrow && <Arrow />}
     </a>
   ) : (
-    <button class={classes} type={type}>
+    <button class={classes} type={type} {...rest}>
       <slot />
       {arrow && <Arrow />}
     </button>

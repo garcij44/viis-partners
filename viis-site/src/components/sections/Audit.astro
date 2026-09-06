@@ -1,0 +1,132 @@
+---
+/**
+ * Section 8 — the audit (brief §2.8). The lead magnet, styled like Canopy's
+ * Toolkit: eyebrow, display headline, subhead, then two cards — the form,
+ * and what the audit checks, as four mono-labelled groups. No icons here;
+ * the form is the section's object.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import AuditForm from '../AuditForm.astro';
+
+interface Group {
+  label: string;
+  items: string[];
+}
+
+const groups: Group[] = [
+  { label: 'Site', items: ['speed', 'mobile', 'accessibility', 'broken links', 'SSL', 'indexability'] },
+  { label: 'Foundation', items: ['DNS records', 'SPF/DKIM/DMARC', 'domain ownership', 'Workspace configuration', 'licence waste'] },
+  { label: 'Search', items: ['Google Business Profile', 'local visibility', 'metadata', 'schema', 'analytics and conversion tracking'] },
+  { label: 'Risk', items: ['backups', 'admin access', 'MFA', 'orphaned accounts', 'vendor lock-in'] },
+];
+---
+
+<Section id="audit" labelledby="audit-heading">
+  <Eyebrow class="kicker">Free</Eyebrow>
+  <h2 id="audit-heading" class="headline">A free audit of your site and the systems under it</h2>
+  <p class="t-lead fg-2 measure sub">
+    A 20-point audit of your website and the systems underneath it. We run it, write it up, and
+    send you the report. No obligation, and you keep the report whether or not you hire us.
+  </p>
+
+  {/* The form is first in the DOM (it is the point) and sits right on desktop
+      beside what it delivers; stacked, it comes straight after the offer. */}
+  <div class="grid">
+    <Card class="form-card">
+      <AuditForm />
+    </Card>
+
+    <Card class="checks">
+      <h3>What's checked</h3>
+      <dl class="groups">
+        {
+          groups.map((group) => (
+            <div class="group">
+              <dt class="t-label fg-2">{group.label}</dt>
+              <dd>
+                <ul class="items t-mono">
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </Card>
+  </div>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--sp-7);
+    align-items: start;
+    margin-top: var(--sp-8);
+  }
+
+  .form-card {
+    order: 1;
+  }
+
+  .groups {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--sp-5);
+  }
+
+  .group {
+    padding-block: var(--sp-4);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .group:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .group:last-child {
+    padding-bottom: 0;
+  }
+
+  .group dd {
+    margin-top: var(--sp-2);
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* The brief's own notation, " · ", as a separator between list items. */
+  .items li + li::before {
+    content: '·';
+    margin-inline: var(--sp-2);
+    color: var(--fg-3);
+  }
+
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+
+    .form-card {
+      order: 0;
+    }
+  }
+</style>
