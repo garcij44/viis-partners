@@ -2,9 +2,8 @@
 /**
  * Section 4 — the method (brief §2.4): four service lines as one path, not
  * four doors. A vertical sequence on a single rail, a jade node per step,
- * each title linking to its service page, closed by the brief's connective
- * line. The brief gives this section no headline, so its name is the
- * heading — an h2 set as the eyebrow — and the four titles carry the type.
+ * each title linking to its service page, and closed by the connective
+ * line, which is the concrete version of the headline above it.
  *
  * The service pages do not exist until build step 7; the links 404 until
  * then.
@@ -43,7 +42,8 @@ const lines: ServiceLine[] = [
 ---
 
 <Section id="method" labelledby="method-heading">
-  <Eyebrow as="h2" id="method-heading" class="kicker">The method</Eyebrow>
+  <Eyebrow class="kicker">The method</Eyebrow>
+  <h2 id="method-heading" class="headline">Each step comes out of the one before it.</h2>
 
   <ol class="path">
     {
@@ -69,8 +69,12 @@ const lines: ServiceLine[] = [
     display: flex;
   }
 
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
   .path {
-    margin-top: var(--sp-7);
+    margin-top: var(--sp-8);
   }
 
   /* Each step owns its node and the rail segment down to the next node.

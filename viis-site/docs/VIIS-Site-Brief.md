@@ -129,6 +129,9 @@ This is Canopy's "The new search" slot. It teaches the prospect something that m
 
 Present as **one path, not four doors.** Vertical sequence with a connecting rule, each linking to its service page.
 
+- **Eyebrow:** `THE METHOD`
+- **H2:** Each step comes out of the one before it.
+
 **Websites** — Design and build on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account.
 
 **Foundations** — Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, licence audit, backups, access control. The layer every website depends on and almost nobody maintains.
