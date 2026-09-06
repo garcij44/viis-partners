@@ -2,7 +2,8 @@
 /**
  * Homepage — redesign brief §2, built in the brief's order (§6).
  * Sections in place: 1 (hero), 2 (capability row), 3 (reframe), 4 (method),
- * 8 (the audit), and 10 (closing CTA). Sections 5, 6, 7, and 9 follow.
+ * 5 (proof), 6 (comparison), 7 (packages), 8 (the audit), and 10 (closing
+ * CTA). Section 9 (FAQ) follows.
  *
  * Chrome is SiteHeader (logotype, audit CTA, no nav links) and SiteFooter
  * (carried over; the brief specifies no footer).
@@ -14,6 +15,9 @@ import HeroBand from '../components/sections/HeroBand.astro';
 import CapabilityRow from '../components/sections/CapabilityRow.astro';
 import Reframe from '../components/sections/Reframe.astro';
 import Method from '../components/sections/Method.astro';
+import Proof from '../components/sections/Proof.astro';
+import Comparison from '../components/sections/Comparison.astro';
+import Packages from '../components/sections/Packages.astro';
 import Audit from '../components/sections/Audit.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 ---
@@ -38,6 +42,9 @@ import SiteFooter from '../components/SiteFooter.astro';
 		<CapabilityRow />
 		<Reframe />
 		<Method />
+		<Proof />
+		<Comparison />
+		<Packages />
 		<Audit />
 
 		<HeroBand variant="closing" id="closing" />

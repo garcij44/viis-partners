@@ -1,0 +1,278 @@
+---
+/**
+ * Section 5 — proof (brief §2.5). The deliverable proves the service:
+ * every audit ends in a written report, so the report is the section's
+ * object, and the client outcome sits beneath it.
+ *
+ * Canopy's quality-report slot, read against docs/canopy-04-proof-comparison.png:
+ * the argument on the left, a receipt on the right. The receipt is a
+ * document, not a UI panel — card corners at the top, a torn edge at the
+ * bottom, Geist Mono throughout, dotted leaders between key and value. The
+ * tear is an SVG pattern and the leaders a dotted border: brief §1 allows
+ * no gradient outside the hero field, so neither is drawn with one.
+ *
+ * No real report exists yet (brief §6, blocking dependency), so the receipt
+ * is the report's frame with every value left empty and a visible
+ * placeholder notice. Nothing in it is a finding, a severity, or a result.
+ * The client is not named: the practice has not given written permission.
+ *
+ * The intro paragraph is not in the brief; provisional copy until confirmed.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+
+const cover = ['Prepared for', 'Website', 'Date'];
+const areas = ['Site', 'Foundation', 'Search', 'Risk'];
+---
+
+<Section id="proof" labelledby="proof-heading">
+  <div class="grid">
+    <div class="lede">
+      <Eyebrow class="kicker">Proof</Eyebrow>
+      <h2 id="proof-heading" class="headline">Every audit ships with a report.</h2>
+      <p class="t-lead fg-2 measure sub">
+        The audit is not a sales call. It ends in a written report: each finding, how serious it
+        is, and what it costs you, in plain language.
+      </p>
+    </div>
+
+    <Card class="report">
+      <div class="report-head">
+        <p class="t-label fg-2">Audit report</p>
+        <p class="t-mono fg-3">
+          No. <span aria-hidden="true">—</span><span class="sr-only">pending</span>
+        </p>
+      </div>
+
+      <dl class="rows t-mono">
+        {
+          cover.map((key) => (
+            <div class="row">
+              <dt>
+                <span>{key}</span>
+                <span class="leader" aria-hidden="true" />
+              </dt>
+              <dd>
+                <span aria-hidden="true">—</span>
+                <span class="sr-only">pending</span>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div role="group" aria-labelledby="proof-areas">
+        <p id="proof-areas" class="t-label fg-3 group-label">Findings by area</p>
+        <dl class="rows t-mono">
+          {
+            areas.map((key) => (
+              <div class="row">
+                <dt>
+                  <span>{key}</span>
+                  <span class="leader" aria-hidden="true" />
+                </dt>
+                <dd>
+                  <span aria-hidden="true">—</span>
+                  <span class="sr-only">pending</span>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      {/* The same dashed frame as the hero's artifact placeholder, so the
+          two empty slots read as the same missing asset. */}
+      <div class="notice t-mono fg-3">
+        <p>Placeholder · audit report · not yet produced</p>
+        <p>Findings, severity, and cost go here once a report exists.</p>
+      </div>
+
+      {/* The torn edge: one row of teeth, each --sp-3 wide and 6px deep (the
+          site's mark size), filled in the card's surface with the card's
+          hairline along the diagonals. Decorative; hidden from readers. */}
+      <svg class="tear" aria-hidden="true" focusable="false">
+        <defs>
+          <pattern id="proof-tear" width="12" height="6" patternUnits="userSpaceOnUse">
+            <path class="tooth" d="M0 0h12L6 6z" />
+            <path class="tooth-edge" d="M0 0 6 6 12 0" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#proof-tear)" />
+      </svg>
+    </Card>
+
+    <div class="outcome">
+      <Eyebrow as="p" muted class="outcome-label">Outcome</Eyebrow>
+      <p class="measure outcome-text">
+        A San Antonio medical practice was paying $499 a month to the website service bundled
+        with their records vendor. They got a basic site, then stopped getting replies. We rebuilt
+        it, moved them onto infrastructure they own, and found a half-configured Workspace and
+        missing DNS records along the way. They now own the site and have someone who answers.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Two columns from lg up: the argument and the outcome stack on the
+     left, the report holds the right. DOM order is lede, report, outcome —
+     the brief's "beneath it" — which is also the stacked order. */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--sp-8);
+    row-gap: var(--sp-7);
+    align-items: start;
+  }
+
+  .lede {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .report {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .outcome {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .kicker,
+  .outcome-label {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  /* The receipt. Card corners at the top only; the bottom edge is the tear,
+     so the primitive's bottom border and radius go. --tooth-h is the tear's
+     depth, the site's 6px mark; the bottom margin reserves it in flow. */
+  .report {
+    --tooth-h: 6px;
+    position: relative;
+    border-bottom: 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin-bottom: var(--tooth-h);
+  }
+
+  /* The tear hangs off the card's border box (-1px), not its padding box. */
+  .tear {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    width: calc(100% + 2px);
+    max-width: none;
+    height: var(--tooth-h);
+    pointer-events: none;
+  }
+
+  .tooth {
+    fill: var(--surface);
+  }
+
+  .tooth-edge {
+    fill: none;
+    stroke: var(--hairline);
+    stroke-width: 1;
+  }
+
+  .report-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-4);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .rows {
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    padding-block: var(--sp-1);
+  }
+
+  .row dt {
+    display: flex;
+    flex: 1;
+    align-items: baseline;
+    gap: var(--sp-3);
+    min-width: 0;
+  }
+
+  .row dd {
+    flex: none;
+    color: var(--fg-2);
+  }
+
+  /* The dotted leader, sat on the baseline: an empty flex item aligns its
+     bottom edge to the row's baseline, and the border is that edge. */
+  .leader {
+    flex: 1;
+    min-width: var(--sp-4);
+    height: 1px;
+    border-bottom: 1px dotted var(--cream-faint);
+  }
+
+  .group-label {
+    margin-top: var(--sp-5);
+    margin-bottom: calc(-1 * var(--sp-2));
+  }
+
+  .notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-top: var(--sp-5);
+    padding: var(--sp-4);
+    text-align: center;
+    border: 1px dashed var(--hairline-hover);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Measured in the notice's own mono size; balanced so the centred lines
+     rag evenly when they wrap. */
+  .notice p {
+    max-width: var(--measure);
+    font: inherit;
+    letter-spacing: inherit;
+    text-wrap: balance;
+  }
+
+  .outcome-text {
+    margin-top: var(--sp-3);
+  }
+
+  /* Stacked under lg: lede, report, outcome, one column. */
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+    }
+
+    .lede,
+    .report,
+    .outcome {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+</style>

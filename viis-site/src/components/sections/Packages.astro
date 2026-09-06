@@ -1,0 +1,188 @@
+---
+/**
+ * Section 7 — packages (brief §2.7): three named tiers, what's included and
+ * who each is for, no pricing anywhere. VIIS is a services firm; the tier
+ * changes the scope, not a number.
+ *
+ * Read against docs/canopy-05-pricing-toolkit.png: one panel divided into
+ * three columns by hairlines, a name, a "for" line, a short list, and the
+ * footnote beneath the panel. Canopy's price line and its check icons are
+ * left out (brief §1: no numbers, no icons outside the four-up row); the
+ * list mark is the site's jade dot, as in the reframe's findings.
+ *
+ * "Talk it through" goes to the audit form: the brief's secondary
+ * conversion is a call, and no booking mechanism exists yet. Pricing is
+ * quoted after the audit, so the form is the honest next step.
+ *
+ * The eyebrow and headline are not in the brief; provisional copy until
+ * confirmed.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import Button from '../Button.astro';
+
+interface Tier {
+  id: string;
+  name: string;
+  audience: string;
+  included: string[];
+}
+
+const tiers: Tier[] = [
+  {
+    id: 'tier-build',
+    name: 'Build',
+    audience: 'For a business that needs a real site and wants to own it.',
+    included: ['Design', 'Build', 'Migration', 'Launch', 'The foundation work found along the way'],
+  },
+  {
+    id: 'tier-care',
+    name: 'Care',
+    audience: 'For a business that has a site and needs it to keep working.',
+    included: ['Hosting', 'Monitoring', 'Backups', 'Updates', 'Small changes', 'A named person who answers'],
+  },
+  {
+    id: 'tier-partner',
+    name: 'Partner',
+    audience: 'For a business treating VIIS as its technical lead.',
+    included: [
+      'Everything in Care',
+      'Search',
+      'Automation',
+      'Systems management',
+      'Defined project capacity each month',
+    ],
+  },
+];
+---
+
+<Section id="packages" labelledby="packages-heading">
+  <Eyebrow class="kicker">Packages</Eyebrow>
+  <h2 id="packages-heading" class="headline">
+    Build it, keep it working, or make VIIS your technical lead.
+  </h2>
+
+  <Card class="panel">
+    <ul class="tiers">
+      {
+        tiers.map(({ id, name, audience, included }) => (
+          <li class="tier">
+            <h3 id={id} class="name">{name}</h3>
+            <p class="t-small fg-2 audience">{audience}</p>
+            <ul class="included t-small">
+              {included.map((item) => <li>{item}</li>)}
+            </ul>
+            {/* Three links share a label; the tier name describes each. */}
+            <Button variant="secondary" href="#audit" class="cta" aria-describedby={id}>
+              Talk it through
+            </Button>
+          </li>
+        ))
+      }
+    </ul>
+  </Card>
+
+  <p class="t-small fg-2 measure note">
+    Pricing is quoted after the audit, against what you're paying now.
+  </p>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  /* The panel carries no padding of its own: each tier pads itself so the
+     dividers run edge to edge. overflow clips the dividers to the corner. */
+  .panel {
+    margin-top: var(--sp-8);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tier {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--sp-6);
+    border-left: 1px solid var(--hairline);
+  }
+
+  .tier:first-child {
+    border-left: 0;
+  }
+
+  .audience {
+    margin-top: var(--sp-3);
+  }
+
+  .included {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    margin-top: var(--sp-5);
+    margin-bottom: var(--sp-6);
+  }
+
+  .included > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  /* The jade mark: the same 6px dot as the eyebrow and the findings list. */
+  .included > li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* The button sits at the foot of every column, level across the row. */
+  .cta {
+    margin-top: auto;
+  }
+
+  .note {
+    margin-top: var(--sp-6);
+  }
+
+  /* Stacked under lg: the dividers turn from left edges to top edges. */
+  @media (max-width: 1023px) {
+    .tiers {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tier {
+      border-left: 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .tier:first-child {
+      border-top: 0;
+    }
+  }
+
+  /* Under 768 the buttons fill the column, as the hero's and the form's do. */
+  @media (max-width: 767px) {
+    .tier {
+      padding: var(--sp-5);
+    }
+
+    .cta {
+      align-self: stretch;
+    }
+  }
+</style>
