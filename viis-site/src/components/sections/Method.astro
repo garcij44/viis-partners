@@ -1,0 +1,123 @@
+---
+/**
+ * Section 4 — the method (brief §2.4): four service lines as one path, not
+ * four doors. A vertical sequence on a single rail, a jade node per step,
+ * each title linking to its service page, closed by the brief's connective
+ * line. The brief gives this section no headline, so its name is the
+ * heading — an h2 set as the eyebrow — and the four titles carry the type.
+ *
+ * The service pages do not exist until build step 7; the links 404 until
+ * then.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+
+interface ServiceLine {
+  name: string;
+  href: string;
+  text: string;
+}
+
+const lines: ServiceLine[] = [
+  {
+    name: 'Websites',
+    href: '/websites',
+    text: 'Design and build on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account.',
+  },
+  {
+    name: 'Foundations',
+    href: '/foundations',
+    text: 'Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, licence audit, backups, access control. The layer every website depends on and almost nobody maintains.',
+  },
+  {
+    name: 'Search',
+    href: '/search',
+    text: 'Technical SEO, local search, Google Business Profile, analytics and conversion tracking, and ongoing content. Client funds their own campaigns and ad spend directly; VIIS runs the work.',
+  },
+  {
+    name: 'Automation',
+    href: '/automation',
+    text: 'Lead capture and routing, follow-up sequences, reporting pipelines, and AI-assisted workflows built on the stack you already pay for.',
+  },
+];
+---
+
+<Section id="method" labelledby="method-heading">
+  <Eyebrow as="h2" id="method-heading" class="kicker">The method</Eyebrow>
+
+  <ol class="path">
+    {
+      lines.map(({ name, href, text }) => (
+        <li class="step">
+          <h3 class="title">
+            <a class="link" href={href}>{name}</a>
+          </h3>
+          <p class="fg-2 measure text">{text}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="t-lead close">
+    Most clients start with a website. What we find while building it is usually where the rest
+    of the work comes from.
+  </p>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .path {
+    margin-top: var(--sp-7);
+  }
+
+  /* Each step owns its node and the rail segment down to the next node.
+     The segment runs from this node's centre past the step's bottom edge by
+     the same offset, so it lands exactly on the next node's centre and the
+     rail stops at the last node. --node-y is the node's top: the title's
+     line box, less the node, halved. */
+  .step {
+    --node-y: calc((var(--text-heading) * var(--lh-heading) - 6px) / 2);
+    position: relative;
+    padding-left: var(--sp-6);
+    padding-bottom: var(--sp-7);
+  }
+
+  .step:last-child {
+    padding-bottom: 0;
+  }
+
+  /* The node: the same 6px jade mark as the eyebrow dot, centred on the rail. */
+  .step::before {
+    content: '';
+    position: absolute;
+    top: var(--node-y);
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateX(-50%);
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc(var(--node-y) + 6px);
+    bottom: calc(-1 * var(--node-y));
+    border-left: 1px solid var(--hairline-hover);
+  }
+
+  .text {
+    margin-top: var(--sp-3);
+  }
+
+  /* The connective line sits in the content column, where the path ends. */
+  .close {
+    margin-top: var(--sp-8);
+    padding-left: var(--sp-6);
+  }
+</style>

@@ -11,11 +11,14 @@ interface Props {
   class?: string;
 }
 
-const { id, labelledby, class: className = '' } = Astro.props;
+// WHY the rest spread: Astro delivers a parent's scoped-style attribute
+// (data-astro-cid-*) as a prop when the parent passes `class`. Without
+// forwarding it, a parent's scoped rules for this root never match.
+const { id, labelledby, class: className = '', ...rest } = Astro.props;
 const classes = ['section', className].filter(Boolean).join(' ');
 ---
 
-<section id={id} class={classes} aria-labelledby={labelledby}>
+<section id={id} class={classes} aria-labelledby={labelledby} {...rest}>
   <div class="container">
     <slot />
   </div>

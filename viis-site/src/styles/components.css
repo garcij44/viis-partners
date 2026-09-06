@@ -93,6 +93,16 @@
   transition-duration: 0ms;
 }
 
+/* WHY: the primary label is 30 characters. Below 360px it outgrows even a
+   full-width button and its arrow is clipped; wrapping is the lesser evil,
+   and no label on the site wraps above this width. */
+@media (max-width: 359px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
 .btn--primary:active {
   background: var(--accent);
 }

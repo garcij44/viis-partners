@@ -70,7 +70,7 @@ markup without re-reading this paragraph.
 
 ### Field contract
 
-Six fields. The redesign brief (§2, Groundwork) specifies five: name, business name,
+Six fields. The redesign brief (§2, the audit) specifies five: name, business name,
 email, website URL, and one optional line. The form is rebuilt to that spec in build
 step 4; until then this is the shipped contract.
 

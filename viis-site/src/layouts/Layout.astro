@@ -1,6 +1,10 @@
 ---
-import '../styles/global.css';
-
+/**
+ * Pages import their own stylesheet: the homepage is on the redesign system
+ * (src/styles/system.css) while 404 and /thanks stay on the pre-redesign
+ * global.css until they are migrated. The two define the same custom
+ * property names with different values and cannot load together.
+ */
 interface Props {
   title: string;
   description: string;

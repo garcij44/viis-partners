@@ -1,0 +1,158 @@
+---
+/**
+ * HeroBand — the one treatment shared by section 1 (hero) and section 10
+ * (closing CTA), brief §2. Both references repeat the identical CTA rather
+ * than varying it, so the copy, trust line, and both buttons are fixed here
+ * and rendered twice. The closing restates the headline as an h2 (one h1
+ * per page) at the same display size, and carries no artifact.
+ *
+ * The green field is a ::before, not a background, so the hero's field can
+ * run up behind the transparent site header the way Canopy's nav sits on
+ * its field. The closing field enters from and leaves to flat ink, so it
+ * needs no knowledge of the sections around it.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Button from '../Button.astro';
+
+interface Props {
+  variant: 'hero' | 'closing';
+  /** Section id; the heading id is derived from it for aria-labelledby. */
+  id: string;
+}
+
+const { variant, id } = Astro.props;
+const headingId = `${id}-heading`;
+const Heading = variant === 'hero' ? 'h1' : 'h2';
+const hasArtifact = Astro.slots.has('artifact');
+---
+
+<Section id={id} class={`band band--${variant}`} labelledby={headingId}>
+  <div class="copy">
+    <Eyebrow class="kicker">Technology consulting · San Antonio</Eyebrow>
+    <Heading id={headingId} class="t-display-1 headline">
+      Your website, and the systems that hold it up.
+    </Heading>
+    <p class="t-lead fg-2 sub">
+      A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured.
+      DNS records missing since the last vendor. VIIS builds the website and fixes what's
+      underneath it — then stays on to keep it working.
+    </p>
+    <Eyebrow as="p" dot muted class="trust">
+      Free audit · No obligation · Results in 3 business days
+    </Eyebrow>
+    <div class="actions">
+      <Button href="#audit">Get your free site audit</Button>
+      <Button href="#proof" variant="secondary">See the work</Button>
+    </div>
+  </div>
+  {
+    hasArtifact && (
+      <div class="artifact">
+        <slot name="artifact" />
+      </div>
+    )
+  }
+</Section>
+
+<style>
+  /* The field. isolation creates the stacking context that lets the
+     ::before sit behind this section's content without falling behind
+     the body background. */
+  .band {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Hero: solid field behind the chrome and the copy, fading to flat ink by
+     the section end so the artifact's lower edge sits on the page ground.
+     WHY the negative top: the site header is transparent and --sp-9 tall,
+     and the field has to run up behind it (see SiteHeader.astro). */
+  .band--hero::before {
+    top: calc(-1 * var(--sp-9));
+    background: linear-gradient(
+      180deg,
+      var(--accent-field-a) 0%,
+      var(--accent-field-a) 40%,
+      var(--accent-field-b) 100%
+    );
+  }
+
+  /* Closing: enters from the flat ink above, holds the field behind the
+     headline and buttons, and settles back to ink before the footer. */
+  .band--closing::before {
+    background: linear-gradient(
+      180deg,
+      var(--accent-field-b) 0%,
+      var(--accent-field-a) 30%,
+      var(--accent-field-a) 60%,
+      var(--accent-field-b) 100%
+    );
+  }
+
+  /* One text column, measured at body size (brief §1: never past 68ch).
+     WHY on the block, not the lead: 68ch resolved against the 21px lead is
+     947px, about 85 characters a line. Against body size it is 812px,
+     about 72, which is where a lead paragraph still reads as one breath.
+     Measured at 1440: the balanced headline runs 541 and 576px, so the
+     column is set by the subhead, not the display face. */
+  .copy {
+    max-width: var(--measure);
+  }
+
+  /* The eyebrow primitive is inline-flex; flex here so each label takes
+     its own line box at its own line-height instead of sitting in an 18px
+     body strut. */
+  .kicker,
+  .trust {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  .trust {
+    margin-top: var(--sp-6);
+    /* The dot has no baseline of its own, so flex uses its bottom edge:
+       it sits on the first line's baseline when the label wraps at ≤414px
+       and lands within a pixel of centred when it does not. */
+    align-items: baseline;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+    margin-top: var(--sp-6);
+  }
+
+  .artifact {
+    margin-top: var(--sp-9);
+  }
+
+  @media (max-width: 767px) {
+    /* Stacked, full-width buttons: the primary label alone is wider than
+       the 327px column at 375, and a thumb wants the whole row anyway. */
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .artifact {
+      margin-top: var(--sp-8);
+    }
+  }
+</style>

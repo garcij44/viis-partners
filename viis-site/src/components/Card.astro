@@ -9,10 +9,11 @@ interface Props {
   class?: string;
 }
 
-const { as: Tag = 'div', nested = false, class: className = '' } = Astro.props;
+// Rest spread forwards the parent's scoped-style attribute; see Section.astro.
+const { as: Tag = 'div', nested = false, class: className = '', ...rest } = Astro.props;
 const classes = ['card', nested && 'card--nested', className].filter(Boolean).join(' ');
 ---
 
-<Tag class={classes}>
+<Tag class={classes} {...rest}>
   <slot />
 </Tag>

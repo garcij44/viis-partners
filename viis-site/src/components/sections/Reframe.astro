@@ -1,0 +1,145 @@
+---
+/**
+ * Section 3 — the reframe (brief §2.3), the most important section on the
+ * page: it turns a generalist service list into a diagnostic method.
+ *
+ * Canopy's "new search" slot, read against docs/canopy-02-reframe.png:
+ * eyebrow and display headline on the ground, then one card that argues on
+ * the left and shows on the right. The findings panel is the section's one
+ * visual — Geist Mono, a jade dot per row, nothing else — and bleeds into
+ * the card's corner the way Canopy's answer panel does. No icons here.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+
+const findings = [
+  'SPF/DKIM/DMARC missing',
+  'Orphaned DNS records',
+  'Workspace on defaults',
+  'No conversion tracking',
+  'Unclaimed Business Profile',
+  'Paying for licences nobody uses',
+];
+---
+
+<Section id="reframe" labelledby="reframe-heading">
+  <Eyebrow class="kicker">What we usually find</Eyebrow>
+  <h2 id="reframe-heading" class="headline">The website is rarely the problem.</h2>
+
+  <Card class="panel">
+    <div class="argument">
+      <p class="t-lead fg-2">
+        Nearly every site we're asked to fix is sitting on something broken. Email authentication
+        that was never set up, so invoices land in spam. DNS records pointing at a vendor the
+        business left two years ago. A Google Workspace running on defaults, with no security, no
+        shared drives, and licences nobody uses. The site gets blamed because the site is the part
+        you can see.
+      </p>
+      <p class="t-lead">We look underneath first. That's usually where the money is going.</p>
+    </div>
+
+    <Card nested class="findings">
+      <ul class="findings-list t-mono">
+        {findings.map((finding) => <li>{finding}</li>)}
+      </ul>
+    </Card>
+  </Card>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  /* One card, two jobs: the argument reads, the panel shows. overflow clips
+     the panel's bleed to the card's own rounded corner. */
+  .panel {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--sp-7);
+    margin-top: var(--sp-8);
+    overflow: hidden;
+  }
+
+  .argument > * + * {
+    margin-top: var(--sp-5);
+  }
+
+  /* The closing line is the punchline and runs two or three lines at every
+     width. balance, not the lead's pretty: pretty only guards a one-word
+     last line, and at 1440 it left "is going." alone. */
+  .argument > :last-child {
+    text-wrap: balance;
+  }
+
+  /* The panel sits in the card's bottom-right corner, its right and bottom
+     edges the card's own. The negative margins equal the Card primitive's
+     padding (--sp-6, --sp-5 under 768px) and must move with it. */
+  .findings {
+    align-self: end;
+    margin-right: calc(-1 * var(--sp-6));
+    margin-bottom: calc(-1 * var(--sp-6));
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: var(--radius-md) 0 0 0;
+  }
+
+  .findings-list > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    padding-block: var(--sp-3);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .findings-list > li:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .findings-list > li:last-child {
+    padding-bottom: 0;
+  }
+
+  /* The jade bullet: the same 6px mark as the eyebrow dot (components.css),
+     sat on the baseline so it centres on the mono x-height. */
+  .findings-list > li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Side by side only from lg up. Measured at 768–1023: the panel column
+     is 255–308px, too narrow for the longest finding on one line, and the
+     argument falls to ~30 characters a line. Stacked, the panel becomes
+     the card's full-width foot: a hairline above it, no radius, bleeding
+     to the three remaining edges. */
+  @media (max-width: 1023px) {
+    .panel {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+
+    .findings {
+      margin-inline: calc(-1 * var(--sp-6));
+      border-left: 0;
+      border-radius: 0;
+    }
+  }
+
+  /* The Card primitive's padding steps down to --sp-5 under 768px. */
+  @media (max-width: 767px) {
+    .findings {
+      margin-inline: calc(-1 * var(--sp-5));
+      margin-bottom: calc(-1 * var(--sp-5));
+    }
+  }
+</style>

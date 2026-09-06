@@ -1,0 +1,50 @@
+---
+/**
+ * SiteHeader — minimal chrome: logotype left, the audit CTA right, no
+ * nav links. Transparent, so on the homepage it sits on the hero's field,
+ * which HeroBand extends up by --sp-9 to meet it (see .band--hero). On a
+ * page without a field it sits on flat ink.
+ *
+ * The CTA label is shorter than the hero's. Both references shorten the nav
+ * button ("Start free", "Get Started"), and the full label does not fit
+ * beside the logotype at 375px. "Free audit" fits at every width, no arrow.
+ */
+import Button from './Button.astro';
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a class="logotype t-ui" href="/">VIIS</a>
+    <Button href="/#audit" arrow={false}>Free audit</Button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    /* Above the hero field's ::before, which paints after this header in
+       tree order. */
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    /* WHY a fixed height: HeroBand extends its field up by exactly --sp-9
+       to sit behind this bar; change one, change both. 96px holds the 48px
+       button with a --sp-5 breath above and below. */
+    min-height: var(--sp-9);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+
+  /* The wordmark: UI size in the body face, tracked like a label — the name
+     in the site's own voice until a mark is designed. */
+  .logotype {
+    color: var(--fg);
+    letter-spacing: var(--track-label);
+    text-decoration: none;
+  }
+</style>

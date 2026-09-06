@@ -102,9 +102,9 @@ Green gradient field (`--accent-field-a` → `--accent-field-b`), fading to flat
 - **H1:** Your website, and the systems that hold it up.
 - **Subhead (one paragraph, ≤45 words):** A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. DNS records missing since the last vendor. VIIS builds the website and fixes what's underneath it — then stays on to keep it working.
 - **Trust line** (mono, small, with a small accent dot): `Free audit · No obligation · Results in 3 business days`
-- **Primary CTA:** `Get your free Groundwork audit`
+- **Primary CTA:** `Get your free site audit`
 - **Secondary CTA:** `See the work`
-- **Artifact:** a real Groundwork audit report page, rendered as the hero image — the way Canopy shows its editor and Simeon shows its dashboard. This is the most important asset on the page. It makes the free offer tangible before anyone clicks and doubles as proof of the SEO service.
+- **Artifact:** a real audit report page, rendered as the hero image — the way Canopy shows its editor and Simeon shows its dashboard. This is the most important asset on the page. It makes the free offer tangible before anyone clicks and doubles as proof of the SEO service.
 
 ### 2 — Four-up capability row
 
@@ -143,7 +143,7 @@ Close the section with the connective line: *Most clients start with a website. 
 
 - **Eyebrow:** `PROOF`
 - **H2:** Every audit ships with a report.
-- Show a **real Groundwork report** — findings, severity, and what each one costs in plain language. Canopy's quality-report receipt is the pattern: the deliverable proves the service.
+- Show a **real audit report** — findings, severity, and what each one costs in plain language. Canopy's quality-report receipt is the pattern: the deliverable proves the service.
 - Beneath it, the client outcome. **Client name requires written permission before publishing — confirm first, and use "a San Antonio medical practice" until you have it.**
   > A San Antonio medical practice was paying $499 a month to the website service bundled with their records vendor. They got a basic site, then stopped getting replies. We rebuilt it, moved them onto infrastructure they own, and found a half-configured Workspace and missing DNS records along the way. They now own the site and have someone who answers.
 - **No invented metrics.** No percentages, no "3x traffic," no fabricated case-study numbers. There are no paid-results claims to make yet and making them is the fastest way to lose credibility with a referral who can check.
@@ -176,12 +176,12 @@ Footer line: *Pricing is quoted after the audit, against what you're paying now.
 
 > **Note for the business Project, not the site:** these names must be reconciled with the rate card, which currently lists Watch / Care / Growth / Partner and a $299 tier that no longer matches what VIIS sells.
 
-### 8 — Groundwork (the audit)
+### 8 — The audit
 
 Its own section, styled like Canopy's Toolkit — this is the lead magnet and it needs to look like a product, not a sales call.
 
 - **Eyebrow:** `FREE`
-- **H2:** Groundwork
+- **H2:** A free audit of your site and the systems under it
 - **Subhead:** A 20-point audit of your website and the systems underneath it. We run it, write it up, and send you the report. No obligation, and you keep the report whether or not you hire us.
 - **What's checked** (four groups, mono labels):
   - **Site** — speed, mobile, accessibility, broken links, SSL, indexability
@@ -189,7 +189,7 @@ Its own section, styled like Canopy's Toolkit — this is the lead magnet and it
   - **Search** — Google Business Profile, local visibility, metadata, schema, analytics and conversion tracking
   - **Risk** — backups, admin access, MFA, orphaned accounts, vendor lock-in
 - **Form fields:** name, business name, email, website URL, *"what's bothering you about it?"* (optional, one line). Nothing else — every extra field costs conversions.
-- **CTA:** `Get your free Groundwork audit`
+- **CTA:** `Get your free site audit`
 
 **Delivery constraint — build this before promoting it.** The audit must be a templated, partly automated process with a fixed checklist and a report template. At 20 hours a week, an unbounded manual audit will consume the month if ten referrals convert. The automation is reusable across every future client, so it's delivery infrastructure, not overhead.
 
@@ -263,10 +263,10 @@ Every claim on this site must be defensible to a referral who calls and asks abo
 1. Design system — tokens, type scale, spacing, base components. Verify contrast.
 2. Hero and closing CTA (they share a treatment).
 3. Reframe and method sections — the strategic core.
-4. Groundwork section and a working form end-to-end.
+4. The audit section and a working form end-to-end.
 5. Proof, comparison, packages.
 6. FAQ, structured data, meta.
 7. Four service pages.
 8. Lighthouse, accessibility, and responsive passes.
 
-**Blocking dependency:** section 5 needs a real Groundwork audit report to exist, since it's both the hero artifact and the proof. Produce one against a real site — Athlon is available — before the page can be finished.
+**Blocking dependency:** section 5 needs a real audit report to exist, since it's both the hero artifact and the proof. Produce one against a real site — Athlon is available — before the page can be finished.

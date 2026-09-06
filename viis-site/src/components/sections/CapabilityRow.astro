@@ -1,0 +1,137 @@
+---
+/**
+ * Section 2 — the four-up capability row (brief §2.2). Directly under the
+ * hero on flat ink: mono label, one-line heading, two-line description.
+ * This is the only place on the page an icon appears (brief §1, anti-noise),
+ * and each item maps to one service line, which its label names.
+ *
+ * Icons are drawn here, not imported: four 24-grid strokes in the Arrow's
+ * idiom, decorative, with the heading carrying the meaning.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+
+interface Capability {
+  label: string;
+  title: string;
+  text: string;
+  icon: string[];
+}
+
+const capabilities: Capability[] = [
+  {
+    label: '01 · Websites',
+    title: 'Build it right',
+    text: 'A fast, accessible site you own outright. No vendor lock-in, no rented platform.',
+    icon: [
+      'M5.5 4.5h13A2.5 2.5 0 0 1 21 7v10a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17V7a2.5 2.5 0 0 1 2.5-2.5z',
+      'M3 9.25h18',
+      'M6.5 6.9h.01',
+    ],
+  },
+  {
+    label: '02 · Foundations',
+    title: 'Fix the foundation',
+    text: 'DNS, email authentication, Google Workspace, licences, security. The parts nobody audited.',
+    icon: ['M12 3 3 7.5l9 4.5 9-4.5L12 3z', 'M3 12l9 4.5 9-4.5', 'M3 16.5 12 21l9-4.5'],
+  },
+  {
+    label: '03 · Search',
+    title: 'Get found',
+    text: 'Local search, Google Business Profile, technical SEO, and content that ranks for what people actually type.',
+    icon: ['M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13z', 'M15.5 15.5 21 21'],
+  },
+  {
+    label: '04 · Automation',
+    title: 'Automate the repetitive',
+    text: 'Lead capture, follow-up, reporting, and the workflows that eat your week.',
+    icon: ['M17 2l4 4-4 4', 'M3 11V9a4 4 0 0 1 4-4h14', 'M7 22l-4-4 4-4', 'M21 13v2a4 4 0 0 1-4 4H3'],
+  },
+];
+---
+
+<Section id="capabilities" labelledby="capabilities-heading" class="capabilities">
+  {/* The brief gives this row no heading. One is needed so the four h3s do
+      not follow the h1 directly; it names the row for readers who cannot
+      see the layout do it. */}
+  <h2 id="capabilities-heading" class="sr-only">What VIIS does</h2>
+  <ul class="items">
+    {
+      capabilities.map(({ label, title, text, icon }) => (
+        <li class="item">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            {icon.map((d) => <path d={d} />)}
+          </svg>
+          <Eyebrow as="p" muted class="label">{label}</Eyebrow>
+          <h3 class="title">{title}</h3>
+          <p class="t-small fg-2 text">{text}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  /* WHY no top padding: "directly under the hero" — the hero's own bottom
+     padding is the one section-pad between the artifact and this row, so
+     the row reads as attached to the hero rather than as a new movement. */
+  .capabilities {
+    padding-top: 0;
+  }
+
+  .items {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--sp-7) var(--sp-6);
+  }
+
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* The row's one accent. Labels stay muted so each item carries a single
+     jade mark, not two. */
+  .icon {
+    width: var(--sp-5);
+    height: var(--sp-5);
+    color: var(--accent-dim);
+  }
+
+  .label {
+    display: flex;
+    margin-top: var(--sp-4);
+  }
+
+  .title {
+    margin-top: var(--sp-2);
+  }
+
+  .text {
+    margin-top: var(--sp-2);
+  }
+
+  @media (max-width: 1023px) {
+    .items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 639px) {
+    .items {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+</style>
