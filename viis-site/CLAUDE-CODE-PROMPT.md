@@ -1,5 +1,10 @@
 # Claude Code — VIIS Site Overhaul Prompt
 
+> **Historical.** This document predates the 2026-09-05 redesign and cites
+> `ART-DIRECTION.md`, which was deleted that day (see git history). Design
+> authority is now `docs/VIIS-Site-Brief.md` and `src/styles/tokens.css`; see
+> `CLAUDE.md`. Nothing below is a current instruction.
+
 Copy everything below the line into Claude Code from `~/Projects/VIIS`.
 
 ---

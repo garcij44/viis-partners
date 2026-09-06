@@ -4,9 +4,10 @@ Single-page brochure site for VIIS Partners. Astro 7, static output, no
 client-side framework, no runtime third-party requests. Deploys to Azure Static
 Web Apps.
 
-Design rules live in [`ART-DIRECTION.md`](./ART-DIRECTION.md) and are enforced,
-not aspirational: locked palette, three self-hosted typefaces, an 8px spacing
-scale. Read it before touching anything visual.
+Design authority is split in two, and both are enforced, not aspirational:
+[`docs/VIIS-Site-Brief.md`](./docs/VIIS-Site-Brief.md) for intent and structure,
+[`src/styles/tokens.css`](./src/styles/tokens.css) for every built value. Where they
+disagree, `tokens.css` wins. Read both before touching anything visual.
 
 ---
 
@@ -69,8 +70,9 @@ markup without re-reading this paragraph.
 
 ### Field contract
 
-Six fields, which is the ceiling set by `ART-DIRECTION.md` → "Field discipline".
-Adding a seventh requires amending that file first.
+Six fields. The redesign brief (§2, Groundwork) specifies five: name, business name,
+email, website URL, and one optional line. The form is rebuilt to that spec in build
+step 4; until then this is the shipped contract.
 
 | Field     | Name        | Required | Cap  | Notes                              |
 | --------- | ----------- | -------- | ---- | ---------------------------------- |

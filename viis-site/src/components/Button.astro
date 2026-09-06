@@ -1,0 +1,40 @@
+---
+/**
+ * Button — primary (jade fill, cream label) or secondary (raised surface).
+ * Renders an <a> when given an href, otherwise a <button>.
+ * Primary shows the arrow by default; secondary does not.
+ */
+import Arrow from './Arrow.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  arrow?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  arrow = variant === 'primary',
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+const classes = ['btn', `btn--${variant}`, className].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a class={classes} href={href}>
+      <slot />
+      {arrow && <Arrow />}
+    </a>
+  ) : (
+    <button class={classes} type={type}>
+      <slot />
+      {arrow && <Arrow />}
+    </button>
+  )
+}

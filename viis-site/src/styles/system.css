@@ -1,0 +1,6 @@
+/* VIIS design system entry point. Order matters: tokens first, then the
+   reset, then the type scale, then components that compose both. */
+@import './tokens.css';
+@import './base.css';
+@import './type.css';
+@import './components.css';

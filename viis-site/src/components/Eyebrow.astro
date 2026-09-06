@@ -1,0 +1,23 @@
+---
+/**
+ * Eyebrow — the mono label above a headline. `dot` adds the small jade
+ * mark used on the hero trust line. `muted` swaps accent-dim for cream-dim
+ * where a section already has its one accent.
+ */
+interface Props {
+  as?: 'p' | 'span' | 'div';
+  dot?: boolean;
+  muted?: boolean;
+  class?: string;
+}
+
+const { as: Tag = 'p', dot = false, muted = false, class: className = '' } = Astro.props;
+const classes = ['eyebrow', 't-label', muted && 'eyebrow--muted', className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>
+  {dot && <span class="eyebrow__dot" aria-hidden="true"></span>}
+  <slot />
+</Tag>

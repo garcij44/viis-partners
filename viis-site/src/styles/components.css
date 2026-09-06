@@ -1,0 +1,160 @@
+/* ------------------------------------------------------------------ */
+/* Base components — layout primitives, button, eyebrow, card, reveal.  */
+/* Page sections compose these; they do not restyle them.              */
+/* ------------------------------------------------------------------ */
+
+/* Layout */
+.container {
+  width: min(100% - 2 * var(--gutter), var(--container));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section-pad);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap, var(--sp-5));
+}
+
+.hairline {
+  border-top: 1px solid var(--hairline);
+}
+
+/* Wide content scrolls inside its own box; the page never scrolls
+   sideways. Wrap any table in this. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Button — two variants, one shape. Radius 8px, never a pill. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: var(--sp-7);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  line-height: var(--lh-ui);
+  font-weight: var(--wt-ui);
+  letter-spacing: normal;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.btn--primary {
+  background: var(--accent-fill);
+  color: var(--cream);
+}
+
+.btn--secondary {
+  background: var(--surface-2);
+  border-color: var(--hairline);
+  color: var(--cream);
+}
+
+.btn__arrow {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+/* Hover is a refinement, never the affordance: scoped to pointer devices
+   so a tap on touch never latches a state the user cannot clear. The
+   primary keeps its fill on hover — brightening to --accent would drop
+   the label to 3.94:1 — and signals with a jade ring and the arrow. */
+@media (hover: hover) {
+  .btn--primary:hover {
+    box-shadow: inset 0 0 0 1px var(--accent-bright);
+  }
+
+  .btn--secondary:hover {
+    border-color: var(--hairline-hover);
+  }
+
+  .btn:hover .btn__arrow {
+    transform: translateX(var(--sp-1));
+  }
+}
+
+.btn:active {
+  transition-duration: 0ms;
+}
+
+.btn--primary:active {
+  background: var(--accent);
+}
+
+/* Eyebrow — the mono label above a headline, optionally with a jade dot
+   (the hero trust line). --accent on ink is 3.81:1, fine for a mark. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--accent-dim);
+}
+
+.eyebrow__dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.eyebrow--muted {
+  color: var(--fg-2);
+}
+
+/* Card — surface, hairline, 12px radius, no shadow. Ever. */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: var(--sp-6);
+}
+
+.card--nested {
+  background: var(--surface-2);
+}
+
+@media (max-width: 767px) {
+  .card {
+    padding: var(--sp-5);
+  }
+}
+
+/* Reveal — fade-up on scroll intersection (brief §1 "Motion"). The
+   hidden state is gated on html.js so content is never invisible when
+   scripts do not run; the observer script adds .is-visible. */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(var(--sp-3));
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+html.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

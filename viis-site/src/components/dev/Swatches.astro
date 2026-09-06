@@ -1,0 +1,139 @@
+---
+/**
+ * Dev-only colour specimen. Parses tokens.css at build time so the hex
+ * values and contrast ratios shown are the live ones.
+ */
+import tokensCss from '../../styles/tokens.css?raw';
+import { aaLevel, composite, contrastRatio } from '../../lib/contrast';
+
+const tokens = new Map<string, string>();
+for (const m of tokensCss.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-f]{6}|rgba?\([^)]*\))\s*;/gi)) {
+  tokens.set(m[1], m[2]);
+}
+
+const ink = tokens.get('ink') ?? '#000000';
+const get = (name: string): string => {
+  const v = tokens.get(name);
+  if (!v) throw new Error(`Swatches: token --${name} not found in tokens.css`);
+  return v;
+};
+
+interface Pair {
+  fg: string;
+  bg: string;
+  note: string;
+}
+
+// The three pairs the brief names, then every pair a component relies on.
+const pairs: Pair[] = [
+  { fg: 'cream', bg: 'ink', note: 'body text' },
+  { fg: 'cream', bg: 'accent-fill', note: 'button label' },
+  { fg: 'cream-dim', bg: 'ink', note: 'secondary text' },
+  { fg: 'cream', bg: 'accent', note: 'brief value — fails, see --accent-fill' },
+  { fg: 'cream-faint', bg: 'surface-2', note: 'captions on a nested panel' },
+  { fg: 'cream', bg: 'surface', note: 'card text' },
+  { fg: 'accent-dim', bg: 'accent-field-a', note: 'eyebrow on hero field' },
+  { fg: 'accent-bright', bg: 'ink', note: 'hover highlight as text' },
+  { fg: 'accent', bg: 'ink', note: 'jade mark (3:1 rule)' },
+  { fg: 'accent-fill', bg: 'surface', note: 'button edge on a card (3:1 rule)' },
+];
+
+const rows = pairs.map(({ fg, bg, note }) => {
+  const ratio = contrastRatio(get(fg), get(bg));
+  return { fg, bg, note, ratio: ratio.toFixed(2), level: aaLevel(ratio) };
+});
+
+const swatchNames = [
+  'ink', 'surface', 'surface-2', 'cream', 'cream-dim', 'cream-faint', 'hairline',
+  'accent', 'accent-fill', 'accent-bright', 'accent-dim', 'accent-field-a',
+];
+const swatches = swatchNames.map((name) => {
+  const raw = get(name);
+  const hex = raw.startsWith('#') ? raw : composite(raw, ink);
+  const onDark = luminanceIsLight(hex);
+  return { name, raw, hex, label: onDark ? ink : get('cream') };
+});
+
+function luminanceIsLight(hex: string): boolean {
+  return contrastRatio(hex, ink) > 4.5;
+}
+---
+
+<div class="swatches">
+  {
+    swatches.map((s) => (
+      <div class="swatch" style={`background:${s.hex};color:${s.label}`}>
+        <span class="t-label">--{s.name}</span>
+        <span class="t-mono">{s.raw}</span>
+      </div>
+    ))
+  }
+</div>
+
+<div class="table-scroll ratios">
+<table class="t-mono">
+  <thead>
+    <tr>
+      <th class="t-label">Foreground</th>
+      <th class="t-label">Background</th>
+      <th class="t-label">Ratio</th>
+      <th class="t-label">Level</th>
+      <th class="t-label">Used for</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((r) => (
+        <tr data-level={r.level}>
+          <td>--{r.fg}</td>
+          <td>--{r.bg}</td>
+          <td>{r.ratio}:1</td>
+          <td>{r.level}</td>
+          <td class="fg-2">{r.note}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+</div>
+
+<style>
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--sp-1);
+    aspect-ratio: 4 / 3;
+    padding: var(--sp-4);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+  }
+
+  .ratios {
+    margin-top: var(--sp-6);
+  }
+
+  .ratios th,
+  .ratios td {
+    text-align: left;
+    white-space: nowrap;
+    padding: var(--sp-3) var(--sp-4) var(--sp-3) 0;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: top;
+  }
+
+  .ratios th {
+    color: var(--fg-2);
+    font-weight: var(--wt-label);
+  }
+
+  .ratios tr[data-level='fail'] td:nth-child(-n + 4) {
+    color: var(--accent-bright);
+  }
+</style>

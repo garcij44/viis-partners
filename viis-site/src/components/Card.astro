@@ -1,0 +1,18 @@
+---
+/**
+ * Card — --surface, 1px hairline, 12px radius, no shadow.
+ * `nested` lifts to --surface-2 for a panel inside a card or a hover row.
+ */
+interface Props {
+  as?: 'div' | 'article' | 'li' | 'section';
+  nested?: boolean;
+  class?: string;
+}
+
+const { as: Tag = 'div', nested = false, class: className = '' } = Astro.props;
+const classes = ['card', nested && 'card--nested', className].filter(Boolean).join(' ');
+---
+
+<Tag class={classes}>
+  <slot />
+</Tag>

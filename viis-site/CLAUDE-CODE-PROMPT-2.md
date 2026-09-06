@@ -1,5 +1,10 @@
 # Claude Code — VIIS Sprint 2: Ship the Lead Capture
 
+> **Historical.** This document predates the 2026-09-05 redesign and cites
+> `ART-DIRECTION.md`, which was deleted that day (see git history). Design
+> authority is now `docs/VIIS-Site-Brief.md` and `src/styles/tokens.css`; see
+> `CLAUDE.md`. Nothing below is a current instruction.
+
 Run from `~/Projects/VIIS`. Branch: `feat/pre-launch-overhaul`.
 
 ---

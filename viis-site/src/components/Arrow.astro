@@ -1,0 +1,25 @@
+---
+/**
+ * Trailing arrow for buttons and links. Drawn, not typed: Fraunces has no
+ * arrow glyph and Geist's is too light against a 500-weight label.
+ * Decorative — aria-hidden, the label carries the meaning.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = 'btn__arrow' } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 16 16"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M3 8h10M9 4l4 4-4 4" />
+</svg>

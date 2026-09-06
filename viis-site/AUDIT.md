@@ -1,5 +1,10 @@
 # VIIS Site — Pre-Launch Audit
 
+> **Historical.** This document predates the 2026-09-05 redesign and cites
+> `ART-DIRECTION.md`, which was deleted that day (see git history). Design
+> authority is now `docs/VIIS-Site-Brief.md` and `src/styles/tokens.css`; see
+> `CLAUDE.md`. Nothing below is a current instruction.
+
 Audited against `ART-DIRECTION.md` and the `taste-skill` / `redesign-skill` standards
 now installed at `.claude/skills/`. Ordered by severity. Nothing here requires a
 rewrite — the foundation is sound and the art direction is unusually disciplined.
