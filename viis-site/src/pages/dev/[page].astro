@@ -12,6 +12,7 @@ import Card from '../../components/Card.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import Swatches from '../../components/dev/Swatches.astro';
 import TypeScale from '../../components/dev/TypeScale.astro';
+import FieldVariants from '../../components/dev/FieldVariants.astro';
 
 export function getStaticPaths() {
   return import.meta.env.PROD ? [] : [{ params: { page: 'design-system' } }];
@@ -113,6 +114,17 @@ const spacing = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
             <span class="t-label">--accent-field-a → --accent-field-b</span>
           </div>
         </div>
+      </section>
+
+      <section class="spec-section" aria-labelledby="field">
+        <Eyebrow>Hero field</Eyebrow>
+        <h2 id="field">The adopted field, at full height.</h2>
+        <p class="t-small fg-2 measure">
+          What the hero and closing CTA render. Dashed lines mark the header's foot and the 40%
+          stop where the fade begins. The three variants it was chosen over are recorded in
+          FieldVariants.astro.
+        </p>
+        <FieldVariants />
       </section>
     </main>
   </body>

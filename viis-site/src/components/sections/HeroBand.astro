@@ -10,6 +10,13 @@
  * run up behind the transparent site header the way Canopy's nav sits on
  * its field. The closing field enters from and leaves to flat ink, so it
  * needs no knowledge of the sections around it.
+ *
+ * The field is interpolated in OKLab and carries a monochrome grain layer
+ * (an inline feTurbulence, no data URI, so the self-only CSP holds). The
+ * grain is the only thing that breaks the 8-bit banding a slow fade
+ * between two near-blacks produces; the colour space does not, since both
+ * paths land on the same pixels at these values. Chosen from the four-way
+ * board on /dev/design-system, 2026-09-06.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -25,9 +32,33 @@ const { variant, id } = Astro.props;
 const headingId = `${id}-heading`;
 const Heading = variant === 'hero' ? 'h1' : 'h2';
 const hasArtifact = Astro.slots.has('artifact');
+const grainId = `grain-${id}`;
+// WHY 0.3 with overlay: overlay is zero-mean but scales with the base, and
+// this base is ~0.08. At 0.3 the grain moves a pixel by about ±1 level of
+// 255, one band's worth; at 0.06 it measured nothing.
+const grainOpacity = 0.3;
 ---
 
-<Section id={id} class={`band band--${variant}`} labelledby={headingId}>
+<Section
+  id={id}
+  class={`band band--${variant}`}
+  labelledby={headingId}
+  style={`--grain: url(#${grainId}); --grain-opacity: ${grainOpacity}`}
+>
+  {/* Definition only. Nothing here paints: the filter lives in <defs> and
+      the SVG is 0×0 and out of flow, so it can never take layout. The
+      band's ::after references it by id and does the painting. */}
+  <svg class="grain-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id={grainId} x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncA type="table" tableValues="1 1" />
+        </feComponentTransfer>
+      </filter>
+    </defs>
+  </svg>
   <div class="copy">
     <Eyebrow class="kicker">Technology consulting · San Antonio</Eyebrow>
     <Heading id={headingId} class="t-display-1 headline">
@@ -64,7 +95,8 @@ const hasArtifact = Astro.slots.has('artifact');
     isolation: isolate;
   }
 
-  .band::before {
+  .band::before,
+  .band::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -72,14 +104,37 @@ const hasArtifact = Astro.slots.has('artifact');
     pointer-events: none;
   }
 
+  /* The grain: the band's ::after, painted through the filter the 0×0 SVG
+     defines, over the field and under the copy. Overlay is zero-mean, so
+     the field's colour holds. WHY the ink background: the filter graph
+     never reads its source, but Safari skips a filter on a box that paints
+     nothing, so the box paints ink and the turbulence replaces it. */
+  .band::after {
+    background: var(--ink);
+    filter: var(--grain);
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+  }
+
+  .grain-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
   /* Hero: solid field behind the chrome and the copy, fading to flat ink by
      the section end so the artifact's lower edge sits on the page ground.
      WHY the negative top: the site header is transparent and --sp-9 tall,
      and the field has to run up behind it (see SiteHeader.astro). */
-  .band--hero::before {
+  .band--hero::before,
+  .band--hero::after {
     top: calc(-1 * var(--sp-9));
+  }
+
+  .band--hero::before {
     background: linear-gradient(
-      180deg,
+      180deg in oklab,
       var(--accent-field-a) 0%,
       var(--accent-field-a) 40%,
       var(--accent-field-b) 100%
@@ -90,7 +145,7 @@ const hasArtifact = Astro.slots.has('artifact');
      headline and buttons, and settles back to ink before the footer. */
   .band--closing::before {
     background: linear-gradient(
-      180deg,
+      180deg in oklab,
       var(--accent-field-b) 0%,
       var(--accent-field-a) 30%,
       var(--accent-field-a) 60%,

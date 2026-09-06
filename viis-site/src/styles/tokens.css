@@ -19,7 +19,7 @@
      so captions pass wherever they land. 5.17:1 on ink. */
   --cream-faint: #8a8780;
   --hairline: rgba(236, 231, 219, 0.08);        /* dividers, card edges */
-  --hairline-hover: rgba(236, 231, 219, 0.16);  /* card/secondary hover edge */
+  --hairline-hover: rgba(236, 231, 219, 0.16);  /* card hover edge */
 
   --accent: #2f7f5e;         /* jade — marks, dots, underlines, large text */
   /* WHY: cream on #2F7F5E is 3.94:1 — under AA for button labels, and no
@@ -31,7 +31,13 @@
   --accent-fill: #2a7255;
   --accent-bright: #46a57c;  /* hover, small highlights — 6.12:1 on ink */
   --accent-dim: #7ba894;     /* eyebrow labels, muted marks — 6.95:1 on ink */
-  --accent-field-a: #0f1f19; /* hero gradient top */
+  /* WHY: the brief's #0F1F19 was a second green beside ink. This is ink with
+     only its green channel raised (0x13 → 0x1e), stopped where its OKLab
+     lightness matches the brief's value (0.222 vs 0.223), so the fade back
+     to ink moves one channel. Chosen 2026-09-06 from the four-way board on
+     /dev/design-system. Every hero pair holds its level: cream 13.89:1,
+     --cream-dim 6.89, --accent-dim 6.42, --cream-faint 4.78. */
+  --accent-field-a: #121e19; /* hero gradient top */
   --accent-field-b: #121319; /* hero gradient bottom (= ink) */
 
   /* Semantic aliases. Components reference these, not the raw palette,
@@ -43,6 +49,15 @@
   --link-rule: var(--accent-dim);
   --link-rule-hover: var(--accent-bright);
   --focus-ring: var(--cream);  /* 15.02:1 on ink, 4.68:1 on --accent-fill */
+  /* WHY: a secondary button is a raised surface whose fill sits under 1.3:1
+     on every ground, so its edge alone identifies it (WCAG 1.4.11, 3:1).
+     The hairline it drew measured 1.21:1 on --surface. The edge is the grey
+     the form inputs already use for theirs: 5.17:1 on ink, 4.89 on
+     --surface, 4.76 on the hero field, 4.53 inside its own --surface-2
+     fill. Hover lifts to --fg-2, the inputs' hover: 7.46:1 on ink, 6.54 on
+     --surface-2. Any control that needs a boundary takes these. */
+  --control-edge: var(--cream-faint);
+  --control-edge-hover: var(--fg-2);
 
   /* Type — three faces, three jobs (brief §1 "Typography"). */
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;

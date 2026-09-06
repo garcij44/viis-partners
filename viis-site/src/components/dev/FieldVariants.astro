@@ -1,0 +1,138 @@
+---
+/**
+ * Dev-only render of the hero field at the hero's full height, so banding
+ * and hue drift show at real scale. This is what HeroBand paints; the
+ * numbers under it are computed here with the same maths the browser uses
+ * for `in oklab`, so the label cannot drift from the render.
+ *
+ * Chosen 2026-09-06 from a four-way board, since removed. What it was
+ * chosen over, and why:
+ *   01  the brief's field (#0f1f19 → ink) interpolated in sRGB
+ *   02  the same colours interpolated in OKLab — pixel-identical to 01 at
+ *       these values; both paths mid-fade at #111919
+ *   03  ink with only its green channel raised to #121e19 (OKLab L matched
+ *       to the brief's field), interpolated in OKLab — same weight, the top
+ *       no longer cuts red, one channel moves on the fade back to ink
+ *   04  03 plus monochrome feTurbulence grain, overlay at 0.3 — the only
+ *       change that touches banding, which is 8-bit quantisation of the
+ *       fade, not interpolation. Overlay under ~0.3 measured nothing on a
+ *       ground this dark. Adopted.
+ */
+import tokensCss from '../../styles/tokens.css?raw';
+import { mixOklab, toOklch } from '../../lib/oklab';
+
+const tokens = new Map<string, string>();
+for (const m of tokensCss.matchAll(/--([a-z0-9-]+):\s*(#[0-9a-f]{6})\s*;/gi)) tokens.set(m[1], m[2]);
+const get = (name: string): string => {
+  const v = tokens.get(name);
+  if (!v) throw new Error(`FieldVariants: token --${name} not found`);
+  return v;
+};
+
+const ink = get('ink');
+const top = get('accent-field-a');
+const grainOpacity = 0.3;
+
+const fmt = (hex: string): string => {
+  const { L, C, H } = toOklch(hex);
+  return `${hex} · L ${L.toFixed(3)} C ${C.toFixed(3)} H ${H.toFixed(0)}°`;
+};
+// The 70% mark is the middle of the fade (40% → 100%).
+const mid = mixOklab(top, ink, 0.5);
+const gradient = `linear-gradient(180deg in oklab, ${top} 0%, ${top} 40%, ${ink} 100%)`;
+---
+
+<div class="board">
+  <div class="field" style={`background: ${gradient}; --grain-opacity: ${grainOpacity}`}>
+    <svg class="grain-defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="grain-spec" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+          <feColorMatrix type="saturate" values="0" />
+          <feComponentTransfer>
+            <feFuncA type="table" tableValues="1 1" />
+          </feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
+    <span class="marker marker--header" aria-hidden="true" />
+    <span class="marker marker--fade" aria-hidden="true" />
+    <p class="t-label tag">--accent-field-a → --ink · OKLab · grain {grainOpacity}</p>
+  </div>
+  <dl class="t-mono spec">
+    <dt class="fg-3">Rule</dt>
+    <dd>linear-gradient(180deg in oklab, --accent-field-a 0 40%, --ink 100%) + feTurbulence overlay {grainOpacity}</dd>
+    <dt class="fg-3">Top</dt>
+    <dd>{fmt(top)}</dd>
+    <dt class="fg-3">Mid-fade (70%)</dt>
+    <dd>{fmt(mid)}</dd>
+    <dt class="fg-3">Ink</dt>
+    <dd>{fmt(ink)}</dd>
+  </dl>
+</div>
+
+<style>
+  .board {
+    max-width: var(--measure);
+  }
+
+  /* WHY 1647px: the hero band measured 1551px at 1440 plus the 96px header
+     its field runs up behind. The field's 40% stop lands where it does live. */
+  .field {
+    position: relative;
+    height: 1647px;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Same pattern as HeroBand: a 0×0 definition SVG, the box's ::after
+     painting through it. */
+  .field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    filter: url(#grain-spec);
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .grain-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* Where the header ends and where the fade begins, as hairlines. */
+  .marker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--hairline-hover);
+  }
+
+  .marker--header {
+    top: var(--sp-9);
+  }
+
+  .marker--fade {
+    top: 40%;
+  }
+
+  .tag {
+    position: absolute;
+    top: var(--sp-4);
+    left: var(--sp-4);
+    color: var(--accent-dim);
+  }
+
+  .spec {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--sp-1) var(--sp-3);
+    margin-top: var(--sp-3);
+    overflow-wrap: anywhere;
+  }
+</style>

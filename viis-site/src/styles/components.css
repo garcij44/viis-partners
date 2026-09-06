@@ -60,7 +60,7 @@
 
 .btn--secondary {
   background: var(--surface-2);
-  border-color: var(--hairline);
+  border-color: var(--control-edge);
   color: var(--cream);
 }
 
@@ -81,7 +81,7 @@
   }
 
   .btn--secondary:hover {
-    border-color: var(--hairline-hover);
+    border-color: var(--control-edge-hover);
   }
 
   .btn:hover .btn__arrow {
