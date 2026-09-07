@@ -132,7 +132,7 @@ Present as **one path, not four doors.** Vertical sequence with a connecting rul
 - **Eyebrow:** `THE METHOD`
 - **H2:** Each step comes out of the one before it.
 
-**Websites** — Design and build on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account.
+**Websites** — Design, build, and launch on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account. A build is a project, quoted after the audit.
 
 **Foundations** — Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, licence audit, backups, access control. The layer every website depends on and almost nobody maintains.
 
@@ -171,17 +171,19 @@ Keep it factual and unsmug. The table should read as orientation, not as an atta
 
 ### 7 — Packages *(named tiers, no numbers)*
 
-Three cards. What's included, who it's for, no pricing. CTA on each: `Talk it through`.
+The rate card's four recurring tiers. What's included, no pricing. CTA on each: `Talk it through`. Builds are projects, not plans: they are not listed here, and the Websites line in §4 covers design, build, migration, and launch.
 
-**Build** — For a business that needs a real site and wants to own it. Design, build, migration, launch, and the foundation work found along the way.
+**Watch** — *A simple site with nothing automated behind it.* Hosting, DNS and SSL monitoring, backups, updates, break/fix response, quarterly report.
 
-**Care** — For a business that has a site and needs it to keep working. Hosting, monitoring, backups, updates, small changes, and a named person who answers.
+**Care** — *A standard build, with Workspace or automations in the picture.* Everything in Watch, plus a monthly report, a set allowance of changes each month, Google Workspace and Microsoft 365 management, DNS and email-authentication monitoring, automation health checks, quarterly call.
 
-**Partner** — For a business treating VIIS as its technical lead. Everything in Care, plus search, automation, systems management, and defined project capacity each month.
+**Growth** — *A larger site, live automations, and content going out.* Everything in Care, plus a larger monthly allowance, priority response, quarterly audit and roadmap, monthly call.
 
-Footer line: *Pricing is quoted after the audit, once we know what actually needs doing.* (Not set against a competitor's price or the client's current spend.)
+**Partner** — *You want a technical lead, not a vendor.* Everything in Growth, plus defined project capacity each month, systems architecture, vendor management, automation maintenance.
 
-> **Note for the business Project, not the site:** these names must be reconciled with the rate card, which currently lists Watch / Care / Growth / Partner and a $299 tier that no longer matches what VIIS sells.
+No footer line: plans are priced by tier regardless of audit findings, and each tier's `Talk it through` is how pricing happens.
+
+> Reconciled with the rate card on 2026-09-06 (previously Build / Care / Partner). Inclusions and the "who it's for" lines are the rate card's, as written; add nothing to them here.
 
 ### 8 — The audit
 

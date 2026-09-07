@@ -1,21 +1,29 @@
 ---
 /**
- * Section 7 — packages (brief §2.7): three named tiers, what's included and
- * who each is for, no pricing anywhere. VIIS is a services firm; the tier
- * changes the scope, not a number.
+ * Section 7 — packages (brief §2.7): the rate card's four recurring tiers,
+ * what each includes, no pricing anywhere. Builds are projects, not plans,
+ * so they are not here; the Websites line in the method covers design,
+ * build, migration, and launch, and pricing is quoted after the audit.
  *
  * Read against docs/canopy-05-pricing-toolkit.png: one panel divided into
- * three columns by hairlines, a name, a "for" line, a short list, and the
- * footnote beneath the panel. Canopy's price line and its check icons are
- * left out (brief §1: no numbers, no icons outside the four-up row); the
- * list mark is the site's jade dot, as in the reframe's findings.
+ * columns by hairlines, a name, a short list, and the footnote beneath the
+ * panel. Canopy's price line and its check icons are left out (brief §1:
+ * no numbers, no icons outside the four-up row); the list mark is the
+ * site's jade dot, as in the reframe's findings.
+ *
+ * Inclusions and the "who it's for" lines are the rate card's, as Jadrin
+ * supplied them on 2026-09-06, and nothing is added to them. Plans are
+ * priced by tier, so there is no pricing line under the panel: each tier's
+ * "Talk it through" is how pricing happens.
  *
  * "Talk it through" goes to the audit form: the brief's secondary
- * conversion is a call, and no booking mechanism exists yet. Pricing is
- * quoted after the audit, so the form is the honest next step.
+ * conversion is a call, and no booking mechanism exists yet.
  *
- * The eyebrow and headline are not in the brief; provisional copy until
- * confirmed.
+ * Layout: one row of four from lg, two by two from sm, one column below.
+ * Four tiers divide evenly at every step, so no card is ever orphaned.
+ *
+ * The eyebrow, headline, and subhead are not in the brief; provisional
+ * copy until confirmed.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -31,27 +39,54 @@ interface Tier {
 
 const tiers: Tier[] = [
   {
-    id: 'tier-build',
-    name: 'Build',
-    audience: 'For a business that needs a real site and wants to own it.',
-    included: ['Design', 'Build', 'Migration', 'Launch', 'The foundation work found along the way'],
+    id: 'tier-watch',
+    name: 'Watch',
+    audience: 'A simple site with nothing automated behind it.',
+    included: [
+      'Hosting',
+      'DNS and SSL monitoring',
+      'Backups',
+      'Updates',
+      'Break/fix response',
+      'Quarterly report',
+    ],
   },
   {
     id: 'tier-care',
     name: 'Care',
-    audience: 'For a business that has a site and needs it to keep working.',
-    included: ['Hosting', 'Monitoring', 'Backups', 'Updates', 'Small changes', 'A named person who answers'],
+    audience: 'A standard build, with Workspace or automations in the picture.',
+    included: [
+      'Everything in Watch',
+      'Monthly report',
+      'A set allowance of changes each month',
+      'Google Workspace and Microsoft 365 management',
+      'DNS and email-authentication monitoring',
+      'Automation health checks',
+      'Quarterly call',
+    ],
+  },
+  {
+    id: 'tier-growth',
+    name: 'Growth',
+    audience: 'A larger site, live automations, and content going out.',
+    included: [
+      'Everything in Care',
+      'A larger monthly allowance',
+      'Priority response',
+      'Quarterly audit and roadmap',
+      'Monthly call',
+    ],
   },
   {
     id: 'tier-partner',
     name: 'Partner',
-    audience: 'For a business treating VIIS as its technical lead.',
+    audience: 'You want a technical lead, not a vendor.',
     included: [
-      'Everything in Care',
-      'Search',
-      'Automation',
-      'Systems management',
+      'Everything in Growth',
       'Defined project capacity each month',
+      'Systems architecture',
+      'Vendor management',
+      'Automation maintenance',
     ],
   },
 ];
@@ -59,9 +94,11 @@ const tiers: Tier[] = [
 
 <Section id="packages" labelledby="packages-heading">
   <Eyebrow class="kicker">Packages</Eyebrow>
-  <h2 id="packages-heading" class="headline">
-    Build it, keep it working, or make VIIS your technical lead.
-  </h2>
+  <h2 id="packages-heading" class="headline">Four plans for after launch.</h2>
+  <p class="t-lead fg-2 measure sub">
+    Builds are projects, quoted after the audit. These are the plans that keep the site and the
+    systems under it working once it is live.
+  </p>
 
   <Card class="panel">
     <ul class="tiers">
@@ -82,10 +119,6 @@ const tiers: Tier[] = [
       }
     </ul>
   </Card>
-
-  <p class="t-small fg-2 measure note">
-    Pricing is quoted after the audit, once we know what actually needs doing.
-  </p>
 </Section>
 
 <style>
@@ -94,6 +127,10 @@ const tiers: Tier[] = [
   }
 
   .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
     margin-top: var(--sp-5);
   }
 
@@ -107,14 +144,17 @@ const tiers: Tier[] = [
 
   .tiers {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  /* --sp-5 padding, not the card's --sp-6: four columns in the container
+     are 280px each, and 32px a side would leave the longest inclusion
+     three lines deep. */
   .tier {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: var(--sp-6);
+    padding: var(--sp-5);
     border-left: 1px solid var(--hairline);
   }
 
@@ -155,23 +195,34 @@ const tiers: Tier[] = [
     margin-top: auto;
   }
 
-  .note {
-    margin-top: var(--sp-6);
+  /* Two by two under lg (the four-up row's own step), one column under
+     sm. Dividers: left edges on every column but the first of its row,
+     top edges on every row but the first. */
+  @media (max-width: 1023px) {
+    .tiers {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tier:nth-child(2n + 1) {
+      border-left: 0;
+    }
+
+    .tier:nth-child(n + 3) {
+      border-top: 1px solid var(--hairline);
+    }
   }
 
-  /* Stacked under lg: the dividers turn from left edges to top edges. */
-  @media (max-width: 1023px) {
+  @media (max-width: 639px) {
     .tiers {
       grid-template-columns: minmax(0, 1fr);
     }
 
     .tier {
       border-left: 0;
-      border-top: 1px solid var(--hairline);
     }
 
-    .tier:first-child {
-      border-top: 0;
+    .tier:nth-child(n + 2) {
+      border-top: 1px solid var(--hairline);
     }
   }
 

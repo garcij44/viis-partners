@@ -20,7 +20,7 @@ export const faq: FaqItem[] = [
     id: 'cost',
     question: 'What does a website cost?',
     answer:
-      'It depends on what needs building and what is broken underneath it, so we quote after the free audit, against what you are paying now. The Build package covers design, build, migration, launch, and the foundation work found along the way. You see the scope and the figure before any work starts.',
+      'It depends on what needs building and what is broken underneath it, so we quote after the free audit, once we know what actually needs doing. A build is a project, not a plan: design, build, migration, launch, and the foundation work found along the way. You see the scope and the figure before any work starts.',
   },
   {
     id: 'ownership',
@@ -56,7 +56,7 @@ export const faq: FaqItem[] = [
     id: 'after-launch',
     question: 'What happens after launch?',
     answer:
-      'The site keeps working because someone is looking after it. The Care package covers hosting, monitoring, backups, updates, and small changes, with a named person who answers. Partner adds search, automation, and systems management, with defined project capacity each month.',
+      'The site keeps working because someone is looking after it. Watch covers hosting, monitoring, backups, updates, and break/fix response. Care adds a monthly allowance of changes and management of Google Workspace and Microsoft 365. Growth adds priority response and a quarterly audit and roadmap. Partner adds defined project capacity each month, with VIIS as your technical lead.',
   },
   {
     id: 'response',
