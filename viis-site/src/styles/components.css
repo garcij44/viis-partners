@@ -4,6 +4,21 @@
 /* ------------------------------------------------------------------ */
 
 /* Layout */
+
+/* WHY here, not tokens.css: not a scale step but a composite of two. The
+   header is one --sp-9 row; under 768 the nav takes a second --sp-7 row.
+   SiteHeader sizes itself by it and HeroBand extends its field up by it,
+   so the field always meets the top of the page. */
+:root {
+  --header-h: var(--sp-9);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-h: calc(var(--sp-9) + var(--sp-7));
+  }
+}
+
 .container {
   width: min(100% - 2 * var(--gutter), var(--container));
   margin-inline: auto;

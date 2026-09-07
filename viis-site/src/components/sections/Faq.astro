@@ -13,29 +13,45 @@
  * icon on a heading.
  *
  * The eyebrow and headline are not in the brief; provisional copy. The
- * answers are drafts (src/data/faq.ts) awaiting review.
+ * answers are drafts (src/data/faq.ts) awaiting review. The service pages
+ * pass their own shorter lists; defaults are the homepage's.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
-import { faq } from '../../data/faq';
+import { faq, type FaqItem } from '../../data/faq';
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  items?: FaqItem[];
+}
+
+const {
+  id = 'faq',
+  eyebrow = 'FAQ',
+  heading = 'Things people ask before they hire us.',
+  items = faq,
+} = Astro.props;
+const headingId = `${id}-heading`;
 ---
 
-<Section id="faq" labelledby="faq-heading">
+<Section id={id} labelledby={headingId}>
   <div class="grid">
     <div class="lede">
-      <Eyebrow class="kicker">FAQ</Eyebrow>
-      <h2 id="faq-heading" class="headline">Things people ask before they hire us.</h2>
+      <Eyebrow class="kicker">{eyebrow}</Eyebrow>
+      <h2 id={headingId} class="headline">{heading}</h2>
     </div>
 
     <div class="items">
       {
-        faq.map(({ id, question, answer }) => (
-          <details class="item" name="faq" id={`faq-${id}`}>
+        items.map((item) => (
+          <details class="item" name={id} id={`${id}-${item.id}`}>
             <summary class="summary">
-              <h3 class="question">{question}</h3>
+              <h3 class="question">{item.question}</h3>
             </summary>
             <div class="answer">
-              <p class="fg-2 measure">{answer}</p>
+              <p class="fg-2 measure">{item.answer}</p>
             </div>
           </details>
         ))

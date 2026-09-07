@@ -47,7 +47,11 @@ const business = {
   name: siteName,
   legalName: 'VIIS, LLC',
   alternateName: 'VIIS', // the logotype and sign-off short form
-  description,
+  // WHY a fixed string: the node shares one @id across every page, so it
+  // must say the same thing on every page; the page description is the
+  // page's, not the business's.
+  description:
+    'Technology consulting in San Antonio: websites you own, and the DNS, email, Google Workspace, search, and automation underneath them.',
   url: origin,
   email: 'jgarcia@viispartners.com',
   image: imageUrl,

@@ -16,7 +16,13 @@
  * grain is the only thing that breaks the 8-bit banding a slow fade
  * between two near-blacks produces; the colour space does not, since both
  * paths land on the same pixels at these values. Chosen from the four-way
- * board on /dev/design-system, 2026-09-06.
+ * board on /dev/design-system, 2026-09-06. The grain fades out over the
+ * band's last section-pad (and the closing's first), so the edge where the
+ * grain stops no longer reads as a faint line against the plain ink.
+ *
+ * The service pages reuse the hero with their own eyebrow, headline, and
+ * subhead; the trust line and both buttons stay fixed. Defaults are the
+ * homepage's copy, so the homepage renders as before.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -26,25 +32,34 @@ interface Props {
   variant: 'hero' | 'closing';
   /** Section id; the heading id is derived from it for aria-labelledby. */
   id: string;
+  eyebrow?: string;
+  heading?: string;
+  sub?: string;
+  /** Where "See the work" goes; service pages point back at the proof. */
+  workHref?: string;
 }
 
-const { variant, id } = Astro.props;
+const {
+  variant,
+  id,
+  eyebrow = 'Technology consulting · San Antonio',
+  heading = 'Your website, and the systems that hold it up.',
+  sub = "A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. DNS records missing since the last vendor. VIIS builds the website and fixes what's underneath it — then stays on to keep it working.",
+  workHref = '#proof',
+} = Astro.props;
 const headingId = `${id}-heading`;
 const Heading = variant === 'hero' ? 'h1' : 'h2';
 const hasArtifact = Astro.slots.has('artifact');
-const grainId = `grain-${id}`;
-// WHY 0.3 with overlay: overlay is zero-mean but scales with the base, and
-// this base is ~0.08. At 0.3 the grain moves a pixel by about ±1 level of
-// 255, one band's worth; at 0.06 it measured nothing.
-const grainOpacity = 0.3;
+// WHY the filter id is the variant, not the section id: the stylesheet
+// references it by name (see .band--hero::after). Nothing may be passed
+// through an inline style attribute: staticwebapp.config.json ships
+// style-src 'self', which blocks style attributes, and an unset custom
+// property here once left the grain layer at opacity 1 and crushed the
+// field to black in production while every local preview looked right.
+const grainId = `grain-${variant}`;
 ---
 
-<Section
-  id={id}
-  class={`band band--${variant}`}
-  labelledby={headingId}
-  style={`--grain: url(#${grainId}); --grain-opacity: ${grainOpacity}`}
->
+<Section id={id} class={`band band--${variant}`} labelledby={headingId}>
   {/* Definition only. Nothing here paints: the filter lives in <defs> and
       the SVG is 0×0 and out of flow, so it can never take layout. The
       band's ::after references it by id and does the painting. */}
@@ -60,21 +75,15 @@ const grainOpacity = 0.3;
     </defs>
   </svg>
   <div class="copy">
-    <Eyebrow class="kicker">Technology consulting · San Antonio</Eyebrow>
-    <Heading id={headingId} class="t-display-1 headline">
-      Your website, and the systems that hold it up.
-    </Heading>
-    <p class="t-lead fg-2 sub">
-      A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured.
-      DNS records missing since the last vendor. VIIS builds the website and fixes what's
-      underneath it — then stays on to keep it working.
-    </p>
+    <Eyebrow class="kicker">{eyebrow}</Eyebrow>
+    <Heading id={headingId} class="t-display-1 headline">{heading}</Heading>
+    <p class="t-lead fg-2 sub">{sub}</p>
     <Eyebrow as="p" dot muted class="trust">
       Free audit · No obligation · Results in 3 business days
     </Eyebrow>
     <div class="actions">
       <Button href="#audit">Get your free site audit</Button>
-      <Button href="#proof" variant="secondary">See the work</Button>
+      <Button href={workHref} variant="secondary">See the work</Button>
     </div>
   </div>
   {
@@ -108,12 +117,22 @@ const grainOpacity = 0.3;
      defines, over the field and under the copy. Overlay is zero-mean, so
      the field's colour holds. WHY the ink background: the filter graph
      never reads its source, but Safari skips a filter on a box that paints
-     nothing, so the box paints ink and the turbulence replaces it. */
+     nothing, so the box paints ink and the turbulence replaces it.
+     WHY 0.3: overlay scales with the base, and this base is ~0.08. At 0.3
+     the grain moves a pixel by about ±1 level of 255, one band's worth;
+     at 0.06 it measured nothing. Both values live here, never inline. */
   .band::after {
     background: var(--ink);
-    filter: var(--grain);
-    opacity: var(--grain-opacity);
+    opacity: 0.3;
     mix-blend-mode: overlay;
+  }
+
+  .band--hero::after {
+    filter: url(#grain-hero);
+  }
+
+  .band--closing::after {
+    filter: url(#grain-closing);
   }
 
   .grain-defs {
@@ -125,11 +144,33 @@ const grainOpacity = 0.3;
 
   /* Hero: solid field behind the chrome and the copy, fading to flat ink by
      the section end so the artifact's lower edge sits on the page ground.
-     WHY the negative top: the site header is transparent and --sp-9 tall,
-     and the field has to run up behind it (see SiteHeader.astro). */
+     WHY the negative top: the site header is transparent and --header-h
+     tall (components.css), and the field has to run up behind it. */
   .band--hero::before,
   .band--hero::after {
-    top: calc(-1 * var(--sp-9));
+    top: calc(-1 * var(--header-h));
+  }
+
+  /* The grain fades to nothing over the band's last section-pad, so where
+     it stops is not a visible edge. The closing band fades at both ends. */
+  .band--hero::after {
+    -webkit-mask-image: linear-gradient(#000 calc(100% - var(--section-pad)), transparent);
+    mask-image: linear-gradient(#000 calc(100% - var(--section-pad)), transparent);
+  }
+
+  .band--closing::after {
+    -webkit-mask-image: linear-gradient(
+      transparent,
+      #000 var(--section-pad),
+      #000 calc(100% - var(--section-pad)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      transparent,
+      #000 var(--section-pad),
+      #000 calc(100% - var(--section-pad)),
+      transparent
+    );
   }
 
   .band--hero::before {

@@ -1,0 +1,97 @@
+---
+/**
+ * Service page — "what's included": one card, six items as a definition
+ * list in two columns, the site's jade dot beside each name. The same
+ * card-and-list vocabulary as the audit section's checks and the packages.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import type { Inclusion } from '../../data/services';
+
+interface Props {
+  heading: string;
+  items: Inclusion[];
+}
+const { heading, items } = Astro.props;
+---
+
+<Section id="included" labelledby="included-heading">
+  <Eyebrow class="kicker">What's included</Eyebrow>
+  <h2 id="included-heading" class="headline">{heading}</h2>
+
+  <Card class="panel">
+    <dl class="items">
+      {
+        items.map(({ name, text, link }) => (
+          <div class="item">
+            <dt class="name">{name}</dt>
+            <dd class="t-small fg-2">
+              {text}
+              {link && (
+                <>
+                  {' '}
+                  <a class="link" href={link.href}>{link.label}</a>
+                </>
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Card>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .panel {
+    margin-top: var(--sp-8);
+  }
+
+  .items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-6) var(--sp-7);
+  }
+
+  /* --sp-4 of hanging indent: the 6px dot plus a gap close to the 12px the
+     site's other dot lists use. */
+  .item {
+    position: relative;
+    padding-left: var(--sp-4);
+  }
+
+  /* The jade mark, on the name's first line. */
+  .item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: calc((var(--text-body) * var(--lh-body) - 6px) / 2);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .name {
+    font-weight: var(--wt-ui);
+  }
+
+  .item dd {
+    margin-top: var(--sp-1);
+  }
+
+  @media (max-width: 767px) {
+    .items {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-5);
+    }
+  }
+</style>

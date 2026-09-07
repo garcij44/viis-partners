@@ -80,12 +80,12 @@ export const faq: FaqItem[] = [
   },
 ];
 
-/** schema.org FAQPage for the homepage head; the text is the visible answer. */
-export function faqSchema(): Record<string, unknown> {
+/** schema.org FAQPage for a page head; the text is the visible answer. */
+export function faqSchema(items: FaqItem[] = faq): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faq.map(({ question, answer }) => ({
+    mainEntity: items.map(({ question, answer }) => ({
       '@type': 'Question',
       name: question,
       acceptedAnswer: { '@type': 'Answer', text: answer },

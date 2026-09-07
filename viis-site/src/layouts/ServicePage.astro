@@ -1,0 +1,76 @@
+---
+/**
+ * Service page template (brief §3, in its order): hero, the problem it
+ * solves, what's included, what it looks like in practice, a short FAQ,
+ * and the same audit section as the homepage. Every section is a homepage component
+ * with the page's copy passed in; the copy lives in src/data/services.ts.
+ *
+ * Head: the page's own title and description (never a template), the
+ * ProfessionalService graph from Layout, a Service graph naming this line
+ * with the business as provider, and FAQPage for the page's questions.
+ */
+import '../styles/system.css';
+import Layout from './Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import HeroBand from '../components/sections/HeroBand.astro';
+import Reframe from '../components/sections/Reframe.astro';
+import ServiceIncluded from '../components/sections/ServiceIncluded.astro';
+import ServicePractice from '../components/sections/ServicePractice.astro';
+import Audit from '../components/sections/Audit.astro';
+import Faq from '../components/sections/Faq.astro';
+import { faqSchema } from '../data/faq';
+import { serviceBySlug, type Service } from '../data/services';
+
+interface Props {
+  slug: Service['slug'];
+}
+
+const service = serviceBySlug(Astro.props.slug);
+const origin = new URL('/', Astro.site).href;
+const url = new URL(`/${service.slug}/`, Astro.site).href;
+
+const lineName = service.label.replace(/^\d+ · /, '');
+const serviceGraph = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': `${url}#service`,
+  name: lineName,
+  serviceType: service.title.split(' | ')[0],
+  description: service.description,
+  url,
+  provider: { '@id': `${origin}#business` },
+  areaServed: { '@type': 'City', name: 'San Antonio' },
+};
+---
+
+<Layout title={service.title} description={service.description} schema={[serviceGraph, faqSchema(service.faq)]}>
+  <SiteHeader />
+
+  <main id="main">
+    <HeroBand
+      variant="hero"
+      id="hero"
+      eyebrow={service.label}
+      heading={service.heading}
+      sub={service.sub}
+      workHref="/#proof"
+    />
+    <Reframe
+      id="problem"
+      eyebrow={service.problem.eyebrow}
+      heading={service.problem.heading}
+      body={service.problem.body}
+      close={service.problem.close}
+      findings={service.problem.findings}
+    />
+    <ServiceIncluded heading={service.includedHeading} items={service.included} />
+    <ServicePractice heading={service.practiceHeading} steps={service.practice} />
+    {/* Brief §3 order: FAQ, then the audit CTA, so the page ends on the
+        form rather than a closed accordion. */}
+    <Faq id="faq" eyebrow="FAQ" heading={`Questions about ${lineName.toLowerCase()}.`} items={service.faq} />
+    <Audit />
+  </main>
+
+  <SiteFooter />
+</Layout>

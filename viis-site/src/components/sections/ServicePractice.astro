@@ -1,0 +1,94 @@
+---
+/**
+ * Service page — "what it looks like in practice": three steps in one
+ * panel split by hairlines, the packages' treatment. Mono step numbers,
+ * a heading, a sentence or two. No icons (brief §1).
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import type { Step } from '../../data/services';
+
+interface Props {
+  heading: string;
+  steps: Step[];
+}
+const { heading, steps } = Astro.props;
+---
+
+<Section id="practice" labelledby="practice-heading">
+  <Eyebrow class="kicker">In practice</Eyebrow>
+  <h2 id="practice-heading" class="headline">{heading}</h2>
+
+  <Card class="panel">
+    <ol class="steps">
+      {
+        steps.map(({ title, text }, i) => (
+          <li class="step">
+            <p class="t-label fg-2 number">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="title">{title}</h3>
+            <p class="t-small fg-2 text">{text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Card>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .panel {
+    margin-top: var(--sp-8);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .step {
+    padding: var(--sp-6);
+    border-left: 1px solid var(--hairline);
+  }
+
+  .step:first-child {
+    border-left: 0;
+  }
+
+  .number {
+    display: flex;
+  }
+
+  .title {
+    margin-top: var(--sp-3);
+  }
+
+  .text {
+    margin-top: var(--sp-2);
+  }
+
+  @media (max-width: 767px) {
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .step {
+      padding: var(--sp-5);
+      border-left: 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .step:first-child {
+      border-top: 0;
+    }
+  }
+</style>

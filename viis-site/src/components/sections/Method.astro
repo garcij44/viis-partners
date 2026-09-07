@@ -5,8 +5,7 @@
  * each title linking to its service page, and closed by the connective
  * line, which is the concrete version of the headline above it.
  *
- * The service pages do not exist until build step 7; the links 404 until
- * then.
+ * Links carry the trailing slash the canonical URLs and sitemap use.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -20,22 +19,22 @@ interface ServiceLine {
 const lines: ServiceLine[] = [
   {
     name: 'Websites',
-    href: '/websites',
+    href: '/websites/',
     text: 'Design, build, and launch on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account. A build is a project, quoted after the audit.',
   },
   {
     name: 'Foundations',
-    href: '/foundations',
+    href: '/foundations/',
     text: 'Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, licence audit, backups, access control. The layer every website depends on and almost nobody maintains.',
   },
   {
     name: 'Search',
-    href: '/search',
+    href: '/search/',
     text: 'Technical SEO, local search, Google Business Profile, analytics and conversion tracking, and ongoing content. Client funds their own campaigns and ad spend directly; VIIS runs the work.',
   },
   {
     name: 'Automation',
-    href: '/automation',
+    href: '/automation/',
     text: 'Lead capture and routing, follow-up sequences, reporting pipelines, and AI-assisted workflows built on the stack you already pay for.',
   },
 ];

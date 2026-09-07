@@ -13,30 +13,45 @@ import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
 import Card from '../Card.astro';
 
-const findings = [
-  'SPF/DKIM/DMARC missing',
-  'Orphaned DNS records',
-  'Workspace on defaults',
-  'No conversion tracking',
-  'Unclaimed Business Profile',
-  'Paying for licences nobody uses',
-];
+/**
+ * The service pages reuse this treatment for "the problem it solves", with
+ * their own copy. Defaults are the homepage's, so it renders as before.
+ */
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  close?: string;
+  findings?: string[];
+}
+
+const {
+  id = 'reframe',
+  eyebrow = 'What we usually find',
+  heading = 'The website is rarely the problem.',
+  body = "Nearly every site we're asked to fix is sitting on something broken. Email authentication that was never set up, so invoices land in spam. DNS records pointing at a vendor the business left two years ago. A Google Workspace running on defaults, with no security, no shared drives, and licences nobody uses. The site gets blamed because the site is the part you can see.",
+  close = "We look underneath first. That's usually where the money is going.",
+  findings = [
+    'SPF/DKIM/DMARC missing',
+    'Orphaned DNS records',
+    'Workspace on defaults',
+    'No conversion tracking',
+    'Unclaimed Business Profile',
+    'Paying for licences nobody uses',
+  ],
+} = Astro.props;
+const headingId = `${id}-heading`;
 ---
 
-<Section id="reframe" labelledby="reframe-heading">
-  <Eyebrow class="kicker">What we usually find</Eyebrow>
-  <h2 id="reframe-heading" class="headline">The website is rarely the problem.</h2>
+<Section id={id} labelledby={headingId}>
+  <Eyebrow class="kicker">{eyebrow}</Eyebrow>
+  <h2 id={headingId} class="headline">{heading}</h2>
 
   <Card class="panel">
     <div class="argument">
-      <p class="t-lead fg-2">
-        Nearly every site we're asked to fix is sitting on something broken. Email authentication
-        that was never set up, so invoices land in spam. DNS records pointing at a vendor the
-        business left two years ago. A Google Workspace running on defaults, with no security, no
-        shared drives, and licences nobody uses. The site gets blamed because the site is the part
-        you can see.
-      </p>
-      <p class="t-lead">We look underneath first. That's usually where the money is going.</p>
+      <p class="t-lead fg-2">{body}</p>
+      <p class="t-lead">{close}</p>
     </div>
 
     <Card nested class="findings">
