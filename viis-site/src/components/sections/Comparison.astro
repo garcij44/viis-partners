@@ -10,8 +10,10 @@
  * puts VIIS first, so at 375 the row label and the VIIS cell are in view
  * before any scrolling; the row labels stay put while the rest scrolls.
  *
- * The eyebrow, headline, and subhead are not in the brief. They are
- * provisional copy in the brief's voice until confirmed.
+ * The headline is Jadrin's (2026-09-06, brief §2.6): every row but the
+ * first is about what happens after launch, so the table is set up as that,
+ * not as a build-cost comparison. The eyebrow and subhead are not in the
+ * brief; provisional copy until confirmed.
  */
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
@@ -37,7 +39,7 @@ const rows: Row[] = [
 
 <Section id="comparison" labelledby="comparison-heading">
   <Eyebrow class="kicker">The alternatives</Eyebrow>
-  <h2 id="comparison-heading" class="headline">Four ways to get a website, side by side.</h2>
+  <h2 id="comparison-heading" class="headline">Getting a website is the easy part.</h2>
   <p class="t-lead fg-2 measure sub">
     All four are real options. The difference is what you own afterward, and who answers when
     something breaks.

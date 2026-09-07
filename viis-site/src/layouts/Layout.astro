@@ -15,6 +15,8 @@ interface Props {
   /** Keep the page out of the index. For utility pages (404, /thanks) that
       have no search value but should still pass link equity onward. */
   noindex?: boolean;
+  /** Additional JSON-LD graphs for this page (the homepage adds FAQPage). */
+  schema?: Record<string, unknown>[];
 }
 
 const {
@@ -23,6 +25,7 @@ const {
   image = '/og-image.png',
   ogType = 'website',
   noindex = false,
+  schema = [],
 } = Astro.props;
 
 // Absolute URLs are required for canonical + OG tags. Astro.site is the
@@ -31,24 +34,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const imageUrl = new URL(image, Astro.site).href;
 const siteName = 'VIIS Partners';
 
-// ProfessionalService structured data. Only facts the business supports:
-// name, locality, and contact email. No invented phone/street/claims.
-const jsonLd = {
+// ProfessionalService (a LocalBusiness subtype) structured data, brief §4.
+// Only facts the business supports: names, locality, service area, contact
+// email, the service lines. No street address, phone, hours, prices, or
+// ratings — none exist to state. The legal entity is VIIS, LLC doing
+// business as VIIS Partners until the Texas assumed-name filing completes.
+const origin = new URL('/', Astro.site).href;
+const business = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
+  '@id': `${origin}#business`,
   name: siteName,
+  legalName: 'VIIS, LLC',
+  alternateName: 'VIIS', // the logotype and sign-off short form
   description,
-  url: new URL('/', Astro.site).href,
+  url: origin,
   email: 'jgarcia@viispartners.com',
-  areaServed: 'San Antonio, Texas',
+  image: imageUrl,
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'San Antonio',
     addressRegion: 'TX',
     addressCountry: 'US',
   },
+  areaServed: [
+    { '@type': 'City', name: 'San Antonio' },
+    { '@type': 'State', name: 'Texas' },
+  ],
   founder: { '@type': 'Person', name: 'Jadrin Garcia' },
+  knowsAbout: [
+    'Website design and development',
+    'DNS and email authentication',
+    'Google Workspace and Microsoft 365 administration',
+    'Local search and technical SEO',
+    'Lead capture and business automation',
+  ],
 };
+const graphs = [business, ...schema];
 ---
 
 <html lang="en">
@@ -74,7 +96,7 @@ const jsonLd = {
 		<meta property="og:image" content={imageUrl} />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="VIIS Partners" />
+		<meta property="og:image:alt" content="VIIS Partners — your website, and the systems that hold it up" />
 		<meta property="og:locale" content="en_US" />
 
 		<!-- Twitter -->
@@ -89,7 +111,7 @@ const jsonLd = {
 		<link rel="preload" href="/fonts/geist-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/geist-mono-variable.woff2" as="font" type="font/woff2" crossorigin />
 
-		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+		{graphs.map((graph) => <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />)}
 	</head>
 	<body>
 		<a class="skip" href="#main">Skip to content</a>

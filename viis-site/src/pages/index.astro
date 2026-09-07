@@ -1,9 +1,10 @@
 ---
 /**
  * Homepage — redesign brief §2, built in the brief's order (§6).
- * Sections in place: 1 (hero), 2 (capability row), 3 (reframe), 4 (method),
- * 5 (proof), 6 (comparison), 7 (packages), 8 (the audit), and 10 (closing
- * CTA). Section 9 (FAQ) follows.
+ * All ten sections are in place: 1 (hero), 2 (capability row), 3 (reframe),
+ * 4 (method), 5 (proof), 6 (comparison), 7 (packages), 8 (the audit),
+ * 9 (FAQ), and 10 (closing CTA). The head carries the ProfessionalService
+ * graph from the layout plus FAQPage from the FAQ data.
  *
  * Chrome is SiteHeader (logotype, audit CTA, no nav links) and SiteFooter
  * (carried over; the brief specifies no footer).
@@ -19,12 +20,19 @@ import Proof from '../components/sections/Proof.astro';
 import Comparison from '../components/sections/Comparison.astro';
 import Packages from '../components/sections/Packages.astro';
 import Audit from '../components/sections/Audit.astro';
+import Faq from '../components/sections/Faq.astro';
+import { faqSchema } from '../data/faq';
 import SiteFooter from '../components/SiteFooter.astro';
 ---
 
+{/* Title and description are the homepage's own (brief §4: unique per page).
+    The title leads with what the business does and where, and ends on the
+    brand; the description names the four service lines and the free audit.
+    Both are provisional copy until Jadrin confirms them. */}
 <Layout
-	title="VIIS Partners — Your website, and the systems that hold it up."
-	description="A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. VIIS builds the website and fixes what's underneath it."
+	title="Websites and the systems under them | VIIS Partners, San Antonio"
+	description="Websites you own, and the DNS, email, Google Workspace, search, and automation underneath them. Technology consulting in San Antonio. Free 20-point audit."
+	schema={[faqSchema()]}
 >
 	<SiteHeader />
 
@@ -46,6 +54,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 		<Comparison />
 		<Packages />
 		<Audit />
+		<Faq />
 
 		<HeroBand variant="closing" id="closing" />
 	</main>

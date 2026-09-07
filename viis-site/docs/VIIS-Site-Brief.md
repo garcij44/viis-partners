@@ -155,6 +155,8 @@ Close the section with the connective line: *Most clients start with a website. 
 
 Canopy's structure, VIIS's honest columns.
 
+- **H2:** Getting a website is the easy part. *(Every row but the first is about what happens after launch; the headline sets the table up as that, not as a build-cost comparison.)*
+
 | | **VIIS** | **Bundled vendor** | **Template DIY** | **Agency retainer** |
 |---|---|---|---|---|
 | Who owns the site | You | They do | You | Varies |
