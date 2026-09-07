@@ -82,13 +82,10 @@ const capabilities: Capability[] = [
 </Section>
 
 <style>
-  /* WHY no top padding: "directly under the hero" — the hero's own bottom
-     padding is the one section-pad between the artifact and this row, so
-     the row reads as attached to the hero rather than as a new movement. */
-  .capabilities {
-    padding-top: 0;
-  }
-
+  /* The row keeps the section's own padding on both sides (an earlier cut
+     dropped the top so the row hugged the hero; with the hero's grain the
+     band edge is faintly visible and the icons sat on it). Centred in its
+     band, the boundary above reads as any other section boundary. */
   .items {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));

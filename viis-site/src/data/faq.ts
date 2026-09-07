@@ -3,10 +3,12 @@
  * order. One source for the rendered accordion and the FAQPage structured
  * data, so the two cannot drift.
  *
- * PROVISIONAL: every answer is a draft awaiting Jadrin's review. Each
- * claim is kept to what the brief already states (ownership, packages,
- * the audit, ad spend funded by the client, the no-BAA position) and
- * nothing here quotes a price, a response time, or a result.
+ * PROVISIONAL: every answer is a draft awaiting Jadrin's review, except
+ * answer 8, whose figures are the signed SLA's response targets as Jadrin
+ * supplied them (2026-09-06) and must not be rounded or restated. Each
+ * other claim is kept to what the brief already states (ownership, the
+ * plans, the audit, ad spend funded by the client, the no-BAA position)
+ * and nothing quotes a price or a result.
  */
 export interface FaqItem {
   /** Stable id for the details element and the heading. */
@@ -26,7 +28,7 @@ export const faq: FaqItem[] = [
     id: 'ownership',
     question: 'Do I own the site?',
     answer:
-      'Yes. The code, the domain, and the hosting account are yours, in your name, from the day we start. If you leave, you take everything with you and nothing has to be rebuilt.',
+      'Yes. The code, the domain, and the hosting account are yours, in your name: from the start on a new build, or moved into your name as part of the work on a migration. If you leave, you take everything with you and nothing has to be rebuilt.',
   },
   {
     id: 'existing-site',
@@ -50,7 +52,7 @@ export const faq: FaqItem[] = [
     id: 'ads',
     question: 'Do you run ads?',
     answer:
-      'We set up and manage search campaigns when they make sense for you, along with the tracking that shows whether they are working. Ad spend is paid by you, directly to the platform, and is never marked up through us. We do not promise traffic or results, and we will say so when ads are the wrong place for the money.',
+      'Yes, when they make sense for you. We set up and manage search campaigns, along with the tracking that shows whether they are working. Ad spend is paid by you, directly to the platform, and is never marked up through us. We do not promise traffic or results, and we will say so when ads are the wrong place for the money.',
   },
   {
     id: 'after-launch',
@@ -62,19 +64,19 @@ export const faq: FaqItem[] = [
     id: 'response',
     question: 'How fast do you respond when something breaks?',
     answer:
-      'You have a named person, not a ticket queue. Response targets are written into your Care or Partner agreement, and anything that stops the business, such as the site being down or email not sending, comes first.',
+      'You have a named person, not a ticket queue, during business hours: Monday to Friday, 9 to 5 Central, excluding US federal holidays. If the site is down or compromised, we acknowledge within four business hours and work it the same business day until it is restored. Broken lead capture, such as forms not submitting or notifications not arriving, is acknowledged within one business day, and everything else within two business days. This is not a 24/7 on-call arrangement.',
   },
   {
     id: 'accounts',
     question: 'Who owns the domain and hosting accounts?',
     answer:
-      'You do. Both are registered in your name and billed to you, and we work as an administrator you can remove at any time. We will not register anything on your behalf that you cannot take back.',
+      'You do. On a new build they are set up in your name and billed to you from the start; on a migration we move them into your name as part of the work. Either way we act as an administrator you can remove at any time, and we will not register anything on your behalf that you cannot take back.',
   },
   {
     id: 'regulated',
     question: 'Do you work with medical or regulated businesses?',
     answer:
-      'Yes, within clear limits. VIIS builds forms that collect non-clinical contact information only, such as a name, an email address, and a message. We do not handle patient records, so no business associate agreement (BAA) is required between the parties. Systems that store patient data are outside what we build, and we will tell you so.',
+      'Yes. What we build for you, the site, the forms, and the systems around them, is designed to keep patient information out of it: forms collect non-clinical contact details only, such as a name, an email address, and a message. That is a deliberate choice. It means no business associate agreement (BAA) is needed between us, and one less thing for you to manage. Anything that would involve patient information is scoped separately, so the boundary is always explicit.',
   },
 ];
 
