@@ -14,7 +14,16 @@
  * No real report exists yet (brief §6, blocking dependency), so the receipt
  * is the report's frame with every value left empty and a visible
  * placeholder notice. Nothing in it is a finding, a severity, or a result.
- * The client is not named: the practice has not given written permission.
+ *
+ * Beneath the report: two observations, then one outcome. Two unrelated
+ * San Antonio businesses were each paying a monthly fee to a website
+ * service and got the same basic site and the same silence; that is the
+ * pattern, stated as two specific cases, not a market claim. Only the
+ * practice is a client, and only it gets outcome language. The second
+ * business is evidence of the pattern and nothing more: no result, no
+ * engagement. Neither is named anywhere on the site, and no fee is stated:
+ * the argument is ownership and responsiveness, not price (Jadrin,
+ * 2026-09-06; brief §2.5).
  *
  * The intro paragraph is not in the brief; provisional copy until confirmed.
  */
@@ -104,12 +113,21 @@ const areas = ['Site', 'Foundation', 'Search', 'Risk'];
     </Card>
 
     <div class="outcome">
-      <Eyebrow as="p" muted class="outcome-label">Outcome</Eyebrow>
+      <Eyebrow as="p" muted class="outcome-label">The pattern</Eyebrow>
+      <p class="fg-2 measure outcome-text">
+        Two unrelated San Antonio businesses were each paying a monthly fee to a website service.
+      </p>
+      <ul class="observations fg-2 measure">
+        <li>A medical practice, for a site bundled with their records vendor.</li>
+        <li>A second business, for a marketing platform with ad services attached.</li>
+      </ul>
+      <p class="fg-2 measure">Both got a basic site, then stopped getting replies.</p>
+
+      <Eyebrow as="p" muted class="outcome-label outcome-label--result">Outcome</Eyebrow>
       <p class="measure outcome-text">
-        A San Antonio medical practice was paying $499 a month to the website service bundled
-        with their records vendor. They got a basic site, then stopped getting replies. We rebuilt
-        it, moved them onto infrastructure they own, and found a half-configured Workspace and
-        missing DNS records along the way. They now own the site and have someone who answers.
+        The practice hired us. We rebuilt the site, moved them onto infrastructure they own, and
+        found a half-configured Workspace and missing DNS records along the way. They now own the
+        site and have someone who answers.
       </p>
     </div>
   </div>
@@ -259,6 +277,35 @@ const areas = ['Site', 'Foundation', 'Search', 'Risk'];
 
   .outcome-text {
     margin-top: var(--sp-3);
+  }
+
+  /* The two observations: the site's jade-dot list, as in the reframe's
+     findings and the package lists. Body size, secondary colour, so the
+     pattern reads as context and the outcome, in cream, as the result. */
+  .observations {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    margin-block: var(--sp-4);
+  }
+
+  .observations > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  .observations > li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .outcome-label--result {
+    margin-top: var(--sp-6);
   }
 
   /* Stacked under lg: lede, report, outcome, one column. */

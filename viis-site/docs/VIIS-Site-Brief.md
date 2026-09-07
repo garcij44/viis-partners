@@ -147,8 +147,10 @@ Close the section with the connective line: *Most clients start with a website. 
 - **Eyebrow:** `PROOF`
 - **H2:** Every audit ships with a report.
 - Show a **real audit report** — findings, severity, and what each one costs in plain language. Canopy's quality-report receipt is the pattern: the deliverable proves the service.
-- Beneath it, the client outcome. **Client name requires written permission before publishing — confirm first, and use "a San Antonio medical practice" until you have it.**
-  > A San Antonio medical practice was paying $499 a month to the website service bundled with their records vendor. They got a basic site, then stopped getting replies. We rebuilt it, moved them onto infrastructure they own, and found a half-configured Workspace and missing DNS records along the way. They now own the site and have someone who answers.
+- Beneath it, the pattern and the client outcome. **Client name requires written permission before publishing — confirm first, and use "a San Antonio medical practice" until you have it. No client is named anywhere on the site.**
+  - **The pattern**, as two specific observations, not a market-wide claim: *Two unrelated San Antonio businesses were each paying a monthly fee to a website service.* · *A medical practice, for a site bundled with their records vendor.* · *A second business, for a marketing platform with ad services attached.* · *Both got a basic site, then stopped getting replies.*
+  - **Outcome**, which applies to the practice only: *The practice hired us. We rebuilt the site, moved them onto infrastructure they own, and found a half-configured Workspace and missing DNS records along the way. They now own the site and have someone who answers.*
+  - Do not state what either business was paying: the argument is ownership and responsiveness, not price. The second business is evidence of the pattern, not a VIIS engagement — never a client or a case study, and no results are invented for it.
 - **No invented metrics.** No percentages, no "3x traffic," no fabricated case-study numbers. There are no paid-results claims to make yet and making them is the fastest way to lose credibility with a referral who can check.
 
 ### 6 — Comparison
@@ -160,7 +162,7 @@ Canopy's structure, VIIS's honest columns.
 | | **VIIS** | **Bundled vendor** | **Template DIY** | **Agency retainer** |
 |---|---|---|---|---|
 | Who owns the site | You | They do | You | Varies |
-| After launch | Maintained | Replies stop | Your problem | Billed hourly |
+| After launch | Maintained | Replies stop | You manage | Billed hourly |
 | DNS, email, Workspace | Included in scope | Out of scope | Out of scope | Usually out of scope |
 | When something breaks | Named person responds | Ticket queue | Forum search | Account manager |
 | Cost of leaving | Take everything | Rebuild from zero | — | Rebuild from zero |
@@ -177,7 +179,7 @@ Three cards. What's included, who it's for, no pricing. CTA on each: `Talk it th
 
 **Partner** — For a business treating VIIS as its technical lead. Everything in Care, plus search, automation, systems management, and defined project capacity each month.
 
-Footer line: *Pricing is quoted after the audit, against what you're paying now.*
+Footer line: *Pricing is quoted after the audit, once we know what actually needs doing.* (Not set against a competitor's price or the client's current spend.)
 
 > **Note for the business Project, not the site:** these names must be reconciled with the rate card, which currently lists Watch / Care / Growth / Partner and a $299 tier that no longer matches what VIIS sells.
 
