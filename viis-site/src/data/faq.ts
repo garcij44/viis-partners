@@ -46,7 +46,7 @@ export const faq: FaqItem[] = [
     id: 'workspace-365',
     question: 'Do you manage Google Workspace and Microsoft 365?',
     answer:
-      'Yes, both. Setup, security settings, shared drives, email authentication, licence audits, backups, and access control. Many of the businesses we look at are paying for licences nobody uses and running on defaults nobody chose.',
+      'Yes, both. Setup, security settings, shared drives, email authentication, license audits, backups, and access control. Many of the businesses we look at are paying for licenses nobody uses and running on defaults nobody chose.',
   },
   {
     id: 'ads',

@@ -59,7 +59,11 @@ const hasArtifact = Astro.slots.has('artifact');
 const grainId = `grain-${variant}`;
 ---
 
-<Section id={id} class={`band band--${variant}`} labelledby={headingId}>
+{/* WHY only the hero is a named region: the closing restates the hero's
+    heading word for word, and two landmarks with one name fail
+    landmark-unique. The closing keeps its heading and its id and is
+    simply not a landmark of its own. */}
+<Section id={id} class={`band band--${variant}`} labelledby={variant === 'hero' ? headingId : undefined}>
   {/* Definition only. Nothing here paints: the filter lives in <defs> and
       the SVG is 0×0 and out of flow, so it can never take layout. The
       band's ::after references it by id and does the painting. */}

@@ -75,6 +75,12 @@ const business = {
   ],
 };
 const graphs = [business, ...schema];
+
+// Analytics (brief §4): GA4 and Search Console. Both are gated on build-time
+// variables so a build with neither set ships no third-party script and no
+// verification tag. See .env.example and README.
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID as string | undefined;
+const siteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION as string | undefined;
 ---
 
 <html lang="en">
@@ -87,6 +93,7 @@ const graphs = [business, ...schema];
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonical} />
+		{siteVerification && <meta name="google-site-verification" content={siteVerification} />}
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
@@ -116,6 +123,7 @@ const graphs = [business, ...schema];
 		<link rel="preload" href="/fonts/geist-mono-variable.woff2" as="font" type="font/woff2" crossorigin />
 
 		{graphs.map((graph) => <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />)}
+		{gaId && <script is:inline src="/scripts/analytics.js" data-measurement-id={gaId} defer />}
 	</head>
 	<body>
 		<a class="skip" href="#main">Skip to content</a>

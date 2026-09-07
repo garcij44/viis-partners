@@ -1,0 +1,174 @@
+---
+/**
+ * /privacy — what the site collects, where it goes, and what we do not do
+ * with it. Plain and specific, in the site's voice: every statement here
+ * maps to a mechanism in this repo (AuditForm, api/, analytics.js).
+ *
+ * PROVISIONAL: drafted 2026-09-06 for Jadrin's review and possibly a
+ * lawyer's. Two facts are not in the repo and are flagged in the copy's
+ * comments: a retention period for audit requests, and a postal address.
+ */
+import '../styles/system.css';
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+
+const updated = 'September 6, 2026';
+---
+
+<Layout
+	title="Privacy | VIIS Partners"
+	description="What viispartners.com collects when you request an audit or visit the site, where it is stored, who sees it, and how to have it deleted."
+>
+	<SiteHeader />
+
+	<main id="main">
+		<Section labelledby="privacy-heading">
+			<Eyebrow class="kicker">Privacy</Eyebrow>
+			<h1 id="privacy-heading" class="headline">What this site collects, and what we do with it.</h1>
+			<p class="t-lead fg-2 measure sub">
+				Short version: the audit form collects five things you type, we store them in our own
+				account to run your audit and reply, analytics counts visits without identifying you, and
+				nothing is sold or shared with anyone.
+			</p>
+			<p class="t-mono fg-3 updated">Last updated {updated}</p>
+
+			<div class="prose measure">
+				<h2>The audit form</h2>
+				<p>
+					When you request a free audit, the form sends us your name, your business name, your
+					email address, your website address, and, if you add one, a one-line note. That is all
+					it asks for, and every field is capped in length.
+				</p>
+				<p>
+					Alongside those five fields we record the time of the request, a scrambled version of
+					your device's network address, and your browser's identifying string. The network
+					address is hashed before it is stored and the original is never kept; we use the hash
+					only to stop one source from flooding the form.
+				</p>
+				<p>
+					Two emails go out when a request is accepted: a confirmation to the address you gave,
+					and a notification to us. Both contain what you typed and nothing else.
+				</p>
+
+				<h2>Where it is stored</h2>
+				<p>
+					Requests are written to a table in a Microsoft Azure storage account that belongs to
+					VIIS. The emails are sent through Azure's email service from the same account. No
+					third-party form tool, mailing service, or marketing platform sits in that path.
+				</p>
+				<p>
+					The hosting platform, Microsoft Azure, keeps its own standard operational logs. Our own
+					application logs contain no personal information: hostnames and hash prefixes only.
+				</p>
+
+				<h2>Who sees it</h2>
+				<p>
+					One person: Jadrin Garcia, the principal of VIIS. Your request is used to run the audit,
+					write the report, and reply to you. It is not used for a newsletter, it is not added to
+					any list, and it is never sold, rented, or shared with another business.
+				</p>
+				<p>
+					We keep audit requests for as long as we need them to run the audit and follow up on
+					it. Ask and we delete yours.
+				</p>
+
+				<h2>Analytics</h2>
+				<p>
+					The site uses Google Analytics 4 to count visits and to record when an audit request is
+					accepted, so we know whether the site is doing its job. It is configured with Google
+					Signals and advertising personalization switched off, which means it does not build an
+					advertising profile of you and does not share your visit with Google's ad products. The
+					event that records an accepted request carries no form data. Google processes this
+					traffic under its own terms, and your network address is not stored by it.
+				</p>
+
+				<h2>Cookies</h2>
+				<p>
+					The site sets no cookies of its own. Google Analytics sets its own first-party cookies
+					to tell a returning visit from a new one. Blocking them in your browser does not affect
+					the site or the form.
+				</p>
+
+				<h2>What we do not do</h2>
+				<ul>
+					<li>We do not sell, rent, trade, or share your details with anyone.</li>
+					<li>We do not send marketing email. A request gets a confirmation and a reply, and that is all.</li>
+					<li>We do not embed social media, advertising pixels, chat widgets, or any third-party script other than Google Analytics.</li>
+					<li>We do not collect anything from you that the form does not show you.</li>
+				</ul>
+
+				<h2>Your choices</h2>
+				<p>
+					Email us and we will send you a copy of what we hold about you, correct it, or delete
+					it. There is no form for this and no waiting period: it is a reply from a person.
+				</p>
+
+				<h2>Contact</h2>
+				<p>VIIS, LLC (d/b/a VIIS Partners), San Antonio, Texas.</p>
+				<p><a href="mailto:jgarcia@viispartners.com">jgarcia@viispartners.com</a></p>
+			</div>
+		</Section>
+	</main>
+
+	<SiteFooter />
+</Layout>
+
+<style>
+	.kicker {
+		display: flex;
+	}
+
+	.headline {
+		margin-top: var(--sp-5);
+	}
+
+	.sub {
+		margin-top: var(--sp-5);
+	}
+
+	.updated {
+		margin-top: var(--sp-5);
+	}
+
+	.prose {
+		margin-top: var(--sp-8);
+	}
+
+	/* Sections within the policy: an h2 opens each, with a section's worth
+	   of breath above it but the prose rhythm below. */
+	.prose h2 {
+		margin-top: var(--sp-8);
+	}
+
+	.prose h2:first-child {
+		margin-top: 0;
+	}
+
+	.prose h2 + * {
+		margin-top: var(--sp-4);
+	}
+
+	.prose ul > li {
+		position: relative;
+		padding-left: var(--sp-5);
+	}
+
+	.prose ul > li + li {
+		margin-top: var(--sp-3);
+	}
+
+	/* The site's jade mark, on the item's first line. */
+	.prose ul > li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: calc((var(--text-body) * var(--lh-body) - 6px) / 2);
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+</style>

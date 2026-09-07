@@ -58,6 +58,18 @@ quietly. See [`api/local.settings.example.json`](./api/local.settings.example.js
 
 ---
 
+### Analytics variables
+
+Two optional build-time variables, read by `src/layouts/Layout.astro`:
+
+| Variable | Effect when set |
+|---|---|
+| `PUBLIC_GA_MEASUREMENT_ID` | Renders `/scripts/analytics.js` with the ID, which loads GA4's `gtag.js` after the page has loaded, reports page views, and sends a `generate_lead` event when an audit request is accepted (fetch path) or when `/thanks/` loads (no-JS path). No form data travels with the event. |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | Renders the `google-site-verification` meta tag for Search Console. **Not used: Search Console is verified by DNS record** (decided 2026-09-06). The variable stays available as a fallback; leave it unset. |
+
+Unset, the build ships no analytics script and no verification tag. Set them in the GitHub Actions build step's `env` (from repository variables), not in a committed `.env`. Mark `generate_lead` as a key event in the GA4 property so it reports as a conversion.
+
+
 ## Form architecture
 
 The audit form is the primary conversion point (brief §2.8). Three layers,
@@ -204,6 +216,15 @@ Do not add `'unsafe-inline'`. Prefer external same-origin files, as
 `audit.js` is, so the strict policy holds.
 
 ---
+
+The policy admits Google's analytics origins, exactly as Google documents for `gtag.js`:
+
+- `script-src https://*.googletagmanager.com` — the tag itself.
+- `img-src https://*.google-analytics.com https://*.googletagmanager.com` — the pixel fallback the tag uses when `fetch`/beacon is unavailable.
+- `connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com` — the collection endpoints, including the regional ones.
+
+`style-src` stays `'self'` with no `'unsafe-inline'`: the loader is an external same-origin script and there is no inline snippet, so nothing else was loosened.
+
 
 ## Third-party services
 

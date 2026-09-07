@@ -46,9 +46,10 @@ const rows: Row[] = [
   </p>
 
   {/* A scroll region is keyboard-reachable so the table can be scrolled
-      without a pointer at widths where it overflows; it is named by the
-      section headline. */}
-  <div class="table-scroll panel" role="region" aria-labelledby="comparison-heading" tabindex="0">
+      without a pointer at widths where it overflows. It carries its own
+      name: sharing the section's heading would make two landmarks with one
+      name (axe landmark-unique). */}
+  <div class="table-scroll panel" role="region" aria-label="Comparison table" tabindex="0">
     <table class="table">
       <thead>
         <tr>

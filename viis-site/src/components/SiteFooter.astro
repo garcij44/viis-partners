@@ -4,16 +4,20 @@
  * holds only the sign-off, on the new tokens, until one is designed.
  *
  * The sign-off renders the legal entity as VIIS, LLC (d/b/a VIIS Partners)
- * until the Texas assumed-name filing completes, and the contact email
- * (brief §4). Both are also stated in the ProfessionalService graph in
- * Layout.astro, and structured data should only claim what the page shows.
+ * until the Texas assumed-name filing completes, the privacy link, and the
+ * contact email (brief §4). No byline: the founder is named in the
+ * ProfessionalService graph (Layout.astro) and on the privacy page, and
+ * the audit section carries the site's one first-person line.
  */
 ---
 
 <footer class="site-footer">
   <div class="container inner">
-    <p class="t-mono fg-2">VIIS, LLC (d/b/a VIIS Partners) · Jadrin Garcia, Principal · San Antonio, Texas</p>
-    <p class="t-mono fg-2"><a class="link" href="mailto:jgarcia@viispartners.com">jgarcia@viispartners.com</a></p>
+    <p class="t-mono fg-2">VIIS, LLC (d/b/a VIIS Partners)</p>
+    <p class="t-mono fg-2 links">
+      <a class="link" href="/privacy/">Privacy</a>
+      <a class="link" href="mailto:jgarcia@viispartners.com">jgarcia@viispartners.com</a>
+    </p>
   </div>
 </footer>
 
@@ -27,6 +31,12 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    gap: var(--sp-2) var(--sp-5);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--sp-2) var(--sp-5);
   }
 </style>

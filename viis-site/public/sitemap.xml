@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Static on purpose: five indexable pages. /thanks/ is noindex and /dev/
+<!-- Static on purpose: six indexable pages. /thanks/ is noindex and /dev/
      is not built for production, so neither belongs here. Update lastmod
      on content changes. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -21,6 +21,10 @@
   </url>
   <url>
     <loc>https://viispartners.com/automation/</loc>
+    <lastmod>2026-09-06</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/privacy/</loc>
     <lastmod>2026-09-06</lastmod>
   </url>
 </urlset>

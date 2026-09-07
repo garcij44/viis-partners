@@ -111,7 +111,7 @@ Green gradient field (`--accent-field-a` → `--accent-field-b`), fading to flat
 Directly under the hero, on flat ink. Mono label, one-line heading, two-line description. Icons here only.
 
 1. **Build it right** — A fast, accessible site you own outright. No vendor lock-in, no rented platform.
-2. **Fix the foundation** — DNS, email authentication, Google Workspace, licences, security. The parts nobody audited.
+2. **Fix the foundation** — DNS, email authentication, Google Workspace, licenses, security. The parts nobody audited.
 3. **Get found** — Local search, Google Business Profile, technical SEO, and content that ranks for what people actually type.
 4. **Automate the repetitive** — Lead capture, follow-up, reporting, and the workflows that eat your week.
 
@@ -121,9 +121,9 @@ This is Canopy's "The new search" slot. It teaches the prospect something that m
 
 - **Eyebrow:** `WHAT WE USUALLY FIND`
 - **H2:** The website is rarely the problem.
-- **Body:** Nearly every site we're asked to fix is sitting on something broken. Email authentication that was never set up, so invoices land in spam. DNS records pointing at a vendor the business left two years ago. A Google Workspace running on defaults, with no security, no shared drives, and licences nobody uses. The site gets blamed because the site is the part you can see.
+- **Body:** Nearly every site we're asked to fix is sitting on something broken. Email authentication that was never set up, so invoices land in spam. DNS records pointing at a vendor the business left two years ago. A Google Workspace running on defaults, with no security, no shared drives, and licenses nobody uses. The site gets blamed because the site is the part you can see.
 - **Closing line:** We look underneath first. That's usually where the money is going.
-- **Visual:** a short list of real finding types in Geist Mono — `SPF/DKIM/DMARC missing` · `Orphaned DNS records` · `Workspace on defaults` · `No conversion tracking` · `Unclaimed Business Profile` · `Paying for licences nobody uses`. Restrained, no icons, no colour except accent bullets.
+- **Visual:** a short list of real finding types in Geist Mono — `SPF/DKIM/DMARC missing` · `Orphaned DNS records` · `Workspace on defaults` · `No conversion tracking` · `Unclaimed Business Profile` · `Paying for licenses nobody uses`. Restrained, no icons, no colour except accent bullets.
 
 ### 4 — The method (four service lines)
 
@@ -134,7 +134,7 @@ Present as **one path, not four doors.** Vertical sequence with a connecting rul
 
 **Websites** — Design, build, and launch on Astro, fast and accessible, deployed to infrastructure you own. Migration off rented platforms. You keep the code, the domain, and the hosting account. A build is a project, quoted after the audit.
 
-**Foundations** — Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, licence audit, backups, access control. The layer every website depends on and almost nobody maintains.
+**Foundations** — Domain, DNS, email authentication, Google Workspace and Microsoft 365, security settings, license audit, backups, access control. The layer every website depends on and almost nobody maintains.
 
 **Search** — Technical SEO, local search, Google Business Profile, analytics and conversion tracking, and ongoing content. Client funds their own campaigns and ad spend directly; VIIS runs the work.
 
@@ -194,7 +194,7 @@ Its own section, styled like Canopy's Toolkit — this is the lead magnet and it
 - **Subhead:** A 20-point audit of your website and the systems underneath it. We run it, write it up, and send you the report. No obligation, and you keep the report whether or not you hire us.
 - **What's checked** (four groups, mono labels):
   - **Site** — speed, mobile, accessibility, broken links, SSL, indexability
-  - **Foundation** — DNS records, SPF/DKIM/DMARC, domain ownership, Workspace configuration, licence waste
+  - **Foundation** — DNS records, SPF/DKIM/DMARC, domain ownership, Workspace configuration, license waste
   - **Search** — Google Business Profile, local visibility, metadata, schema, analytics and conversion tracking
   - **Risk** — backups, admin access, MFA, orphaned accounts, vendor lock-in
 - **Form fields:** name, business name, email, website URL, *"what's bothering you about it?"* (optional, one line). Nothing else — every extra field costs conversions.

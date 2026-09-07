@@ -4,8 +4,7 @@
  * PROVISIONAL pending Jadrin's review. Voice per brief §5: plain, concrete,
  * no banned words, no performance claims, no invented results, no client
  * named. Foundations carries the reframe's argument and extends it rather
- * than restating it. Spelling is American except "licence", which the
- * brief's own copy uses.
+ * than restating it. American spelling throughout.
  */
 import type { FaqItem } from './faq';
 
@@ -98,7 +97,7 @@ export const services: Service[] = [
     title: 'DNS, email authentication, and Workspace setup | VIIS Partners',
     description:
       'The layer every website depends on: domain, DNS, SPF, DKIM and DMARC, Google Workspace and Microsoft 365, and backups. Audited and fixed, in San Antonio.',
-    heading: 'The DNS, email, and Workspace your website stands on.',
+    heading: 'The DNS, email, and Workspace under your website.',
     sub: 'Domain, DNS, email authentication, Google Workspace and Microsoft 365, backups, and access control. Almost nobody maintains it, and it is where most of the problems we find actually live.',
     problem: {
       eyebrow: 'Underneath the website',
@@ -110,7 +109,7 @@ export const services: Service[] = [
         'DNS records nobody can explain',
         'Mail routed through a dead provider',
         'Workspace admin on a personal account',
-        'Licences for people who left',
+        'Licenses for people who left',
         'A backup nobody has restored',
       ],
     },
@@ -118,21 +117,21 @@ export const services: Service[] = [
     included: [
       { name: 'Domain and DNS', text: 'Registrar in your name, records cleaned up, nothing pointing at a vendor you left.' },
       { name: 'Email authentication', text: 'SPF, DKIM, and DMARC set up and monitored, so mail from your domain arrives.' },
-      { name: 'Google Workspace and Microsoft 365', text: 'Security settings, shared drives, groups, and a licence audit against who actually works there.' },
+      { name: 'Google Workspace and Microsoft 365', text: 'Security settings, shared drives, groups, and a license audit against who actually works there.' },
       { name: 'Backups', text: 'Site, mail, and files backed up on a schedule, with a restore that has been tested.' },
       { name: 'Access control', text: 'Who has admin on what, written down, with MFA on every account that matters and former vendors removed.' },
       { name: 'Monitoring', text: 'DNS and SSL watched on every plan. Email authentication and automation health checked on Care and above.', link: plans },
     ],
     practiceHeading: 'How the foundation work runs.',
     practice: [
-      { title: 'Map what exists', text: 'Every domain, record, account, and licence, and who holds the keys to each. Most businesses have never seen this list.' },
-      { title: 'Fix in order of cost', text: 'Email that is not arriving comes before a licence that is wasting money, which comes before tidying. You see the order and the reason.' },
+      { title: 'Map what exists', text: 'Every domain, record, account, and license, and who holds the keys to each. Most businesses have never seen this list.' },
+      { title: 'Fix in order of cost', text: 'Email that is not arriving comes before a license that is wasting money, which comes before tidying. You see the order and the reason.' },
       { title: 'Write it down and watch it', text: 'A record of where everything lives and who can change it, then monitoring so it stays fixed.' },
     ],
     faq: [
       { id: 'spam', question: 'Why is my email going to spam?', answer: 'Usually because your domain has no SPF, DKIM, or DMARC records, or they were set up for a mail service you no longer use. Receiving servers cannot tell your mail from a forgery, so they file it as one. It is a fix, not a rebuild, once someone looks.' },
       { id: 'it-person', question: 'We already have an IT person. Why does this matter?', answer: "It often does not overlap. IT keeps laptops and networks running; this is the domain, the mail, and the accounts a website depends on, and it is usually nobody's job. We work alongside whoever you have." },
-      { id: 'tenants', question: 'What do you do inside Google Workspace and Microsoft 365?', answer: 'Setup, security settings, shared drives, licence audits, backups, and access control, in either one or both. Ongoing management is part of the Care plan and above.' },
+      { id: 'tenants', question: 'What do you do inside Google Workspace and Microsoft 365?', answer: 'Setup, security settings, shared drives, license audits, backups, and access control, in either one or both. Ongoing management is part of the Care plan and above.' },
     ],
   },
   {

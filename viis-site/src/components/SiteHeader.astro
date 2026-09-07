@@ -8,7 +8,8 @@
  * Nav is Geist (brief §1 typography: body face for nav), the current page
  * in cream with the jade rule the site uses for links. Under 768 the four
  * links move to a second row so the logotype and CTA keep their own; the
- * row's height is part of --header-h.
+ * row's height is part of --header-h; under 360 that row wraps to two
+ * lines so all four links stay reachable without any scrolling.
  *
  * The CTA label is shorter than the hero's. Both references shorten the nav
  * button ("Start free", "Get Started"), and the full label does not fit
@@ -149,7 +150,7 @@ const auditHref = hasAudit ? '#audit' : '/#audit';
     }
 
     .links {
-      gap: var(--sp-3);
+      gap: var(--sp-2);
       padding: var(--sp-2);
       white-space: nowrap;
     }
@@ -158,6 +159,25 @@ const auditHref = hasAudit ? '#audit' : '/#audit';
       font-size: var(--text-small);
       line-height: var(--lh-small);
       padding-block: var(--sp-1);
+    }
+  }
+
+  /* Under 360 the four links do not fit one line even at --text-small, so
+     the row wraps to two lines and grows to --sp-8; --header-h steps with
+     it (components.css). Every link stays in view, nothing scrolls. */
+  @media (max-width: 359px) {
+    .inner {
+      grid-template-rows: var(--sp-9) var(--sp-8);
+    }
+
+    .nav {
+      overflow: visible;
+    }
+
+    .links {
+      flex-wrap: wrap;
+      white-space: normal;
+      row-gap: 0;
     }
   }
 </style>

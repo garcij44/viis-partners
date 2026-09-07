@@ -138,6 +138,9 @@ if (form) {
       const result = await deliver();
       if (result.kind === 'ok') {
         showSuccess();
+        // Analytics listens for this (public/scripts/analytics.js). No detail:
+        // nothing typed into the form travels with the event.
+        document.dispatchEvent(new CustomEvent('audit:submitted'));
         return;
       }
       setBusy(false);
