@@ -9,3 +9,9 @@
 
 # macOS
 .DS_Store
+
+# Azure Functions local settings — real connection strings live here.
+viis-site/api/local.settings.json
+
+# Local operating docs — never committed
+/.local/
