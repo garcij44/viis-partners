@@ -7,6 +7,7 @@
  * than restating it. American spelling throughout.
  */
 import type { FaqItem } from './faq';
+import { AUDIT_POINT_COUNT } from './audit';
 
 export interface Step {
   title: string;
@@ -52,8 +53,7 @@ export const services: Service[] = [
     slug: 'websites',
     label: '01 · Websites',
     title: 'Website design and build in San Antonio | VIIS Partners',
-    description:
-      'Fast, accessible websites built on Astro and deployed to hosting in your name. Design, build, migration off rented platforms, and launch. Free 15-point audit.',
+    description: `Fast, accessible websites built on Astro and deployed to hosting in your name. Design, build, migration off rented platforms, and launch. Free ${AUDIT_POINT_COUNT}-point audit.`,
     heading: 'A website you own outright.',
     sub: 'Design, build, and launch on Astro, deployed to infrastructure in your name. Migration off rented platforms. You keep the code, the domain, and the hosting account, and someone stays on to keep it working.',
     problem: {

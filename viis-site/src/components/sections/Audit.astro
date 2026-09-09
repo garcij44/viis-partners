@@ -9,6 +9,7 @@ import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
 import Card from '../Card.astro';
 import AuditForm from '../AuditForm.astro';
+import { AUDIT_POINT_COUNT } from '../../data/audit';
 
 interface Group {
   label: string;
@@ -41,9 +42,9 @@ const paidGroups: Group[] = [
   <Eyebrow class="kicker">Free</Eyebrow>
   <h2 id="audit-heading" class="headline">A free audit of your site and the systems under it</h2>
   <p class="t-lead fg-2 measure sub">
-    A 15-point audit of your website and domain — from nothing but your domain and an email
-    address. We run it, write it up, and send you the report. No obligation, and you keep the
-    report whether or not you hire us.
+    A {AUDIT_POINT_COUNT}-point audit of your website and domain — from nothing but your domain
+    and an email address. We run it, write it up, and send you the report. No obligation, and you
+    keep the report whether or not you hire us.
   </p>
 
   {/* The form is first in the DOM (it is the point) and sits right on desktop

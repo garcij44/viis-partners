@@ -8,6 +8,13 @@ import type { Message } from './mail';
 
 const SIGN_OFF = ['Jadrin Garcia', 'VIIS, LLC (d/b/a VIIS Partners)', 'jgarcia@viispartners.com'];
 
+// Canonical value: src/data/audit.ts's AUDIT_POINT_COUNT. Not imported —
+// viis-site/api deploys as an isolated package (Azure Static Web Apps
+// builds api_location on its own; nothing outside it reaches the deployed
+// function) — so this literal must be updated by hand whenever the count
+// in src/data/audit.ts changes.
+const AUDIT_POINT_COUNT = 15;
+
 export const escapeHtml = (value: string): string =>
   value
     .replace(/&/g, '&amp;')
@@ -34,7 +41,7 @@ export function ackMessage(lead: LeadRecord, replyTo: string): Message {
   const lines = [
     `Hi ${lead.name},`,
     `Your request for a free audit of ${hostOf(lead.website)} is in.`,
-    'Here is what happens next. We run the 15-point check across your site, the foundation under it (DNS, domain, and email authentication), search, and risk. Then we write it up and send you the report within three business days. No obligation, and the report is yours whether or not we work together.',
+    `Here is what happens next. We run the ${AUDIT_POINT_COUNT}-point check across your site, the foundation under it (DNS, domain, and email authentication), search, and risk. Then we write it up and send you the report within three business days. No obligation, and the report is yours whether or not we work together.`,
     'If anything is urgent before then, reply to this email.',
     SIGN_OFF.join('\n'),
   ];

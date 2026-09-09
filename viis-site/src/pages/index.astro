@@ -22,6 +22,7 @@ import Packages from '../components/sections/Packages.astro';
 import Audit from '../components/sections/Audit.astro';
 import Faq from '../components/sections/Faq.astro';
 import { faqSchema } from '../data/faq';
+import { AUDIT_POINT_COUNT } from '../data/audit';
 import SiteFooter from '../components/SiteFooter.astro';
 ---
 
@@ -31,7 +32,7 @@ import SiteFooter from '../components/SiteFooter.astro';
     Both are provisional copy until Jadrin confirms them. */}
 <Layout
 	title="Websites and the systems under them | VIIS Partners, San Antonio"
-	description="Websites you own, and the DNS, email, Google Workspace, search, and automation underneath them. Technology consulting in San Antonio. Free 15-point audit."
+	description={`Websites you own, and the DNS, email, Google Workspace, search, and automation underneath them. Technology consulting in San Antonio. Free ${AUDIT_POINT_COUNT}-point audit.`}
 	schema={[faqSchema()]}
 >
 	<SiteHeader />
