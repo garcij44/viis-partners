@@ -34,7 +34,7 @@ export function ackMessage(lead: LeadRecord, replyTo: string): Message {
   const lines = [
     `Hi ${lead.name},`,
     `Your request for a free audit of ${hostOf(lead.website)} is in.`,
-    'Here is what happens next. We run the 20-point check across your site, the foundation under it (DNS, email authentication, Workspace), search, and risk. Then we write it up and send you the report within three business days. No obligation, and the report is yours whether or not we work together.',
+    'Here is what happens next. We run the 15-point check across your site, the foundation under it (DNS, domain, and email authentication), search, and risk. Then we write it up and send you the report within three business days. No obligation, and the report is yours whether or not we work together.',
     'If anything is urgent before then, reply to this email.',
     SIGN_OFF.join('\n'),
   ];

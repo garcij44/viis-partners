@@ -34,7 +34,7 @@ export const faq: FaqItem[] = [
     id: 'existing-site',
     question: 'What if I already have a website?',
     answer:
-      'Start with the audit. Often the site is fine and the problem is underneath it: email landing in spam, DNS records pointing at an old vendor, a Workspace nobody configured. If the site does need replacing, we rebuild it and move you off any rented platform, and you keep the domain and the content.',
+      'Start with the audit. The site can be fine, with the problem sitting underneath it instead: email landing in spam, or DNS records pointing at an old vendor. If the site does need replacing, we rebuild it and move you off any rented platform, and you keep the domain and the content.',
   },
   {
     id: 'outside-san-antonio',

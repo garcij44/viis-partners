@@ -53,7 +53,7 @@ export const services: Service[] = [
     label: '01 · Websites',
     title: 'Website design and build in San Antonio | VIIS Partners',
     description:
-      'Fast, accessible websites built on Astro and deployed to hosting in your name. Design, build, migration off rented platforms, and launch. Free 20-point audit.',
+      'Fast, accessible websites built on Astro and deployed to hosting in your name. Design, build, migration off rented platforms, and launch. Free 15-point audit.',
     heading: 'A website you own outright.',
     sub: 'Design, build, and launch on Astro, deployed to infrastructure in your name. Migration off rented platforms. You keep the code, the domain, and the hosting account, and someone stays on to keep it working.',
     problem: {

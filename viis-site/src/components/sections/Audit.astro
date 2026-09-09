@@ -15,11 +15,25 @@ interface Group {
   items: string[];
 }
 
-const groups: Group[] = [
+// Free vs. paid split (2026-09): the free tier only promises what is
+// verifiable from outside the client's systems. DKIM is dropped from the
+// free promise (absence can't be proven from outside — only that a
+// selector wasn't found; the audit still probes for it). Local visibility
+// moves to paid (rank grids cost per location). Analytics splits: tag
+// presence is externally visible, whether tags fire is not. External
+// exposure (headers, version disclosure, directory listing) is new to
+// free. See docs/VIIS-Site-Brief.md §8 for the full rationale.
+const freeGroups: Group[] = [
   { label: 'Site', items: ['speed', 'mobile', 'accessibility', 'broken links', 'SSL', 'indexability'] },
-  { label: 'Foundation', items: ['DNS records', 'SPF/DKIM/DMARC', 'domain ownership', 'Workspace configuration', 'license waste'] },
-  { label: 'Search', items: ['Google Business Profile', 'local visibility', 'metadata', 'schema', 'analytics and conversion tracking'] },
-  { label: 'Risk', items: ['backups', 'admin access', 'MFA', 'orphaned accounts', 'vendor lock-in'] },
+  { label: 'Foundation', items: ['DNS records', 'SPF and DMARC', 'domain ownership'] },
+  { label: 'Search', items: ['Google Business Profile', 'metadata', 'schema', 'analytics tags'] },
+  { label: 'Risk', items: ['vendor lock-in', 'external exposure'] },
+];
+
+const paidGroups: Group[] = [
+  { label: 'Foundation', items: ['Workspace configuration', 'license waste'] },
+  { label: 'Search', items: ['local ranking', 'Search Console and analytics data', 'conversion tracking verification'] },
+  { label: 'Risk', items: ['backups', 'admin access', 'MFA', 'orphaned accounts'] },
 ];
 ---
 
@@ -27,8 +41,9 @@ const groups: Group[] = [
   <Eyebrow class="kicker">Free</Eyebrow>
   <h2 id="audit-heading" class="headline">A free audit of your site and the systems under it</h2>
   <p class="t-lead fg-2 measure sub">
-    A 20-point audit of your website and the systems underneath it. We run it, write it up, and
-    send you the report. No obligation, and you keep the report whether or not you hire us.
+    A 15-point audit of your website and domain — from nothing but your domain and an email
+    address. We run it, write it up, and send you the report. No obligation, and you keep the
+    report whether or not you hire us.
   </p>
 
   {/* The form is first in the DOM (it is the point) and sits right on desktop
@@ -39,10 +54,11 @@ const groups: Group[] = [
     </Card>
 
     <Card class="checks">
-      <h3>What's checked</h3>
+      <h3>What's checked — free</h3>
+      <p class="tier-note t-small fg-3">All we need is your domain and your email address.</p>
       <dl class="groups">
         {
-          groups.map((group) => (
+          freeGroups.map((group) => (
             <div class="group">
               <dt class="t-label fg-2">{group.label}</dt>
               <dd>
@@ -54,6 +70,30 @@ const groups: Group[] = [
           ))
         }
       </dl>
+
+      <h3 class="tier-heading">What needs access — Systems Audit, $1,450</h3>
+      <p class="tier-note t-small fg-3">
+        These can't be seen from outside. They require read access you grant us.
+      </p>
+      <dl class="groups">
+        {
+          paidGroups.map((group) => (
+            <div class="group">
+              <dt class="t-label fg-2">{group.label}</dt>
+              <dd>
+                <ul class="items t-mono">
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="closing t-small fg-3">
+        Neither is a security audit. The free report observes what's publicly visible; the Systems
+        Audit reviews your configuration.
+      </p>
     </Card>
   </div>
 </Section>
@@ -83,10 +123,24 @@ const groups: Group[] = [
     order: 1;
   }
 
+  .tier-heading {
+    margin-top: var(--sp-7);
+  }
+
+  .tier-note {
+    margin-top: var(--sp-2);
+  }
+
   .groups {
     display: flex;
     flex-direction: column;
     margin-top: var(--sp-5);
+  }
+
+  .closing {
+    margin-top: var(--sp-6);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--hairline);
   }
 
   .group {
