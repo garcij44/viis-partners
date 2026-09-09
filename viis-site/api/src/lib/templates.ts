@@ -42,6 +42,7 @@ export function ackMessage(lead: LeadRecord, replyTo: string): Message {
     `Hi ${lead.name},`,
     `Your request for a free audit of ${hostOf(lead.website)} is in.`,
     `Here is what happens next. We run the ${AUDIT_POINT_COUNT}-point check across your site, the foundation under it (DNS, domain, and email authentication), search, and risk. Then we write it up and send you the report within three business days. No obligation, and the report is yours whether or not we work together.`,
+    'We do all of this from the outside, using nothing but your domain — we never need access to your systems. A few things can only be checked from the inside, and the report tells you exactly which ones.',
     'If anything is urgent before then, reply to this email.',
     SIGN_OFF.join('\n'),
   ];
