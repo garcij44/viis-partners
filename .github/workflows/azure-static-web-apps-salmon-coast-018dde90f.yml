@@ -51,6 +51,11 @@ jobs:
           # Public by design (it is rendered into the HTML) but kept in GitHub
           # Secrets so it can be rotated without a commit.
           PUBLIC_FORM_ACCESS_KEY: ${{ secrets.PUBLIC_FORM_ACCESS_KEY }}
+          # WHY a literal, not a GitHub Secret: the GA4 measurement ID is not
+          # sensitive — it is visible in the page source of every site that
+          # uses it. Treating it as a secret would only make it harder to see
+          # which property a build reports to.
+          PUBLIC_GA_MEASUREMENT_ID: G-MHQNGNC9YY
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_COAST_018DDE90F }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
