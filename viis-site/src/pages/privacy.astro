@@ -2,11 +2,15 @@
 /**
  * /privacy — what the site collects, where it goes, and what we do not do
  * with it. Plain and specific, in the site's voice: every statement here
- * maps to a mechanism in this repo (AuditForm, api/, analytics.js).
+ * maps to a mechanism in this repo (AuditForm, api/, analytics.js) or to a
+ * setting on the GA4 property, and nothing here is a template sentence.
  *
- * PROVISIONAL: drafted 2026-09-06 for Jadrin's review and possibly a
- * lawyer's. Two facts are not in the repo and are flagged in the copy's
- * comments: a retention period for audit requests, and a postal address.
+ * Rewritten 2026-09-12 to match the GA4 property as configured (14-month
+ * event retention, Google Signals off, user-provided data collection off,
+ * ads personalization off, granular location and device data on) so the
+ * property's user-data acknowledgement can be signed against it. May still
+ * go to a lawyer. Two facts are not in the repo and are stated as such in
+ * the copy: a retention period for audit requests, and a postal address.
  */
 import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
@@ -15,7 +19,8 @@ import SiteFooter from '../components/SiteFooter.astro';
 import Section from '../components/Section.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 
-const updated = 'September 6, 2026';
+const updated = 'September 12, 2026';
+const gaId = 'G-MHQNGNC9YY';
 ---
 
 <Layout
@@ -29,9 +34,9 @@ const updated = 'September 6, 2026';
 			<Eyebrow class="kicker">Privacy</Eyebrow>
 			<h1 id="privacy-heading" class="headline">What this site collects, and what we do with it.</h1>
 			<p class="t-lead fg-2 measure sub">
-				Short version: the audit form collects five things you type, we store them in our own
-				account to run your audit and reply, analytics counts visits without identifying you, and
-				nothing is sold or shared with anyone.
+				Short version: the audit form collects five things you type and we store them in our own
+				Azure account to run your audit and reply; Google Analytics counts visits and records when a
+				request is accepted, without advertising features; nothing is sold or shared with anyone.
 			</p>
 			<p class="t-mono fg-3 updated">Last updated {updated}</p>
 
@@ -40,13 +45,20 @@ const updated = 'September 6, 2026';
 				<p>
 					When you request a free audit, the form sends us your name, your business name, your
 					email address, your website address, and, if you add one, a one-line note. That is all
-					it asks for, and every field is capped in length.
+					it asks for. Every field has a length cap, and line breaks and control characters are
+					stripped before anything is stored.
 				</p>
 				<p>
-					Alongside those five fields we record the time of the request, a scrambled version of
-					your device's network address, and your browser's identifying string. The network
-					address is hashed before it is stored and the original is never kept; we use the hash
-					only to stop one source from flooding the form.
+					With those fields we record the time of the request, your browser's identifying string,
+					and a hash of your network address. The address itself is never stored: it is run through
+					SHA-256 and only the first half of the result is kept, which cannot be turned back into
+					the address. The hash is stored with your request and counted for one hour so that a
+					single source cannot flood the form; after five requests in an hour the form refuses
+					until the hour is up.
+				</p>
+				<p>
+					The form carries a hidden checkbox that a person never sees. Automated submissions that
+					tick it are discarded without being stored.
 				</p>
 				<p>
 					Two emails go out when a request is accepted: a confirmation to the address you gave,
@@ -56,12 +68,14 @@ const updated = 'September 6, 2026';
 				<h2>Where it is stored</h2>
 				<p>
 					Requests are written to a table in a Microsoft Azure storage account that belongs to
-					VIIS. The emails are sent through Azure's email service from the same account. No
-					third-party form tool, mailing service, or marketing platform sits in that path.
+					VIIS, in Azure's East US 2 region. The two emails are sent through Azure Communication
+					Services from the same account. No third-party form tool, mailing service, or marketing
+					platform sits in that path.
 				</p>
 				<p>
-					The hosting platform, Microsoft Azure, keeps its own standard operational logs. Our own
-					application logs contain no personal information: hostnames and hash prefixes only.
+					The hosting platform, Azure Static Web Apps, keeps its own standard operational logs. Our
+					own application logs record the hostname you submitted and a prefix of the hash, never a
+					name or an email address.
 				</p>
 
 				<h2>Who sees it</h2>
@@ -77,19 +91,35 @@ const updated = 'September 6, 2026';
 
 				<h2>Analytics</h2>
 				<p>
-					The site uses Google Analytics 4 to count visits and to record when an audit request is
-					accepted, so we know whether the site is doing its job. It is configured with Google
-					Signals and advertising personalization switched off, which means it does not build an
-					advertising profile of you and does not share your visit with Google's ad products. The
-					event that records an accepted request carries no form data. Google processes this
-					traffic under its own terms, and your network address is not stored by it.
+					The site uses Google Analytics 4, property <span class="t-mono">{gaId}</span>, to count
+					visits and to record when an audit request is accepted, so we know whether the site is
+					doing its job. On each page it loads it sends Google the page address, the page you came
+					from, the time, your browser and operating system, your screen size, and an approximate
+					location derived from your network address, down to city level. Google does not log or
+					store the address itself.
+				</p>
+				<p>
+					The property is configured so that it does not build an advertising profile of you and
+					does not connect your visit to Google's ad products: Google Signals is off, so no
+					cross-device tracking and no demographic or interest data; ads personalization is off;
+					and user-provided data collection is off, so nothing you type on this site, including on
+					the audit form, is sent to Google. The one event beyond page views, sent when a request
+					is accepted, carries no form data.
+				</p>
+				<p>
+					Google keeps the event-level data for fourteen months, then deletes it; aggregated
+					reports remain. Google processes this traffic on its own servers under its own terms,
+					which may place it outside the United States.
 				</p>
 
 				<h2>Cookies</h2>
 				<p>
-					The site sets no cookies of its own. Google Analytics sets its own first-party cookies
-					to tell a returning visit from a new one. Blocking them in your browser does not affect
-					the site or the form.
+					The site sets no cookies of its own. Google Analytics sets two first-party cookies,
+					<span class="t-mono">_ga</span> and <span class="t-mono">_ga_MHQNGNC9YY</span>, each
+					lasting up to two years, to tell a returning visit from a new one. They are set when a
+					page loads; there is no consent banner. Blocking or deleting them in your browser does
+					not affect the site or the form, and with scripts disabled the analytics never loads at
+					all.
 				</p>
 
 				<h2>What we do not do</h2>
@@ -103,7 +133,9 @@ const updated = 'September 6, 2026';
 				<h2>Your choices</h2>
 				<p>
 					Email us and we will send you a copy of what we hold about you, correct it, or delete
-					it. There is no form for this and no waiting period: it is a reply from a person.
+					it. There is no form for this and no waiting period: it is a reply from a person. For
+					analytics, block the two cookies above or use Google's opt-out browser add-on; nothing on
+					the site depends on them.
 				</p>
 
 				<h2>Contact</h2>
