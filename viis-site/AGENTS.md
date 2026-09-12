@@ -10,7 +10,7 @@ styles, layout, components, or copy.
   radius, and duration on the site comes from this file.
 
 **Where the brief and `tokens.css` disagree, `tokens.css` wins.** It reflects the
-contrast fixes made after the brief was written: `--accent-fill #2A7255` for any filled
+contrast fixes made after the brief was written: `--accent-fill #2E7453` for any filled
 surface that carries text (cream on the brief's `#2F7F5E` is 3.94:1 and fails AA), and
 `--cream-faint #8A8780` (the brief's `#6E6B65` fails as text). The `WHY:` comments in
 `tokens.css` record each deviation and the ratio behind it.
