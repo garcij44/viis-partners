@@ -11,9 +11,12 @@
  * tear is an SVG pattern and the leaders a dotted border: brief §1 allows
  * no gradient outside the hero field, so neither is drawn with one.
  *
- * No real report exists yet (brief §6, blocking dependency), so the receipt
- * is the report's frame with every value left empty and a visible
- * placeholder notice. Nothing in it is a finding, a severity, or a result.
+ * The receipt is report 001 (src/data/report.ts): the cover facts, what
+ * each area produced, the three findings (severity, headline, and what
+ * each one costs, as the brief requires), the tally, and the link to the
+ * PDF itself. Nothing on it is summarised
+ * or paraphrased; every line is read off the report. The brief's blocking
+ * dependency (§6) closed when this report was published, 2026-09-12.
  *
  * Beneath the report: two observations, then one outcome. Two unrelated
  * San Antonio businesses were each paying a monthly fee to a website
@@ -30,9 +33,14 @@
 import Section from '../Section.astro';
 import Eyebrow from '../Eyebrow.astro';
 import Card from '../Card.astro';
+import { SAMPLE_REPORT, SAMPLE_REPORT_FILE } from '../../data/report';
 
-const cover = ['Prepared for', 'Website', 'Date'];
-const areas = ['Site', 'Foundation', 'Search', 'Risk'];
+const cover = [
+  { key: 'Prepared for', value: SAMPLE_REPORT.business },
+  { key: 'Website', value: SAMPLE_REPORT.website },
+  { key: 'Date', value: SAMPLE_REPORT.date },
+];
+const tally = `${SAMPLE_REPORT.checks} checks · ${SAMPLE_REPORT.findingCount} findings · ${SAMPLE_REPORT.passed} passed`;
 ---
 
 <Section id="proof" labelledby="proof-heading">
@@ -49,54 +57,70 @@ const areas = ['Site', 'Foundation', 'Search', 'Risk'];
     <Card class="report">
       <div class="report-head">
         <p class="t-label fg-2">Audit report</p>
-        <p class="t-mono fg-3">
-          No. <span aria-hidden="true">—</span><span class="sr-only">pending</span>
-        </p>
+        <p class="t-mono fg-3">No. {SAMPLE_REPORT.number}</p>
       </div>
 
       <dl class="rows t-mono">
         {
-          cover.map((key) => (
+          cover.map(({ key, value }) => (
             <div class="row">
               <dt>
                 <span>{key}</span>
                 <span class="leader" aria-hidden="true" />
               </dt>
-              <dd>
-                <span aria-hidden="true">—</span>
-                <span class="sr-only">pending</span>
-              </dd>
+              <dd>{value}</dd>
             </div>
           ))
         }
       </dl>
 
+      <p class="relationship t-mono fg-2">{SAMPLE_REPORT.relationship}</p>
+
       <div role="group" aria-labelledby="proof-areas">
         <p id="proof-areas" class="t-label fg-3 group-label">Findings by area</p>
         <dl class="rows t-mono">
           {
-            areas.map((key) => (
+            SAMPLE_REPORT.areas.map(({ label, value }) => (
               <div class="row">
                 <dt>
-                  <span>{key}</span>
+                  <span>{label}</span>
                   <span class="leader" aria-hidden="true" />
                 </dt>
-                <dd>
-                  <span aria-hidden="true">—</span>
-                  <span class="sr-only">pending</span>
-                </dd>
+                <dd>{value}</dd>
               </div>
             ))
           }
         </dl>
       </div>
 
-      {/* The same dashed frame as the hero's artifact placeholder, so the
-          two empty slots read as the same missing asset. */}
-      <div class="notice t-mono fg-3">
-        <p>Placeholder · audit report · not yet produced</p>
-        <p>Findings, severity, and cost go here once a report exists.</p>
+      {/* The findings themselves: severity, the headline, and the cost, each
+          as the report words it, in the report's order (most serious first).
+          WHY role="list": base.css strips list markers site-wide, and WebKit
+          drops the list role with them; the tally says "3 findings", so the
+          count has to survive for a screen reader too. */}
+      <div role="group" aria-labelledby="proof-findings">
+        <p id="proof-findings" class="t-label fg-3 group-label">Findings</p>
+        <ol class="findings t-mono" role="list">
+          {
+            SAMPLE_REPORT.findings.map(({ severity, title, cost }) => (
+              <li class="finding">
+                <span class="severity">{severity}</span>
+                <span class="finding-body">
+                  <span class="finding-title">{title}</span>
+                  <span class="fg-2">{cost}</span>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
       </div>
+
+      <p class="tally t-mono fg-3">{tally}</p>
+
+      <p class="file t-mono">
+        <a class="link" href={SAMPLE_REPORT.href}>Read the full report</a>
+        <span class="fg-3">{SAMPLE_REPORT_FILE}</span>
+      </p>
 
       {/* The torn edge: one row of teeth, each --sp-3 wide and 6px deep (the
           site's mark size), filled in the card's surface with the card's
@@ -246,7 +270,13 @@ const areas = ['Site', 'Foundation', 'Search', 'Risk'];
     flex: 1;
     min-width: var(--sp-4);
     height: 1px;
-    border-bottom: 1px dotted var(--cream-faint);
+    border-bottom: 1px dotted var(--fg-3);
+  }
+
+  /* Who Athlon is to VIIS, straight after the cover rows and before any
+     finding, so the receipt and the outcome beside it read as two clients. */
+  .relationship {
+    margin-top: var(--sp-4);
   }
 
   .group-label {
@@ -254,25 +284,49 @@ const areas = ['Site', 'Foundation', 'Search', 'Risk'];
     margin-bottom: calc(-1 * var(--sp-2));
   }
 
-  .notice {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-2);
-    margin-top: var(--sp-5);
-    padding: var(--sp-4);
-    text-align: center;
-    border: 1px dashed var(--hairline-hover);
-    border-radius: var(--radius-sm);
+  /* One finding per row: the severity column, then headline and cost.
+     WHY subgrid: the column takes the widest severity present (Critical,
+     one day), so nothing is sized to today's data and no width is invented.
+     Without subgrid support each row sizes its own column, which is only
+     unaligned, never clipped. */
+  .findings {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-3);
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+    margin: 0;
+    padding-inline: 0;
   }
 
-  /* Measured in the notice's own mono size; balanced so the centred lines
-     rag evenly when they wrap. */
-  .notice p {
-    max-width: var(--measure);
-    font: inherit;
-    letter-spacing: inherit;
-    text-wrap: balance;
+  .finding {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+
+  /* Severity carries the judgement, so it reads in cream with the
+     headline; the cost sits under it in the secondary colour. */
+  .finding-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+
+  .tally {
+    margin-top: var(--sp-4);
+  }
+
+  /* The link and the file's description on one line, wrapping as a pair
+     under narrow widths so the size never orphans on its own. */
+  .file {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-1);
+    margin-top: var(--sp-2);
   }
 
   .outcome-text {

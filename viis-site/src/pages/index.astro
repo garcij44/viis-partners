@@ -23,7 +23,20 @@ import Audit from '../components/sections/Audit.astro';
 import Faq from '../components/sections/Faq.astro';
 import { faqSchema } from '../data/faq';
 import { AUDIT_POINT_COUNT } from '../data/audit';
+import { SAMPLE_REPORT, SAMPLE_REPORT_FILE } from '../data/report';
 import SiteFooter from '../components/SiteFooter.astro';
+import { Image } from 'astro:assets';
+import reportSummary from '../assets/report/summary.png';
+
+// WHY the page image is rendered from the PDF, not the report's HTML: the
+// artifact must be the page a client receives. It is the summary page's
+// upper half, cropped to the slot's 16:10 so the tally is the last thing in
+// frame (the cover is mostly empty paper and says less). Eager: it is the
+// largest element in the first viewport, so a lazy load would push LCP out
+// by one image request. `sizes` mirrors --container and --gutter; it is a
+// resource hint and paints nothing.
+const pageSizes = '(min-width: 1168px) 1120px, calc(100vw - 48px)';
+const pageWidths = [480, 960, 1440];
 ---
 
 {/* Title and description are the homepage's own (brief §4: unique per page).
@@ -39,13 +52,27 @@ import SiteFooter from '../components/SiteFooter.astro';
 
 	<main id="main">
 		<HeroBand variant="hero" id="hero">
-			{/* The real artifact is an audit report rendered as the hero
-			    image (brief §2.1, §6 blocking dependency). It does not exist yet.
-			    This frame holds its slot at the artifact's dimensions — container
-			    width, 16:10, --radius-lg — and says so, rather than inventing one. */}
-			<div slot="artifact" class="artifact-placeholder">
-				<p class="t-mono fg-2">Placeholder · audit report · not yet produced</p>
-			</div>
+			{/* The artifact (brief §2.1): one page of the real report, as the
+			    client receives it, and one link to the PDF. The caption is the
+			    link's visible name, so the frame reads as a link and says what it
+			    is at widths where the page itself is too small to read. */}
+			<a slot="artifact" class="artifact-report" href={SAMPLE_REPORT.href}>
+				<Image
+					src={reportSummary}
+					alt={`Summary page of the report: fifteen checks, three findings, twelve passed.`}
+					widths={pageWidths}
+					sizes={pageSizes}
+					loading="eager"
+					fetchpriority="high"
+					class="page"
+				/>
+				<span class="caption t-mono">
+					<span class="link">Read the sample report</span>
+					<span class="fg-3">
+						{`${SAMPLE_REPORT.business} · ${SAMPLE_REPORT.date} · ${SAMPLE_REPORT_FILE}`}
+					</span>
+				</span>
+			</a>
 		</HeroBand>
 
 		<CapabilityRow />
@@ -64,18 +91,46 @@ import SiteFooter from '../components/SiteFooter.astro';
 </Layout>
 
 <style>
-	.artifact-placeholder {
+	/* The frame: the page on the card surface at --radius-lg (brief §2.1),
+	   the caption beneath it. The link's hover is the caption's underline,
+	   the same treatment as every inline link on the site; the frame's own
+	   edge is too faint on the field to carry a state on its own. */
+	.artifact-report {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: var(--sp-2);
-		aspect-ratio: 16 / 10;
+		gap: var(--sp-4);
 		padding: var(--sp-5);
-		text-align: center;
-		color: var(--fg-3);
 		background: var(--surface);
-		border: 1px dashed var(--hairline-hover);
+		border: 1px solid var(--hairline);
 		border-radius: var(--radius-lg);
+		text-decoration: none;
+	}
+
+	.page {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: var(--radius-sm);
+	}
+
+	.caption {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: var(--sp-3);
+		row-gap: var(--sp-1);
+	}
+
+	@media (hover: hover) {
+		.artifact-report:hover .link {
+			text-decoration-color: var(--link-rule-hover);
+			text-decoration-thickness: 2px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		.artifact-report {
+			gap: var(--sp-3);
+			padding: var(--sp-4);
+		}
 	}
 </style>
