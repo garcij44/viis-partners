@@ -1,0 +1,97 @@
+---
+/**
+ * Dev-only type specimen. Each row: the style rendered with copy from the
+ * brief, and its spec read back from the computed style at load so the
+ * numbers shown are what the browser is actually using.
+ */
+interface Row {
+  cls: string;
+  tag: 'h1' | 'h2' | 'h3' | 'p';
+  sample: string;
+  role: string;
+}
+
+const rows: Row[] = [
+  { cls: 't-display-1', tag: 'h1', role: 'Display 1 — h1, Fraunces opsz 144', sample: 'Your website, and the systems that hold it up.' },
+  { cls: 't-display-2', tag: 'h2', role: 'Display 2 — h2, Fraunces opsz 144', sample: 'The website is rarely the problem.' },
+  { cls: 't-heading', tag: 'h3', role: 'Heading — h3, card and method titles', sample: 'Fix the foundation' },
+  { cls: 't-lead', tag: 'p', role: 'Lead — hero subhead, reframe body', sample: 'A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. DNS records missing since the last vendor.' },
+  { cls: 't-body', tag: 'p', role: 'Body — paragraphs, list items', sample: 'A site can look fine and still be sitting on something broken underneath it. The site gets blamed because the site is the part you can see.' },
+  { cls: 't-ui', tag: 'p', role: 'UI — buttons, nav, inputs', sample: 'Get your free site audit' },
+  { cls: 't-small', tag: 'p', role: 'Small — captions, table cells, card copy', sample: 'DNS, email authentication, Google Workspace, licenses, security. The parts nobody audited.' },
+  { cls: 't-mono', tag: 'p', role: 'Mono — data, table headers, the artifact', sample: 'SPF/DKIM/DMARC missing · Orphaned DNS records · Workspace on defaults' },
+  { cls: 't-label', tag: 'p', role: 'Label — eyebrows only', sample: 'Technology consulting · San Antonio' },
+];
+---
+
+<ol class="scale">
+  {
+    rows.map(({ cls, tag: Tag, sample, role }) => (
+      <li class="row">
+        <div class="spec">
+          <span class="t-mono fg-2">{role}</span>
+          <span class="t-mono fg-3" data-spec-for={cls}>…</span>
+        </div>
+        <Tag class={cls}>{sample}</Tag>
+      </li>
+    ))
+  }
+</ol>
+
+<script>
+  // Reads the computed style of each specimen and writes the spec beside
+  // it, so the numbers on the page are what the browser actually resolved.
+  const nodes = document.querySelectorAll<HTMLElement>('[data-spec-for]');
+  for (const node of nodes) {
+    const target = document.querySelector(`.${node.dataset.specFor}`);
+    if (!target) continue;
+    const cs = getComputedStyle(target);
+    const size = parseFloat(cs.fontSize);
+    const lh = parseFloat(cs.lineHeight) / size;
+    const track =
+      cs.letterSpacing === 'normal' ? '0' : `${(parseFloat(cs.letterSpacing) / size).toFixed(3)}em`;
+    const face = cs.fontFamily.split(',')[0].replace(/["']/g, '');
+    node.textContent = `${face} · ${size.toFixed(1)}px (${(size / 16).toFixed(3)}rem) · lh ${lh.toFixed(2)} · wt ${cs.fontWeight} · tracking ${track}`;
+  }
+</script>
+
+<style>
+  .scale {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+    padding-block: var(--sp-6);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .row > :global(.t-display-1),
+  .row > :global(.t-display-2),
+  .row > :global(.t-lead),
+  .row > :global(.t-body),
+  .row > :global(.t-small) {
+    max-width: var(--measure);
+  }
+
+  .spec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
+  }
+
+  @media (min-width: 1024px) {
+    .row {
+      grid-template-columns: 280px 1fr;
+      gap: var(--sp-7);
+    }
+
+    .spec {
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+  }
+</style>

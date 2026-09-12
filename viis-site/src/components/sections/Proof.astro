@@ -1,0 +1,379 @@
+---
+/**
+ * Section 5 — proof (brief §2.5). The deliverable proves the service:
+ * every audit ends in a written report, so the report is the section's
+ * object, and the client outcome sits beneath it.
+ *
+ * Canopy's quality-report slot, read against docs/canopy-04-proof-comparison.png:
+ * the argument on the left, a receipt on the right. The receipt is a
+ * document, not a UI panel — card corners at the top, a torn edge at the
+ * bottom, Geist Mono throughout, dotted leaders between key and value. The
+ * tear is an SVG pattern and the leaders a dotted border: brief §1 allows
+ * no gradient outside the hero field, so neither is drawn with one.
+ *
+ * The receipt is report 001 (src/data/report.ts): the cover facts, what
+ * each area produced, the three findings (severity, headline, and what
+ * each one costs, as the brief requires), the tally, and the link to the
+ * PDF itself. Nothing on it is summarised
+ * or paraphrased; every line is read off the report. The brief's blocking
+ * dependency (§6) closed when this report was published, 2026-09-12.
+ *
+ * Beneath the report: two observations, then one outcome. Two unrelated
+ * San Antonio businesses were each paying a monthly fee to a website
+ * service and got the same basic site and the same silence; that is the
+ * pattern, stated as two specific cases, not a market claim. Only the
+ * practice is a client, and only it gets outcome language. The second
+ * business is evidence of the pattern and nothing more: no result, no
+ * engagement. Neither is named anywhere on the site, and no fee is stated:
+ * the argument is ownership and responsiveness, not price (Jadrin,
+ * 2026-09-06; brief §2.5).
+ *
+ * The intro paragraph is not in the brief; provisional copy until confirmed.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import { SAMPLE_REPORT, SAMPLE_REPORT_FILE } from '../../data/report';
+
+const cover = [
+  { key: 'Prepared for', value: SAMPLE_REPORT.business },
+  { key: 'Website', value: SAMPLE_REPORT.website },
+  { key: 'Date', value: SAMPLE_REPORT.date },
+];
+const tally = `${SAMPLE_REPORT.checks} checks · ${SAMPLE_REPORT.findingCount} findings · ${SAMPLE_REPORT.passed} passed`;
+---
+
+<Section id="proof" labelledby="proof-heading">
+  <div class="grid">
+    <div class="lede">
+      <Eyebrow class="kicker">Proof</Eyebrow>
+      <h2 id="proof-heading" class="headline">Every audit ships with a report.</h2>
+      <p class="t-lead fg-2 measure sub">
+        The audit is not a sales call. It ends in a written report: each finding, how serious it
+        is, and what it costs you, in plain language.
+      </p>
+    </div>
+
+    <Card class="report">
+      <div class="report-head">
+        <p class="t-label fg-2">Audit report</p>
+        <p class="t-mono fg-3">No. {SAMPLE_REPORT.number}</p>
+      </div>
+
+      <dl class="rows t-mono">
+        {
+          cover.map(({ key, value }) => (
+            <div class="row">
+              <dt>
+                <span>{key}</span>
+                <span class="leader" aria-hidden="true" />
+              </dt>
+              <dd>{value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="relationship t-mono fg-2">{SAMPLE_REPORT.relationship}</p>
+
+      <div role="group" aria-labelledby="proof-areas">
+        <p id="proof-areas" class="t-label fg-3 group-label">Findings by area</p>
+        <dl class="rows t-mono">
+          {
+            SAMPLE_REPORT.areas.map(({ label, value }) => (
+              <div class="row">
+                <dt>
+                  <span>{label}</span>
+                  <span class="leader" aria-hidden="true" />
+                </dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      {/* The findings themselves: severity, the headline, and the cost, each
+          as the report words it, in the report's order (most serious first).
+          WHY role="list": base.css strips list markers site-wide, and WebKit
+          drops the list role with them; the tally says "3 findings", so the
+          count has to survive for a screen reader too. */}
+      <div role="group" aria-labelledby="proof-findings">
+        <p id="proof-findings" class="t-label fg-3 group-label">Findings</p>
+        <ol class="findings t-mono" role="list">
+          {
+            SAMPLE_REPORT.findings.map(({ severity, title, cost }) => (
+              <li class="finding">
+                <span class="severity">{severity}</span>
+                <span class="finding-body">
+                  <span class="finding-title">{title}</span>
+                  <span class="fg-2">{cost}</span>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <p class="tally t-mono fg-3">{tally}</p>
+
+      <p class="file t-mono">
+        <a class="link" href={SAMPLE_REPORT.href}>Read the full report</a>
+        <span class="fg-3">{SAMPLE_REPORT_FILE}</span>
+      </p>
+
+      {/* The torn edge: one row of teeth, each --sp-3 wide and 6px deep (the
+          site's mark size), filled in the card's surface with the card's
+          hairline along the diagonals. Decorative; hidden from readers. */}
+      <svg class="tear" aria-hidden="true" focusable="false">
+        <defs>
+          <pattern id="proof-tear" width="12" height="6" patternUnits="userSpaceOnUse">
+            <path class="tooth" d="M0 0h12L6 6z" />
+            <path class="tooth-edge" d="M0 0 6 6 12 0" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#proof-tear)" />
+      </svg>
+    </Card>
+
+    <div class="outcome">
+      <Eyebrow as="p" muted class="outcome-label">The pattern</Eyebrow>
+      <p class="fg-2 measure outcome-text">
+        Two unrelated San Antonio businesses were each paying a monthly fee to a website service.
+      </p>
+      <ul class="observations fg-2 measure">
+        <li>A medical practice, for a site bundled with their records vendor.</li>
+        <li>A second business, for a marketing platform with ad services attached.</li>
+      </ul>
+      <p class="fg-2 measure">Both got a basic site, then stopped getting replies.</p>
+
+      <Eyebrow as="p" muted class="outcome-label outcome-label--result">Outcome</Eyebrow>
+      <p class="measure outcome-text">
+        The practice hired us. We rebuilt the site, moved them onto infrastructure they own, and
+        found a half-configured Workspace and missing DNS records along the way. They now own the
+        site and have someone who answers.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Two columns from lg up: the argument and the outcome stack on the
+     left, the report holds the right. DOM order is lede, report, outcome —
+     the brief's "beneath it" — which is also the stacked order. */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--sp-8);
+    row-gap: var(--sp-7);
+    align-items: start;
+  }
+
+  .lede {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .report {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .outcome {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .kicker,
+  .outcome-label {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  /* The receipt. Card corners at the top only; the bottom edge is the tear,
+     so the primitive's bottom border and radius go. --tooth-h is the tear's
+     depth, the site's 6px mark; the bottom margin reserves it in flow. */
+  .report {
+    --tooth-h: 6px;
+    position: relative;
+    border-bottom: 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin-bottom: var(--tooth-h);
+  }
+
+  /* The tear hangs off the card's border box (-1px), not its padding box. */
+  .tear {
+    position: absolute;
+    top: 100%;
+    left: -1px;
+    width: calc(100% + 2px);
+    max-width: none;
+    height: var(--tooth-h);
+    pointer-events: none;
+  }
+
+  .tooth {
+    fill: var(--surface);
+  }
+
+  .tooth-edge {
+    fill: none;
+    stroke: var(--hairline);
+    stroke-width: 1;
+  }
+
+  .report-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-4);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .rows {
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    padding-block: var(--sp-1);
+  }
+
+  .row dt {
+    display: flex;
+    flex: 1;
+    align-items: baseline;
+    gap: var(--sp-3);
+    min-width: 0;
+  }
+
+  .row dd {
+    flex: none;
+    color: var(--fg-2);
+  }
+
+  /* The dotted leader, sat on the baseline: an empty flex item aligns its
+     bottom edge to the row's baseline, and the border is that edge. */
+  .leader {
+    flex: 1;
+    min-width: var(--sp-4);
+    height: 1px;
+    border-bottom: 1px dotted var(--fg-3);
+  }
+
+  /* Who Athlon is to VIIS, straight after the cover rows and before any
+     finding, so the receipt and the outcome beside it read as two clients. */
+  .relationship {
+    margin-top: var(--sp-4);
+  }
+
+  .group-label {
+    margin-top: var(--sp-5);
+    margin-bottom: calc(-1 * var(--sp-2));
+  }
+
+  /* One finding per row: the severity column, then headline and cost.
+     WHY subgrid: the column takes the widest severity present (Critical,
+     one day), so nothing is sized to today's data and no width is invented.
+     Without subgrid support each row sizes its own column, which is only
+     unaligned, never clipped. */
+  .findings {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-3);
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--hairline);
+    margin: 0;
+    padding-inline: 0;
+  }
+
+  .finding {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+
+  /* Severity carries the judgement, so it reads in cream with the
+     headline; the cost sits under it in the secondary colour. */
+  .finding-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+
+  .tally {
+    margin-top: var(--sp-4);
+  }
+
+  /* The link and the file's description on one line, wrapping as a pair
+     under narrow widths so the size never orphans on its own. */
+  .file {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-1);
+    margin-top: var(--sp-2);
+  }
+
+  .outcome-text {
+    margin-top: var(--sp-3);
+  }
+
+  /* The two observations: the site's jade-dot list, as in the reframe's
+     findings and the package lists. Body size, secondary colour, so the
+     pattern reads as context and the outcome, in cream, as the result. */
+  .observations {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    margin-block: var(--sp-4);
+  }
+
+  .observations > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  .observations > li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .outcome-label--result {
+    margin-top: var(--sp-6);
+  }
+
+  /* Stacked under lg: lede, report, outcome, one column. */
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+    }
+
+    .lede,
+    .report,
+    .outcome {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+</style>

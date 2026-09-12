@@ -1,14 +1,32 @@
 ## Design — read before any UI, styling, layout, or copy work
 
-Before touching anything visual — styles, layout, components, or copy — read
-`ART-DIRECTION.md` in this project root and follow it exactly. It is the design source
-of truth: every color, type, and spacing decision must come from its scales.
+Two files carry design authority. Read both before touching anything visual —
+styles, layout, components, or copy.
 
-- Never use a color, font size, or spacing value that isn't in its scales.
-- Never ship anything on its anti-patterns list.
-- If a requested change would conflict with a rule in that file, stop and flag it
-  instead of working around it.
-- Run its self-audit checklist before calling any screen done.
+- `docs/VIIS-Site-Brief.md` — intent and structure. What the site has to do, the
+  page order, the section copy, the reference sites, the voice, the layout and
+  anti-noise rules, and the build order.
+- `src/styles/tokens.css` — the built values. Every colour, type step, spacing step,
+  radius, and duration on the site comes from this file.
+
+**Where the brief and `tokens.css` disagree, `tokens.css` wins.** It reflects the
+contrast fixes made after the brief was written: `--accent-fill #2E7453` for any filled
+surface that carries text (cream on the brief's `#2F7F5E` is 3.94:1 and fails AA), and
+`--cream-faint #8A8780` (the brief's `#6E6B65` fails as text). The `WHY:` comments in
+`tokens.css` record each deviation and the ratio behind it.
+
+- Never use a colour, font size, or spacing value that isn't in `tokens.css`. Add a
+  token first, with a `WHY:` comment, if one is genuinely missing.
+- Never ship anything on the brief's anti-noise list (§1) or banned-word list (§5).
+- If a requested change would conflict with either file, stop and flag it instead of
+  working around it.
+- Verify contrast with `src/lib/contrast.ts` before adding a colour: 4.5:1 for text,
+  3:1 for large text and control boundaries.
+- Check 375 / 768 / 1440 before calling any screen done. No horizontal scroll at any
+  width.
+
+The token and type specimen renders at `/dev/design-system` in dev only; it is excluded
+from production builds.
 
 ## Development
 

@@ -2,50 +2,57 @@
 /**
  * Confirmation page for the no-JavaScript submit path.
  *
- * With JS on, the form confirms inline and never navigates here. With JS off
- * the browser performs a real cross-origin POST, and the form backend's own
- * response is raw JSON — so the form passes a `redirect` field pointing here
- * and the visitor lands on something that belongs to the site.
- *
- * Reuses the utility-page shell (see 404.astro); no page-specific CSS.
+ * With JS on, the audit form confirms inline and never navigates here. With
+ * JS off the browser performs a real POST to /api/audit and the function
+ * answers with a 303 to this page.
  */
+import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
 ---
 
 <Layout
-	title="Inquiry received — VIIS Partners"
-	description="Your inquiry has been received. Jadrin will read it and reply directly."
+	title="Request received — VIIS Partners"
+	description="Your free site audit request has been received. The report follows within three business days."
 	noindex
 >
-	<header class="site-header">
-		<div class="bar header-inner">
-			<a class="logotype" href="/">VIIS</a>
-			<span class="header-meta">San Antonio, Texas</span>
-		</div>
-	</header>
+	<SiteHeader />
 
 	<main id="main">
-		<section class="hero grid">
-			<div class="col-1-9">
-				<span class="type-label notice-label">RECEIVED</span>
-				<h1 class="type-h1 notice-heading">Your inquiry is in.</h1>
-				<p class="type-body measure notice-sub">
-					Jadrin reads every message and will reply to you directly.
-				</p>
-				<a class="cta notice-cta" href="/">
-					Back to the start
-					<svg class="cta-arrow" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-						<path d="M1 7.5h11M8 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" />
-					</svg>
-				</a>
+		<Section labelledby="thanks-heading">
+			<Eyebrow class="kicker">Received</Eyebrow>
+			<h1 id="thanks-heading" class="headline">Your audit request is in.</h1>
+			<p class="t-lead fg-2 measure sub">
+				A confirmation is on its way to your inbox. The report follows within three business
+				days. If anything is urgent before then, reply to that email.
+			</p>
+			<div class="actions">
+				<Button href="/" variant="secondary">Back to the site</Button>
 			</div>
-		</section>
+		</Section>
 	</main>
 
-	<footer class="site-footer">
-		<div class="bar footer-inner">
-			<p class="footer-line">VIIS · Jadrin Garcia, Principal · San Antonio, Texas</p>
-			<p class="footer-line">viispartners.com</p>
-		</div>
-	</footer>
+	<SiteFooter />
 </Layout>
+
+<style>
+	.kicker {
+		display: flex;
+	}
+
+	.headline {
+		margin-top: var(--sp-5);
+	}
+
+	.sub {
+		margin-top: var(--sp-5);
+	}
+
+	.actions {
+		margin-top: var(--sp-6);
+	}
+</style>

@@ -1,0 +1,239 @@
+---
+/**
+ * Section 7 — packages (brief §2.7): the rate card's four recurring tiers,
+ * what each includes, no pricing anywhere. Builds are projects, not plans,
+ * so they are not here; the Websites line in the method covers design,
+ * build, migration, and launch, and pricing is quoted after the audit.
+ *
+ * Read against docs/canopy-05-pricing-toolkit.png: one panel divided into
+ * columns by hairlines, a name, a short list, and the footnote beneath the
+ * panel. Canopy's price line and its check icons are left out (brief §1:
+ * no numbers, no icons outside the four-up row); the list mark is the
+ * site's jade dot, as in the reframe's findings.
+ *
+ * Inclusions and the "who it's for" lines are the rate card's, as Jadrin
+ * supplied them on 2026-09-06, and nothing is added to them. Plans are
+ * priced by tier, so there is no pricing line under the panel: each tier's
+ * "Talk it through" is how pricing happens.
+ *
+ * "Talk it through" goes to the audit form: the brief's secondary
+ * conversion is a call, and no booking mechanism exists yet.
+ *
+ * Layout: one row of four from lg, two by two from sm, one column below.
+ * Four tiers divide evenly at every step, so no card is ever orphaned.
+ *
+ * The eyebrow, headline, and subhead are not in the brief; provisional
+ * copy until confirmed.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import Button from '../Button.astro';
+
+interface Tier {
+  id: string;
+  name: string;
+  audience: string;
+  included: string[];
+}
+
+const tiers: Tier[] = [
+  {
+    id: 'tier-watch',
+    name: 'Watch',
+    audience: 'A simple site with nothing automated behind it.',
+    included: [
+      'Hosting',
+      'DNS and SSL monitoring',
+      'Backups',
+      'Updates',
+      'Break/fix response',
+      'Quarterly report',
+    ],
+  },
+  {
+    id: 'tier-care',
+    name: 'Care',
+    audience: 'A standard build, with Workspace or automations in the picture.',
+    included: [
+      'Everything in Watch',
+      'Monthly report',
+      'A set allowance of changes each month',
+      'Google Workspace and Microsoft 365 management',
+      'DNS and email-authentication monitoring',
+      'Automation health checks',
+      'Quarterly call',
+    ],
+  },
+  {
+    id: 'tier-growth',
+    name: 'Growth',
+    audience: 'A larger site, live automations, and content going out.',
+    included: [
+      'Everything in Care',
+      'A larger monthly allowance',
+      'Priority response',
+      'Quarterly audit and roadmap',
+      'Monthly call',
+    ],
+  },
+  {
+    id: 'tier-partner',
+    name: 'Partner',
+    audience: 'You want a technical lead, not a vendor.',
+    included: [
+      'Everything in Growth',
+      'Defined project capacity each month',
+      'Systems architecture',
+      'Vendor management',
+      'Automation maintenance',
+    ],
+  },
+];
+---
+
+<Section id="packages" labelledby="packages-heading">
+  <Eyebrow class="kicker">Packages</Eyebrow>
+  <h2 id="packages-heading" class="headline">Four plans for after launch.</h2>
+  <p class="t-lead fg-2 measure sub">
+    Builds are projects, quoted after the audit. These are the plans that keep the site and the
+    systems under it working once it is live.
+  </p>
+
+  <Card class="panel">
+    <ul class="tiers">
+      {
+        tiers.map(({ id, name, audience, included }) => (
+          <li class="tier">
+            <h3 id={id} class="name">{name}</h3>
+            <p class="t-small fg-2 audience">{audience}</p>
+            <ul class="included t-small">
+              {included.map((item) => <li>{item}</li>)}
+            </ul>
+            {/* Three links share a label; the tier name describes each. */}
+            <Button variant="secondary" href="#audit" class="cta" aria-describedby={id}>
+              Talk it through
+            </Button>
+          </li>
+        ))
+      }
+    </ul>
+  </Card>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  /* The panel carries no padding of its own: each tier pads itself so the
+     dividers run edge to edge. overflow clips the dividers to the corner. */
+  .panel {
+    margin-top: var(--sp-8);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* --sp-5 padding, not the card's --sp-6: four columns in the container
+     are 280px each, and 32px a side would leave the longest inclusion
+     three lines deep. */
+  .tier {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--sp-5);
+    border-left: 1px solid var(--hairline);
+  }
+
+  .tier:first-child {
+    border-left: 0;
+  }
+
+  .audience {
+    margin-top: var(--sp-3);
+  }
+
+  .included {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    margin-top: var(--sp-5);
+    margin-bottom: var(--sp-6);
+  }
+
+  .included > li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+
+  /* The jade mark: the same 6px dot as the eyebrow and the findings list. */
+  .included > li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* The button sits at the foot of every column, level across the row. */
+  .cta {
+    margin-top: auto;
+  }
+
+  /* Two by two under lg (the four-up row's own step), one column under
+     sm. Dividers: left edges on every column but the first of its row,
+     top edges on every row but the first. */
+  @media (max-width: 1023px) {
+    .tiers {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tier:nth-child(2n + 1) {
+      border-left: 0;
+    }
+
+    .tier:nth-child(n + 3) {
+      border-top: 1px solid var(--hairline);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .tiers {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tier {
+      border-left: 0;
+    }
+
+    .tier:nth-child(n + 2) {
+      border-top: 1px solid var(--hairline);
+    }
+  }
+
+  /* Under 768 the buttons fill the column, as the hero's and the form's do. */
+  @media (max-width: 767px) {
+    .tier {
+      padding: var(--sp-5);
+    }
+
+    .cta {
+      align-self: stretch;
+    }
+  }
+</style>

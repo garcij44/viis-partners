@@ -1,0 +1,163 @@
+---
+/**
+ * Section 9 — FAQ (brief §2.9). Objection handling and search surface. The
+ * accordion is native <details>/<summary>: each question is a focusable
+ * disclosure that Enter and Space toggle, with no script to fail. The
+ * shared `name` makes it exclusive where the browser supports it (one
+ * answer open at a time) and a plain set of disclosures elsewhere.
+ *
+ * Each question is an h3 inside its summary, so the outline reads
+ * h2 → ten h3s. The disclosure mark is the summary's ::after (summary may
+ * hold one heading, nothing beside it), drawn as two hairlines: a plus
+ * that turns to a minus when open. It is the control's affordance, not an
+ * icon on a heading.
+ *
+ * The eyebrow and headline are not in the brief; provisional copy. The
+ * answers are drafts (src/data/faq.ts) awaiting review. The service pages
+ * pass their own shorter lists; defaults are the homepage's.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import { faq, type FaqItem } from '../../data/faq';
+
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  heading?: string;
+  items?: FaqItem[];
+}
+
+const {
+  id = 'faq',
+  eyebrow = 'FAQ',
+  heading = 'Things people ask before they hire us.',
+  items = faq,
+} = Astro.props;
+const headingId = `${id}-heading`;
+---
+
+<Section id={id} labelledby={headingId}>
+  <div class="grid">
+    <div class="lede">
+      <Eyebrow class="kicker">{eyebrow}</Eyebrow>
+      <h2 id={headingId} class="headline">{heading}</h2>
+    </div>
+
+    <div class="items">
+      {
+        items.map((item) => (
+          <details class="item" name={id} id={`${id}-${item.id}`}>
+            <summary class="summary">
+              <h3 class="question">{item.question}</h3>
+            </summary>
+            <div class="answer">
+              <p class="fg-2 measure">{item.answer}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Heading left, questions right from lg up; stacked below. */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--sp-8);
+    align-items: start;
+  }
+
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .item {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .item:last-child {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  /* The whole row is the control. The native marker is removed in both
+     syntaxes; the two pseudo-elements below replace it. Right padding
+     reserves the mark's width plus a gap. */
+  .summary {
+    position: relative;
+    display: block;
+    padding-block: var(--sp-5);
+    padding-right: calc(var(--sp-3) + var(--sp-5));
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Focus is the site-wide ring from base.css, drawn 3px outside the row
+     so it never crowds the question's first letter. */
+  .summary:focus-visible {
+    border-radius: var(--radius-sm);
+  }
+
+  .question {
+    margin: 0;
+  }
+
+  /* The mark: two 1px strokes in --fg-3 (5.17:1 on ink, a control at ≥3:1)
+     making a 12px plus, centred on the row. Open, the vertical stroke turns
+     onto the horizontal one and a minus remains. No gradient, no glyph. */
+  .summary::before,
+  .summary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    background: var(--fg-3);
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      transform var(--dur-fast) var(--ease);
+  }
+
+  .summary::after {
+    right: 0;
+    width: var(--sp-3);
+    height: 1px;
+    transform: translateY(-50%);
+  }
+
+  .summary::before {
+    right: calc(var(--sp-3) / 2);
+    width: 1px;
+    height: var(--sp-3);
+    transform: translate(50%, -50%);
+  }
+
+  .item[open] > .summary::before {
+    transform: translate(50%, -50%) rotate(90deg);
+  }
+
+  @media (hover: hover) {
+    .summary:hover::before,
+    .summary:hover::after {
+      background: var(--fg);
+    }
+  }
+
+  .answer {
+    padding-bottom: var(--sp-5);
+  }
+
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+  }
+</style>

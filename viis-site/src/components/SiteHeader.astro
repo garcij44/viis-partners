@@ -1,0 +1,183 @@
+---
+/**
+ * SiteHeader — logotype left, the four service lines as nav, the audit CTA
+ * right. Transparent, so on a page with a hero it sits on the field, which
+ * HeroBand extends up by --header-h (components.css) to meet it; on a page
+ * without one it sits on flat ink.
+ *
+ * Nav is Geist (brief §1 typography: body face for nav), the current page
+ * in cream with the jade rule the site uses for links. Under 768 the four
+ * links move to a second row so the logotype and CTA keep their own; the
+ * row's height is part of --header-h; under 360 that row wraps to two
+ * lines so all four links stay reachable without any scrolling.
+ *
+ * The CTA label is shorter than the hero's. Both references shorten the nav
+ * button ("Start free", "Get Started"), and the full label does not fit
+ * beside the logotype at 375px. It targets the page's own audit section
+ * where one exists, and the homepage's otherwise.
+ */
+import Button from './Button.astro';
+
+const nav = [
+  { href: '/websites/', label: 'Websites' },
+  { href: '/foundations/', label: 'Foundations' },
+  { href: '/search/', label: 'Search' },
+  { href: '/automation/', label: 'Automation' },
+];
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const hasAudit = path === '/' || nav.some((item) => item.href === path);
+const auditHref = hasAudit ? '#audit' : '/#audit';
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a class="logotype t-ui" href="/">VIIS</a>
+    <nav class="nav" aria-label="Services">
+      <ul class="links">
+        {
+          nav.map(({ href, label }) => (
+            <li>
+              <a class="navlink t-ui" href={href} aria-current={href === path ? 'page' : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <Button href={auditHref} arrow={false} class="cta">Free audit</Button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    /* Above the hero field's ::before, which paints after this header in
+       tree order. */
+    z-index: 1;
+  }
+
+  /* Three columns on one --sp-9 row: logotype, nav centred, CTA. Areas,
+     not auto-placement: under 768 the nav spans both columns and
+     auto-placement would push the CTA to a third row. */
+  .inner {
+    display: grid;
+    grid-template-areas: 'logo nav cta';
+    /* Equal outer tracks centre the nav on the page, not on the space the
+       logotype and the wider CTA leave between them. */
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: var(--sp-9);
+    align-items: center;
+    column-gap: var(--sp-4);
+    /* Focus order follows the visual grid where the browser supports it
+       (Chrome 137+); elsewhere it stays DOM order: logotype, nav, CTA. Under
+       768 the nav is on the second row while the CTA stays on the first. */
+    reading-flow: grid-rows;
+  }
+
+  .cta {
+    grid-area: cta;
+    justify-self: end;
+  }
+
+  /* The wordmark: UI size in the body face, tracked like a label — the name
+     in the site's own voice until a mark is designed. */
+  .logotype {
+    grid-area: logo;
+    justify-self: start;
+    color: var(--fg);
+    letter-spacing: var(--track-label);
+    text-decoration: none;
+  }
+
+  .nav {
+    grid-area: nav;
+    justify-self: center;
+    min-width: 0;
+  }
+
+  .links {
+    display: flex;
+    gap: var(--sp-6);
+  }
+
+  .navlink {
+    display: inline-block;
+    padding-block: var(--sp-2);
+    color: var(--fg-2);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .navlink:hover {
+      color: var(--fg);
+    }
+  }
+
+  /* The current page: cream, with the site's jade link rule. */
+  .navlink[aria-current='page'] {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--link-rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  /* Under 768: logotype and CTA keep the first row, the nav takes a second
+     --sp-7 row across the full width. The links are set at --text-small so
+     all four fit the 327px column at 375; at 320 the row scrolls inside
+     itself rather than widening the page. */
+  @media (max-width: 767px) {
+    .inner {
+      grid-template-areas:
+        'logo cta'
+        'nav nav';
+      grid-template-columns: 1fr auto;
+      grid-template-rows: var(--sp-9) var(--sp-7);
+    }
+
+    /* The row scrolls inside itself at 320. A scroll box clips outlines,
+       so the list carries --sp-2 of padding on every side (the ring needs
+       5px) and the box pulls back by the same amount to keep the first
+       link on the container's edge. */
+    .nav {
+      justify-self: stretch;
+      margin-inline: calc(-1 * var(--sp-2));
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .links {
+      gap: var(--sp-2);
+      padding: var(--sp-2);
+      white-space: nowrap;
+    }
+
+    .navlink {
+      font-size: var(--text-small);
+      line-height: var(--lh-small);
+      padding-block: var(--sp-1);
+    }
+  }
+
+  /* Under 360 the four links do not fit one line even at --text-small, so
+     the row wraps to two lines and grows to --sp-8; --header-h steps with
+     it (components.css). Every link stays in view, nothing scrolls. */
+  @media (max-width: 359px) {
+    .inner {
+      grid-template-rows: var(--sp-9) var(--sp-8);
+    }
+
+    .nav {
+      overflow: visible;
+    }
+
+    .links {
+      flex-wrap: wrap;
+      white-space: normal;
+      row-gap: 0;
+    }
+  }
+</style>

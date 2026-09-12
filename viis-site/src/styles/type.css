@@ -1,0 +1,135 @@
+/* ------------------------------------------------------------------ */
+/* Type scale — nine styles, three faces. Elements get sensible         */
+/* defaults; the .t-* classes let markup and style diverge when the     */
+/* heading level and the visual size have to (h3 set as display-2 etc). */
+/* ------------------------------------------------------------------ */
+
+/* Display — Fraunces, h1 and h2 only. Never body. */
+.t-display-1,
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-display-1);
+  line-height: var(--lh-display-1);
+  font-weight: var(--wt-display-1);
+  letter-spacing: var(--track-display-1);
+  font-variation-settings: 'opsz' var(--opsz-display);
+  text-wrap: balance;
+}
+
+.t-display-2,
+h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-display-2);
+  line-height: var(--lh-display-2);
+  font-weight: var(--wt-display-2);
+  letter-spacing: var(--track-display-2);
+  font-variation-settings: 'opsz' var(--opsz-display);
+  text-wrap: balance;
+}
+
+/* Heading — Geist. Card titles, method steps, FAQ questions. Serif is
+   reserved for the section-level moments so it keeps its weight. */
+.t-heading,
+h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-heading);
+  line-height: var(--lh-heading);
+  font-weight: var(--wt-heading);
+  letter-spacing: var(--track-heading);
+  text-wrap: balance;
+}
+
+/* Lead — the hero subhead and the reframe body. */
+.t-lead {
+  font-family: var(--font-body);
+  font-size: var(--text-lead);
+  line-height: var(--lh-lead);
+  font-weight: var(--wt-body);
+  letter-spacing: var(--track-body);
+  text-wrap: pretty;
+}
+
+.t-body,
+p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  font-weight: var(--wt-body);
+  letter-spacing: var(--track-body);
+  text-wrap: pretty;
+}
+
+.t-ui {
+  font-family: var(--font-body);
+  font-size: var(--text-ui);
+  line-height: var(--lh-ui);
+  font-weight: var(--wt-ui);
+  letter-spacing: normal;
+}
+
+.t-small {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  line-height: var(--lh-small);
+  font-weight: var(--wt-body);
+  letter-spacing: var(--track-body);
+}
+
+/* Mono data — table headers, findings, trust line, the audit artifact.
+   Sentence case, normal tracking: this is read, not scanned. */
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  line-height: var(--lh-mono);
+  font-weight: var(--wt-body);
+  letter-spacing: normal;
+}
+
+/* Mono label — eyebrows. Uppercase and tracked: this is scanned. */
+.t-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  font-weight: var(--wt-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* Colour roles for text. */
+.fg-2 {
+  color: var(--fg-2);
+}
+
+.fg-3 {
+  color: var(--fg-3);
+}
+
+/* Measure — text columns never exceed 68ch (brief §1). */
+.measure {
+  max-width: var(--measure);
+}
+
+/* Inline links inside running text: cream text, jade rule. The accent
+   does a job here without colouring the words. */
+.prose a,
+.link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--link-rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+}
+
+@media (hover: hover) {
+  .prose a:hover,
+  .link:hover {
+    text-decoration-color: var(--link-rule-hover);
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* Flow — vertical rhythm inside a text block. */
+.prose > * + * {
+  margin-top: var(--sp-5);
+}

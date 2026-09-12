@@ -1,0 +1,25 @@
+---
+/**
+ * Section — full-width band with the brief's vertical padding
+ * (160 / 96 / 72) and the 1120px container inside it.
+ * Pass `labelledby` pointing at the section's h2 so it is a named
+ * landmark for screen readers.
+ */
+interface Props {
+  id?: string;
+  labelledby?: string;
+  class?: string;
+}
+
+// WHY the rest spread: Astro delivers a parent's scoped-style attribute
+// (data-astro-cid-*) as a prop when the parent passes `class`. Without
+// forwarding it, a parent's scoped rules for this root never match.
+const { id, labelledby, class: className = '', ...rest } = Astro.props;
+const classes = ['section', className].filter(Boolean).join(' ');
+---
+
+<section id={id} class={classes} aria-labelledby={labelledby} {...rest}>
+  <div class="container">
+    <slot />
+  </div>
+</section>

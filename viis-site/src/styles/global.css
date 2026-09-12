@@ -30,7 +30,7 @@
 }
 
 /* ---------------------------------------------------------------- */
-/* Tokens — see ART-DIRECTION.md. Do not add values outside these.   */
+/* Tokens — the pre-redesign scale. Superseded by tokens.css.        */
 /* ---------------------------------------------------------------- */
 
 :root {
@@ -366,7 +366,7 @@ button:focus-visible {
    line that actually says why VIIS (senior, embedded, few clients) is kept. */
 /* WHY: the support line is composed, not dumped — a flex stack keeps the lead
    clause and its qualifier on separate lines at every width, so neither ever
-   runs past ~9 words. See ART-DIRECTION.md "Composition rules". */
+   runs past ~9 words. */
 .hero-support {
   display: flex;
   flex-direction: column;
@@ -832,7 +832,7 @@ button:focus-visible {
    (the pointer is absent, so a user cannot tell focus from selection), but on
    hover the pointer is physically on the word — and selection additionally
    carries the marker bar, whose presence is a binary, not a contrast judgement.
-   Hover is never the affordance here; see the hover clause in ART-DIRECTION. */
+   Hover is never the affordance here. */
 @media (hover: hover) {
   .option-label:hover {
     color: var(--paper);
@@ -867,7 +867,7 @@ button:focus-visible {
      boundary, which WCAG 2.2 SC 1.4.11 requires to clear 3:1 against --ink.
      --rule is 1.32:1 — not a quiet boundary, an absent one. --paper-dim is
      6.28:1. --rule remains correct for dividers, which are decorative and
-     exempt. See ART-DIRECTION.md, Components (corrected 2026-08-27). */
+     exempt. (Corrected 2026-08-27.) */
   border-bottom: 1px solid var(--paper-dim);
   padding: var(--sp-1) 0;
   color: var(--paper);

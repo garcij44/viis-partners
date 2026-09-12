@@ -1,0 +1,221 @@
+---
+/**
+ * Section 6 — comparison (brief §2.6): Canopy's structure, VIIS's honest
+ * columns. Orientation, not an attack: every column is a real way to get a
+ * website, and the rows say what each one leaves you owning and who answers.
+ *
+ * Read against docs/canopy-04-proof-comparison.png: the table is one lifted
+ * panel with a hairline grid; the firm's own column is filled solid in the
+ * header and lifted below it, and the alternatives stay muted. The brief
+ * puts VIIS first, so at 375 the row label and the VIIS cell are in view
+ * before any scrolling; the row labels stay put while the rest scrolls.
+ *
+ * The headline is Jadrin's (2026-09-06, brief §2.6): every row but the
+ * first is about what happens after launch, so the table is set up as that,
+ * not as a build-cost comparison. The eyebrow and subhead are not in the
+ * brief; provisional copy until confirmed.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+
+const columns = ['VIIS', 'Bundled vendor', 'Template DIY', 'Agency retainer'];
+
+interface Row {
+  label: string;
+  cells: string[];
+}
+
+// WHY: the brief's em dash under Template DIY is kept as written; the
+// sr-only text gives it a spoken meaning ("—" alone is read as "dash" or not
+// at all). The rendered mark is not a claim about DIY, only an empty cell.
+const rows: Row[] = [
+  { label: 'Who owns the site', cells: ['You', 'They do', 'You', 'Varies'] },
+  { label: 'After launch', cells: ['Maintained', 'Replies stop', 'You manage', 'Billed hourly'] },
+  { label: 'DNS, email, Workspace', cells: ['Included in scope', 'Out of scope', 'Out of scope', 'Usually out of scope'] },
+  { label: 'When something breaks', cells: ['Named person responds', 'Ticket queue', 'Forum search', 'Account manager'] },
+  { label: 'Cost of leaving', cells: ['Take everything', 'Rebuild from zero', '—', 'Rebuild from zero'] },
+];
+---
+
+<Section id="comparison" labelledby="comparison-heading">
+  <Eyebrow class="kicker">The alternatives</Eyebrow>
+  <h2 id="comparison-heading" class="headline">Getting a website is the easy part.</h2>
+  <p class="t-lead fg-2 measure sub">
+    All four are real options. The difference is what you own afterward, and who answers when
+    something breaks.
+  </p>
+
+  {/* A scroll region is keyboard-reachable so the table can be scrolled
+      without a pointer at widths where it overflows. It carries its own
+      name: sharing the section's heading would make two landmarks with one
+      name (axe landmark-unique). */}
+  <div class="table-scroll panel" role="region" aria-label="Comparison table" tabindex="0">
+    <table class="table">
+      <thead>
+        <tr>
+          <td class="corner"></td>
+          {
+            columns.map((name, i) => (
+              <th scope="col" class:list={['t-mono', { us: i === 0 }]}>
+                {i === 0 && <span class="dot" aria-hidden="true" />}
+                {name}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map(({ label, cells }) => (
+            <tr>
+              <th scope="row" class="t-mono">{label}</th>
+              {cells.map((cell, i) => (
+                <td class:list={['t-small', { us: i === 0 }]}>
+                  {cell === '—' ? (
+                    <>
+                      <span aria-hidden="true">—</span>
+                      <span class="sr-only">Not applicable</span>
+                    </>
+                  ) : (
+                    cell
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  /* The panel is the card treatment on the scroll box itself, so the
+     rounded corners clip the table and any overflow scrolls inside them.
+     WHY positioned: the sr-only text in a cell is absolutely positioned,
+     and without a positioned ancestor inside the scroll box it lands in
+     the document at its static x and widens the page at 375. */
+  .panel {
+    position: relative;
+    margin-top: var(--sp-8);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+  }
+
+  /* WHY separate borders: with collapse, cell borders belong to the table
+     and stay behind when the sticky row header moves. Separate borders
+     travel with their cell. Each cell owns its top and left edge; the first
+     row and column give theirs up to the panel. */
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+
+  .table th,
+  .table td {
+    padding: var(--sp-4) var(--sp-5);
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid var(--hairline);
+    border-left: 1px solid var(--hairline);
+    font-weight: var(--wt-body);
+  }
+
+  .table thead th,
+  .table .corner {
+    border-top: 0;
+    padding-block: var(--sp-5);
+    vertical-align: middle;
+  }
+
+  .table th:first-child,
+  .table .corner {
+    border-left: 0;
+  }
+
+  /* Row labels and the empty corner hold their place while the alternatives
+     scroll under them. Opaque on the panel's own surface so nothing shows
+     through, and the divider to the VIIS column is their right edge, not
+     the VIIS cells' left, so the line stays with the labels when scrolled. */
+  .table tbody th,
+  .table .corner {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface);
+    color: var(--fg);
+    border-right: 1px solid var(--hairline);
+  }
+
+  .table .us {
+    border-left: 0;
+  }
+
+  .table td {
+    color: var(--fg-2);
+  }
+
+  /* VIIS's column: the section's one accent. Solid fill in the header, a
+     lifted surface beneath, cream text in both. --accent-fill carries cream
+     at 4.68:1 (tokens.css); --accent would not. */
+  .table th.us {
+    background: var(--accent-fill);
+    color: var(--cream);
+  }
+
+  .table td.us {
+    background: var(--surface-2);
+    color: var(--fg);
+  }
+
+  /* The same 6px cream mark Canopy sets beside its own name; on the fill
+     it is the only place the site paints a dot in cream, not jade. */
+  .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: var(--sp-2);
+    border-radius: 50%;
+    background: var(--cream);
+    vertical-align: middle;
+    transform: translateY(-1px);
+  }
+
+  /* Column widths: the labels take a fifth, the four options share the
+     rest. Under 768 the table keeps a floor and scrolls inside the panel;
+     measured at 375 the label column plus the VIIS column is in view with
+     the next column's edge showing, which is the scroll affordance. */
+  .table .corner,
+  .table tbody th {
+    width: 22%;
+  }
+
+  /* WHY 640px: no layout token fits a table floor. It is the narrowest
+     width at which the label column holds "DNS, email, Workspace" on two
+     lines and every option column holds a two-word cell; below it the
+     cells fall to one word a line. */
+  @media (max-width: 767px) {
+    .table {
+      min-width: 640px;
+    }
+
+    .table th,
+    .table td {
+      padding-inline: var(--sp-4);
+    }
+  }
+</style>

@@ -4,9 +4,10 @@ Single-page brochure site for VIIS Partners. Astro 7, static output, no
 client-side framework, no runtime third-party requests. Deploys to Azure Static
 Web Apps.
 
-Design rules live in [`ART-DIRECTION.md`](./ART-DIRECTION.md) and are enforced,
-not aspirational: locked palette, three self-hosted typefaces, an 8px spacing
-scale. Read it before touching anything visual.
+Design authority is split in two, and both are enforced, not aspirational:
+[`docs/VIIS-Site-Brief.md`](./docs/VIIS-Site-Brief.md) for intent and structure,
+[`src/styles/tokens.css`](./src/styles/tokens.css) for every built value. Where they
+disagree, `tokens.css` wins. Read both before touching anything visual.
 
 ---
 
@@ -35,251 +36,244 @@ security headers were validated.
 
 ## Environment variables
 
-| Variable               | Public? | Purpose                                             |
-| ---------------------- | ------- | --------------------------------------------------- |
-| `PUBLIC_FORM_ENDPOINT`   | Yes     | URL the contact form POSTs to. Falls back to `/api/contact`. |
-| `PUBLIC_FORM_ACCESS_KEY` | Yes     | Web3Forms form identifier. Public by design — it identifies the form, it authorises nothing. Required when the endpoint is Web3Forms; the build fails without it. |
+The site inlines **no** environment variables at build time. Every setting
+belongs to the API and is read at request time from the Static Web App's
+application settings (Azure Portal → the static web app → Settings →
+Environment variables, or `az staticwebapp appsettings set`).
 
-`PUBLIC_`-prefixed vars are inlined into the client bundle by Astro and are
-visible in the browser **by design**. Never put a secret, key, or token in one.
-See [`.env.example`](./.env.example). Real `.env` files are git-ignored.
+| Setting                          | Required | Purpose                                                                                       |
+| -------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| `LEADS_TABLE_CONNECTION_STRING`  | Yes      | Azure Storage account connection string. Leads and rate-limit counters are written to a table. |
+| `LEADS_TABLE_NAME`               | No       | Table name. Default `leads`. Created on first use.                                            |
+| `MAIL_CONNECTION_STRING`         | Yes      | Azure Communication Services connection string, used for both emails.                        |
+| `MAIL_FROM`                      | Yes      | A verified sender address on the ACS Email domain, e.g. `DoNotReply@<domain>`.               |
+| `MAIL_NOTIFY_TO`                 | No       | Where new-lead notifications go. Default `jgarcia@viispartners.com`.                         |
+| `MAIL_TRANSPORT`                 | No       | `acs` (default) or `log`. `log` writes emails to the function log instead of sending; local use only. |
+| `RATE_LIMIT_PER_HOUR`            | No       | Submissions accepted per client address per hour. Default `5`.                               |
+
+Names avoid the prefixes Static Web Apps reserves (`APPSETTING_`, `AZURE_FUNCTION_`,
+`FUNCTIONS_`, `WEBSITE_`, `AzureWeb`, …). Missing required settings make every
+request return 500 with a `audit.config` log line rather than dropping leads
+quietly. See [`api/local.settings.example.json`](./api/local.settings.example.json).
 
 ---
 
+### Analytics variables
+
+Two optional build-time variables, read by `src/layouts/Layout.astro`:
+
+| Variable | Effect when set |
+|---|---|
+| `PUBLIC_GA_MEASUREMENT_ID` | Renders `/scripts/analytics.js` with the ID, which loads GA4's `gtag.js` after the page has loaded, reports page views, and sends a `generate_lead` event when an audit request is accepted (fetch path) or when `/thanks/` loads (no-JS path). No form data travels with the event. |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | Renders the `google-site-verification` meta tag for Search Console. **Not used: Search Console is verified by DNS record** (decided 2026-09-06). The variable stays available as a fallback; leave it unset. |
+
+Unset, the build ships no analytics script and no verification tag. Set them in the GitHub Actions build step's `env` (from repository variables), not in a committed `.env`. Mark `generate_lead` as a key event in the GA4 property so it reports as a conversion.
+
+
 ## Form architecture
 
-The contact form is the primary conversion point. It is built to work in three
-layers, degrading safely:
+The audit form is the primary conversion point (brief §2.8). Three layers,
+degrading safely:
 
-1. **No JavaScript** — it is a plain `<form method="post" action={PUBLIC_FORM_ENDPOINT}>`.
-   The browser's native validation applies and the POST still fires.
-2. **Enhancement** — [`public/scripts/inquiry.js`](./public/scripts/inquiry.js)
-   (a static, same-origin module so the CSP allows it with no hash/nonce) adds
-   inline validation and inline submit states (idle / sending / success / error,
-   no layout shift, no modal/toast).
-3. **Backend** — Web3Forms for launch; an Azure Function + Microsoft Graph in
-   sprint 3. See `BUSINESS-NEXT-STEPS.md`.
-
-`novalidate` is **not** in the markup — `inquiry.js` sets `form.noValidate` at
-runtime instead. With JS off, native validation is the only thing stopping an
-incomplete cross-origin POST that would strand the visitor on the endpoint's raw
-JSON response. With JS on, it is suppressed so the inline mono errors own the
-presentation rather than the browser's bubbles. Do not move it back into the
-markup without re-reading this paragraph.
+1. **No JavaScript** — a plain `<form method="post" action="/api/audit">`. Native
+   validation applies; the function answers with a `303` to `/thanks/`.
+2. **Enhancement** — [`public/scripts/audit.js`](./public/scripts/audit.js), a
+   static same-origin module (the CSP allows it with no hash or nonce), adds
+   inline validation and inline states. It sets `form.noValidate` at runtime so
+   its inline errors own the presentation instead of browser bubbles; with JS
+   off, native validation remains the only guard. It never gates on a bot
+   heuristic — an earlier form on this site discarded real leads behind a fake
+   confirmation.
+3. **Backend** — [`api/`](./api), a managed Azure Function on the Static Web
+   App, same origin, no third party in the lead path.
 
 ### Field contract
 
-Six fields, which is the ceiling set by `ART-DIRECTION.md` → "Field discipline".
-Adding a seventh requires amending that file first.
+Five fields and nothing else — every extra field costs conversions.
 
-| Field     | Name        | Required | Cap  | Notes                              |
-| --------- | ----------- | -------- | ---- | ---------------------------------- |
-| Name      | `name`      | Yes      | 100  |                                    |
-| Work email| `email`     | Yes      | 200  | shape-checked only, never verified |
-| Service   | `service`   | Yes      | —    | radio; one of the five values below|
-| Phone     | `phone`     | No       | 40   | no mask, no pattern — see below     |
-| Company   | `company`   | No       | 120  |                                    |
-| Project   | `project`   | No       | 1500 | textarea                            |
+| Field                          | Name       | Required | Cap | Server normalisation                                  |
+| ------------------------------ | ---------- | -------- | --- | ----------------------------------------------------- |
+| Name                           | `name`     | Yes      | 100 | one line                                              |
+| Business name                  | `business` | Yes      | 120 | one line                                              |
+| Email                          | `email`    | Yes      | 200 | one line, shape-checked, never verified               |
+| Website URL                    | `website`  | Yes      | 200 | `https://` added if missing; must be http(s) with a dotted host; canonical URL stored |
+| What's bothering you about it? | `note`     | No       | 300 | one line                                              |
 
-`service` is one of exactly: `Secure`, `Adopt`, `Build`, `Advise`,
-`Not sure yet`. A backend should reject any other value rather than storing it.
+Plus `botcheck`, a visually hidden honeypot **checkbox** (never autofilled,
+unlike a text input). Any value means spam: the function answers as if it
+succeeded and stores nothing. "One line" means control characters are stripped
+and whitespace collapsed, so nothing submitted can inject a mail header or a log
+line.
 
-`phone` carries no format mask and no client-side pattern **by design**:
-international numbering varies enough that validation rejects real numbers more
-often than it catches typos, and the field is optional.
+### What the function does
 
-Non-visible fields posted alongside them:
+`POST /api/audit`, in this order:
 
-| Field            | Purpose                                                     |
-| ---------------- | ----------------------------------------------------------- |
-| `access_key`     | Web3Forms form identifier. Public by design; authorises nothing. |
-| `subject`        | Fixed email subject line.                                    |
-| `from_name`      | Fixed sender display name.                                   |
-| `botcheck`       | Honeypot **checkbox**. Checked ⇒ treat as spam.               |
-| `form_render_ts` | Page-render epoch ms. **Empty when JS is off — see below.**   |
-| `redirect`       | Where the **no-JS** POST lands. See the warning below.        |
+1. Read the form body. Honeypot ticked → log `audit.dropped`, respond success.
+2. Validate with zod; on failure `400` with one message per field.
+3. Rate limit: the client address (`x-forwarded-for`) is hashed and counted per
+   hour in the table; over the limit → `429`. No address → the limit is skipped
+   and logged, so one missing header cannot lock the form for everyone.
+4. Write the lead to the table (partition `lead-YYYY-MM`, newest first).
+5. Send two emails in parallel: the notification to `MAIL_NOTIFY_TO` (reply-to
+   the visitor) and the acknowledgement to the visitor (reply-to
+   `MAIL_NOTIFY_TO`).
+6. `200 {"ok":true}` if the lead landed anywhere; `500` only if the table **and**
+   the notification both failed. A fetch submit (`Accept: application/json`)
+   gets JSON; a plain submit gets a redirect or a small HTML page.
 
-> **`redirect` must never be sent from the fetch path.** The endpoint answers
-> it with a 303; `fetch` follows that redirect cross-origin, the followed
-> request carries no CORS grant, and the rejection reports a lead that *was*
-> delivered as a failure. `inquiry.js` deletes it from the FormData before
-> POSTing. A future backend must keep that split: honour `redirect` on a
-> navigation submit, ignore it on an AJAX submit.
+Logs are structured JSON (`audit.received`, `audit.dropped`, `audit.store`,
+`audit.notify`, `audit.ack`, `audit.rate`, `audit.config`). They carry the
+website hostname and a hash prefix, never a name or email. Logs need
+Application Insights enabled on the static web app to be visible.
 
-#### `form_render_ts` carve-out (binding on the sprint-3 backend)
+### Local development
 
-`form_render_ts` is stamped by `inquiry.js`. With JavaScript disabled it is
-submitted **empty**. A backend that treats "too fast" as spam MUST therefore:
+```sh
+cd viis-site/api
+cp local.settings.example.json local.settings.json   # MAIL_TRANSPORT=log, Azurite storage
+npm install
+npx azurite --silent --location /tmp/azurite &        # table storage emulator
+npm start                                              # builds, then func start on :7071
+```
 
-- accept an empty `form_render_ts` as *no signal* and continue processing;
-- only apply the timing rule when the value is a parseable integer;
-- never reject solely on a missing or unparseable value.
+Then `swa start ../dist --api-location . ` from `api/`, or `swa start http://localhost:4321 --api-location .`
+against the Astro dev server, serves the site with `/api` proxied. Azure Functions
+Core Tools (`func`) must be installed. `npm test` runs the handler against
+in-memory fakes and needs no emulator.
 
-Rejecting on empty would silently drop every no-JS submission. This is written
-down now because the backend that will consume it does not exist yet.
+---
 
-#### The honeypot is a checkbox, deliberately
+## Configure the form for production
 
-It used to be a text input named `company_url`. Password managers ignore
-`autocomplete="off"` and autofill fields that look like company or URL fields,
-so a real visitor could trip it. A checkbox is never autofilled.
+Three Azure resources and seven settings. Nothing in this repo contains a
+credential; every value below is created in Azure and pasted into the static
+web app's application settings.
 
-`inquiry.js` also **does not block any submission** on a bot heuristic. An
-earlier version showed "Thank you. Your inquiry has been received." and silently
-discarded the POST when the honeypot or timing check tripped — a false positive
-cost a customer. Spam filtering belongs server-side, where a false positive
-costs an inbox entry instead.
+1. **Storage account** (the lead log). Any general-purpose v2 account in
+   `rg-viis-prod`; Table service is on by default.
+   `az storage account show-connection-string -g rg-viis-prod -n <account> -o tsv`
+   → `LEADS_TABLE_CONNECTION_STRING`.
+2. **Azure Communication Services** with an **Email Communication Service** and a
+   sender domain. Fastest: the Azure-managed domain, which gives a
+   `DoNotReply@<guid>.azurecomm.net` sender. Better: connect `viispartners.com`
+   as a custom domain and add the TXT (verification + SPF) and two CNAME (DKIM)
+   records ACS shows — the acknowledgement then comes from the brand's own
+   domain with authenticated mail, which is the thing the audit itself checks.
+   `az communication list-key -g rg-viis-prod -n <acs> --query primaryConnectionString -o tsv`
+   → `MAIL_CONNECTION_STRING`; the sender address → `MAIL_FROM`.
+3. **Application settings** on `swa-viis-site`:
+   ```sh
+   az staticwebapp appsettings set -n swa-viis-site -g rg-viis-prod --setting-names \
+     LEADS_TABLE_CONNECTION_STRING='<from step 1>' \
+     MAIL_CONNECTION_STRING='<from step 2>' \
+     MAIL_FROM='DoNotReply@<domain>' \
+     MAIL_NOTIFY_TO='jgarcia@viispartners.com'
+   ```
+   `MAIL_TRANSPORT`, `LEADS_TABLE_NAME`, and `RATE_LIMIT_PER_HOUR` keep their
+   defaults unless there is a reason.
+4. **Application Insights** on the static web app, so `audit.*` log lines are
+   readable. Without it the function logs nowhere.
+5. Deploy (merge to `main`; the workflow builds `viis-site/api` as the managed
+   API on Node 22) and submit the form once. Confirm: a row in the `leads`
+   table, a notification in the inbox, an acknowledgement at the address you
+   submitted.
 
-### The backend must still do the real work
-
-Client-side validation is usability only. Whatever receives the POST MUST,
-server-side:
-
-- validate and **normalise** every field; enforce the caps in the table above;
-- **output-encode** any field before it is ever rendered (email body, admin UI);
-- treat a checked `botcheck` as spam; apply the `form_render_ts` carve-out above;
-- **rate-limit / throttle** submissions per IP;
-- return `2xx` on success, non-`2xx` on failure (the client shows the email
-  fallback on failure);
-- never log full lead PII; never expose the recipient address or credentials to
-  the browser.
-
-### Where leads go
-
-**Now:** Web3Forms (`https://api.web3forms.com/submit`) relays the submission by
-email to `jgarcia@viispartners.com`. Free tier, 250 submissions/month.
-
-**The tradeoff, stated plainly:** a third party is in the path of every lead's
-name, email, phone, company, and description of their problem. `BUSINESS-NEXT-STEPS.md`
-judges this acceptable to launch on and not acceptable to still be running in six
-months. The form's on-page note says so in visitor-facing terms — it claims no
-newsletter and no tracking, and no longer claims "no third parties", because that
-would be false while this is the backend.
-
-**Sprint 3:** Azure Function + Microsoft Graph, same origin, no third party in the
-path. Migrating is a change to `PUBLIC_FORM_ENDPOINT` plus removing the Web3Forms
-routing fields from `ContactForm.astro`.
-
-A third-party backend on a different origin must be in **both** `form-action` and
-`connect-src` in the CSP or the browser blocks the submission. Missing
-`connect-src` alone breaks only the JS path, and only in production.
+Managed functions cannot use managed identity or Key Vault references, so the
+connection strings live in application settings. Rotate them there.
 
 ---
 
 ## Security controls
 
-Implemented in this repo:
-
 - **Security headers + CSP** — [`public/staticwebapp.config.json`](./public/staticwebapp.config.json),
-  applied by Azure SWA to every response:
-  - `Content-Security-Policy`: `default-src 'self'`, no `'unsafe-inline'` for
-    script or style (verified — every asset is external and same-origin),
-    `frame-ancestors 'none'`, `object-src 'none'`, `upgrade-insecure-requests`.
-  - `Strict-Transport-Security` (2y, preload), `X-Content-Type-Options: nosniff`,
-    `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`,
-    a restrictive `Permissions-Policy`, `Cross-Origin-Opener-Policy: same-origin`,
-    `Cross-Origin-Resource-Policy: same-origin`.
-- **No secrets in the client** — the only env var is a public endpoint URL.
-- **No third-party requests at runtime** — fonts self-hosted; no analytics, no
-  tags, no CDN scripts. The CSP enforces this.
-- **Honeypot + timestamp** fields on the form, evaluated **server-side only**.
-  `inquiry.js` stamps `form_render_ts` and never gates on it, and never
-  inspects `botcheck` — a client-side gate previously discarded real
-  submissions behind a fake confirmation. Do not reintroduce one.
-- **HTTPS** — provided and enforced by Azure SWA + HSTS.
-
-Server-side controls (validation, anti-automation as appropriate to the chosen
-backend, rate limiting, safe logging) are the backend's responsibility and are
-specified above — they are **not** implemented here because the backend is not
-built.
+  applied by Azure SWA to every page response: `default-src 'self'`, no
+  `'unsafe-inline'` for script or style (every asset is an external same-origin
+  file), `connect-src 'self'`, `form-action 'self'`, `frame-ancestors 'none'`,
+  `object-src 'none'`, `upgrade-insecure-requests`; HSTS, `nosniff`,
+  `X-Frame-Options: DENY`, a strict `Referrer-Policy`, a restrictive
+  `Permissions-Policy`, COOP and CORP `same-origin`. Global headers do not
+  apply to API responses, so the function sets its own on every response.
+- **Server-side validation** — zod at the API boundary; every field normalised
+  to one line and capped; the website URL parsed and canonicalised; unknown
+  fields never reach the schema.
+- **Rate limiting** — per hashed client address per hour, in the table.
+- **Honeypot** evaluated server-side only; bots receive a success and nothing
+  is stored or sent.
+- **No secrets in the client, none in the repo** — the API reads connection
+  strings from application settings; `local.settings.json` is git-ignored.
+- **No PII in logs** — hostnames and hash prefixes only.
+- **Output encoding** — every submitted value is HTML-escaped before it appears
+  in an email or an HTML response.
+- **No third party in the lead path** — storage and mail are Azure services in
+  the same subscription.
 
 ### CSP note
 
-If you add any external resource (a CAPTCHA, a booking embed, a font, an
-analytics tag) you must widen the CSP in `staticwebapp.config.json` to name its
-exact origins. Do not add `'unsafe-inline'`. Prefer external same-origin files
-(as `inquiry.js` does) so the strict policy holds.
+If you add any external resource (a booking embed, a font, an analytics tag)
+you must widen the CSP in `staticwebapp.config.json` to name its exact origins.
+Do not add `'unsafe-inline'`. Prefer external same-origin files, as
+`audit.js` is, so the strict policy holds.
 
 ---
 
+The policy admits Google's analytics origins, exactly as Google documents for `gtag.js`:
+
+- `script-src https://*.googletagmanager.com` — the tag itself.
+- `img-src https://*.google-analytics.com https://*.googletagmanager.com` — the pixel fallback the tag uses when `fetch`/beacon is unavailable.
+- `connect-src https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com` — the collection endpoints, including the regional ones.
+
+`style-src` stays `'self'` with no `'unsafe-inline'`: the loader is an external same-origin script and there is no inline snippet, so nothing else was loosened.
+
+
 ## Third-party services
 
-**None at runtime.** No analytics, no tag manager, no chat widget, no cookie
-banner, no web fonts from a CDN. This is deliberate for a security practice's
-own site. Any addition must be listed here with what data it receives and why.
-
-Dev-only dependencies: `astro`, and `@astrojs/check` + `typescript` for the
-type-check. No runtime dependencies ship to the browser.
+**None in the browser.** No analytics, no tag manager, no chat widget, no
+cookie banner, no CDN fonts. Server-side, the API uses two Azure services in
+the same subscription: Azure Table Storage (lead log) and Azure Communication
+Services Email (notification and acknowledgement). Any addition must be listed
+here with what data it receives and why.
 
 ---
 
 ## Deployment
 
-- **Host:** Azure Static Web Apps. Workflow:
+- **Host:** Azure Static Web Apps, `swa-viis-site` in `rg-viis-prod`. Workflow:
   `.github/workflows/azure-static-web-apps-salmon-coast-018dde90f.yml`
-  (`app_location: viis-site`, `output_location: dist`, no API yet).
+  (`app_location: viis-site`, `api_location: viis-site/api`, `output_location: dist`).
+- **API runtime:** `node:22`, set in `staticwebapp.config.json` → `platform.apiRuntime`.
+  The API is TypeScript; the deploy builds it with `npm run build`.
 - **Preview URL:** https://salmon-coast-018dde90f.7.azurestaticapps.net
-- **Production domain:** `viispartners.com` — live. The preview URL 301s to it.
-- PRs to the workflow's tracked branches get an SWA preview environment; merges
-  deploy production. Roll back by reverting the merge (redeploys the prior build).
-
-### Build-time env vars go in the workflow, never the Portal
-
-`PUBLIC_FORM_ENDPOINT` and `PUBLIC_FORM_ACCESS_KEY` are set in the `env:` block
-of the `Build And Deploy` step, **not** in Azure Portal → Configuration.
-
-Astro inlines `import.meta.env` at **build** time, and the build runs inside the
-GitHub Actions job. Portal application settings are injected at **request** time
-into a running managed API — which this static site does not have — so they
-never reach the bundle. Setting them in the Portal yields a form that posts to
-the `/api/contact` fallback and silently drops every lead, while looking
-completely correct in the Portal UI.
-
-`PUBLIC_FORM_ACCESS_KEY` is stored in GitHub Secrets. It is public by design
-once rendered into the HTML; the secret exists so it can be rotated without a
-commit, not because it is confidential.
-
-**Verify the endpoint in the build output, not the source:** after a build,
-`grep -o 'action="[^"]*"' dist/index.html` must show the Web3Forms URL. If it
-shows `/api/contact`, the env var did not reach the build.
+- **Production domain:** `viispartners.com`.
+- PRs get an SWA preview environment; merges deploy production. Roll back by
+  reverting the merge.
 
 ### Share image
 
 `public/og-image.svg` is the editable source of the 1200×630 social card;
 `public/og-image.png` is the rasterized version the meta tags reference. To
 regenerate the PNG after editing the SVG, render it at 1200×630 with the site's
-self-hosted fonts loaded (any headless browser, or an SVG rasterizer that has
-Fraunces + Geist Mono available) and overwrite `og-image.png`. No build-time
-image dependency is added to the project.
+self-hosted fonts loaded and overwrite `og-image.png`.
 
 ---
 
 ## Launch checklist
 
-Design / content:
-- [ ] Owner sign-off on the **lifecycle section** wording (Define / Deliver /
-      Launch) — currently structured from the brief taxonomy, placeholder prose.
-- [ ] Owner sign-off on the hero support line and contact copy.
-
 Form / backend (blocking):
-- [x] Connect the `PUBLIC_FORM_ENDPOINT` backend (Web3Forms, for launch).
-- [x] Document lead recipient, storage, access, retention — see "Where leads go".
-- [x] Widen `form-action` + `connect-src` for the third-party origin.
-- [ ] Sprint 3: replace Web3Forms with the same-origin Azure Function, so no
-      third party sits in the lead path. See `BUSINESS-NEXT-STEPS.md` Option A.
-- [ ] End-to-end test a real submission to the real inbox.
+- [ ] Create the storage account and ACS resources; set the four application
+      settings (see "Configure the form for production").
+- [ ] Enable Application Insights on the static web app.
+- [ ] Submit the form once in production; confirm the table row, the
+      notification, and the acknowledgement.
+- [ ] Connect `viispartners.com` as the ACS sender domain and publish its SPF
+      and DKIM records, so the acknowledgement is authenticated mail.
 
 Platform:
-- [ ] Point `viispartners.com` DNS at the SWA; confirm the managed certificate.
-- [x] Set `PUBLIC_FORM_ENDPOINT` + `PUBLIC_FORM_ACCESS_KEY` in the workflow
-      `env:` block. **Not** the Azure Portal — see "Build-time env vars" above.
 - [ ] Confirm security headers are live (`curl -I https://viispartners.com`).
-- [ ] Add form-delivery monitoring / uptime check.
+- [ ] Add form-delivery monitoring (an alert on `audit.store` or `audit.notify`
+      errors in Application Insights).
 - [ ] **After this branch merges**, add `.gitattributes` with `* text=auto eol=lf`
-      and renormalise, as its own commit so the mechanical diff never mixes
-      with functional change. `main` is currently CRLF. This blocks sprint 3:
-      a shell script committed with CRLF fails on the Ubuntu runner with a
-      `bad interpreter` error that reads like a missing binary.
+      and renormalise, as its own commit. `main` is currently CRLF.
 - [ ] Decide whether any privacy-conscious, cookieless analytics is wanted
       (none is installed; adding one requires a CSP update and a note here).
 
@@ -287,16 +281,13 @@ Platform:
 
 ## Known limitations
 
-- **A third party sits in the lead path.** Web3Forms relays every submission,
-  which means a vendor holds each lead's name, email, phone, company and problem
-  description. Judged acceptable to launch on and not acceptable in six months —
-  see `BUSINESS-NEXT-STEPS.md`. The on-page note tells visitors a form processor
-  is involved rather than claiming "no third parties".
-- **No server-side validation / rate limiting of our own** — we inherit whatever
-  Web3Forms applies. The controls under "The backend must still do the real work"
-  are specified for the sprint-3 Function, not implemented today.
-- **A tripped `botcheck` is unobservable.** Nothing logs or counts a bot
-  rejection, and Web3Forms does not document its response to one.
-- **Lifecycle copy is placeholder** pending owner wording.
-- **No analytics**, so there is no conversion measurement yet. Intentional.
-- The `og-image.png` must be regenerated by hand if the SVG changes (no pipeline).
+- **Rate limiting is per address behind the SWA proxy.** It relies on
+  `x-forwarded-for`; when absent the limit is skipped (and logged) rather than
+  shared by everyone.
+- **The rate counter is read-then-write.** Two simultaneous requests can both
+  count as the same number. Accepted at this volume.
+- **Email delivery is fire-and-forget.** The function returns once ACS accepts
+  the message; a later delivery failure appears in ACS metrics, not in the
+  function log.
+- **Service pages** (`/websites`, `/foundations`, `/search`, `/automation`) are
+  linked from the method section and do not exist until build step 7.

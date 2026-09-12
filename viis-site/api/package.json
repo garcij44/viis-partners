@@ -1,0 +1,28 @@
+{
+  "name": "viis-site-api",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Managed Azure Functions API for viispartners.com: the free site audit request form.",
+  "main": "dist/src/functions/*.js",
+  "engines": {
+    "node": ">=20.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rm -rf dist",
+    "prestart": "npm run build",
+    "start": "func start",
+    "test": "npm run build && node --test \"dist/test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@azure/communication-email": "^1.1.0",
+    "@azure/data-tables": "^13.3.2",
+    "@azure/functions": "^4.16.2",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0"
+  }
+}

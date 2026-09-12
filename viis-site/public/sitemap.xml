@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Static on purpose: six indexable pages. /thanks/ is noindex and /dev/
+     is not built for production, so neither belongs here. Update lastmod
+     on content changes. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://viispartners.com/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-09-12</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/websites/</loc>
+    <lastmod>2026-09-12</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/foundations/</loc>
+    <lastmod>2026-09-12</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/search/</loc>
+    <lastmod>2026-09-12</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/automation/</loc>
+    <lastmod>2026-09-12</lastmod>
+  </url>
+  <url>
+    <loc>https://viispartners.com/privacy/</loc>
+    <lastmod>2026-09-12</lastmod>
   </url>
 </urlset>

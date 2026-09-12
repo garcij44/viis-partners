@@ -1,0 +1,187 @@
+---
+/**
+ * Section 8 — the audit (brief §2.8). The lead magnet, styled like Canopy's
+ * Toolkit: eyebrow, display headline, subhead, then two cards — the form,
+ * and what the audit checks, as four mono-labelled groups. No icons here;
+ * the form is the section's object.
+ */
+import Section from '../Section.astro';
+import Eyebrow from '../Eyebrow.astro';
+import Card from '../Card.astro';
+import AuditForm from '../AuditForm.astro';
+import { AUDIT_POINT_COUNT } from '../../data/audit';
+
+interface Group {
+  label: string;
+  items: string[];
+}
+
+// Free vs. paid split (2026-09): the free tier only promises what is
+// verifiable from outside the client's systems. DKIM is dropped from the
+// free promise (absence can't be proven from outside — only that a
+// selector wasn't found; the audit still probes for it). Local visibility
+// moves to paid (rank grids cost per location). Analytics splits: tag
+// presence is externally visible, whether tags fire is not. External
+// exposure (headers, version disclosure, directory listing) is new to
+// free. See docs/VIIS-Site-Brief.md §8 for the full rationale.
+const freeGroups: Group[] = [
+  { label: 'Site', items: ['speed', 'mobile', 'accessibility', 'broken links', 'SSL', 'indexability'] },
+  { label: 'Foundation', items: ['DNS records', 'SPF and DMARC', 'domain ownership'] },
+  { label: 'Search', items: ['Google Business Profile', 'metadata', 'schema', 'analytics tags'] },
+  { label: 'Risk', items: ['vendor lock-in', 'external exposure'] },
+];
+
+const paidGroups: Group[] = [
+  { label: 'Foundation', items: ['Workspace configuration', 'license waste'] },
+  { label: 'Search', items: ['local ranking', 'Search Console and analytics data', 'conversion tracking verification'] },
+  { label: 'Risk', items: ['backups', 'admin access', 'MFA', 'orphaned accounts'] },
+];
+---
+
+<Section id="audit" labelledby="audit-heading">
+  <Eyebrow class="kicker">Free</Eyebrow>
+  <h2 id="audit-heading" class="headline">A free audit of your site and the systems under it</h2>
+  <p class="t-lead fg-2 measure sub">
+    A {AUDIT_POINT_COUNT}-point audit of your website and domain — from nothing but your domain
+    and an email address. We run it, write it up, and send you the report. No obligation, and you
+    keep the report whether or not you hire us.
+  </p>
+
+  {/* The form is first in the DOM (it is the point) and sits right on desktop
+      beside what it delivers; stacked, it comes straight after the offer. */}
+  <div class="grid">
+    <Card class="form-card">
+      <AuditForm />
+    </Card>
+
+    <Card class="checks">
+      <h3>What's checked — free</h3>
+      <p class="tier-note t-small fg-3">All we need is your domain and your email address.</p>
+      <dl class="groups">
+        {
+          freeGroups.map((group) => (
+            <div class="group">
+              <dt class="t-label fg-2">{group.label}</dt>
+              <dd>
+                <ul class="items t-mono">
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <h3 class="tier-heading">What needs access — Systems Audit, $1,450</h3>
+      <p class="tier-note t-small fg-3">
+        These can't be seen from outside. They require read access you grant us.
+      </p>
+      <dl class="groups">
+        {
+          paidGroups.map((group) => (
+            <div class="group">
+              <dt class="t-label fg-2">{group.label}</dt>
+              <dd>
+                <ul class="items t-mono">
+                  {group.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="closing t-small fg-3">
+        Neither is a security audit. The free report observes what's publicly visible; the Systems
+        Audit reviews your configuration.
+      </p>
+    </Card>
+  </div>
+</Section>
+
+<style>
+  .kicker {
+    display: flex;
+  }
+
+  .headline {
+    margin-top: var(--sp-5);
+  }
+
+  .sub {
+    margin-top: var(--sp-5);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--sp-7);
+    align-items: start;
+    margin-top: var(--sp-8);
+  }
+
+  .form-card {
+    order: 1;
+  }
+
+  .tier-heading {
+    margin-top: var(--sp-7);
+  }
+
+  .tier-note {
+    margin-top: var(--sp-2);
+  }
+
+  .groups {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--sp-5);
+  }
+
+  .closing {
+    margin-top: var(--sp-6);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .group {
+    padding-block: var(--sp-4);
+    border-top: 1px solid var(--hairline);
+  }
+
+  .group:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .group:last-child {
+    padding-bottom: 0;
+  }
+
+  .group dd {
+    margin-top: var(--sp-2);
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* The brief's own notation, " · ", as a separator between list items. */
+  .items li + li::before {
+    content: '·';
+    margin-inline: var(--sp-2);
+    color: var(--fg-3);
+  }
+
+  @media (max-width: 1023px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--sp-6);
+    }
+
+    .form-card {
+      order: 0;
+    }
+  }
+</style>

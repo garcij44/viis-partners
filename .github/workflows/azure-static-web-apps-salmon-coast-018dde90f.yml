@@ -36,21 +36,14 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         # WHY these live here and not in the Azure Portal: Astro inlines
         # import.meta.env at BUILD time, and the build runs in this job. Portal
-        # application settings are injected at request time into a running API,
-        # which this static site does not have — they would never reach the
-        # bundle. Setting them in the Portal produces a form that posts to the
-        # fallback endpoint and silently drops every lead.
+        # application settings are injected at request time into the running
+        # API; they never reach the static bundle.
         env:
-          # LOAD-BEARING LITERAL — do not move this into GitHub Secrets.
-          # ContactForm.astro's build guard only fires when this value contains
-          # "web3forms.com". If it becomes an empty secret the guard silently
-          # disarms, the build goes green, and the site ships a form posting to
-          # the /api/contact fallback that drops every lead. Verified: with both
-          # vars unset the build exits 0 and bakes action="/api/contact".
-          PUBLIC_FORM_ENDPOINT: https://api.web3forms.com/submit
-          # Public by design (it is rendered into the HTML) but kept in GitHub
-          # Secrets so it can be rotated without a commit.
-          PUBLIC_FORM_ACCESS_KEY: ${{ secrets.PUBLIC_FORM_ACCESS_KEY }}
+          # WHY a literal, not a GitHub Secret: the GA4 measurement ID is not
+          # sensitive — it is visible in the page source of every site that
+          # uses it. Treating it as a secret would only make it harder to see
+          # which property a build reports to.
+          PUBLIC_GA_MEASUREMENT_ID: G-MHQNGNC9YY
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_COAST_018DDE90F }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
@@ -58,7 +51,11 @@ jobs:
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "viis-site" # App source code path
-          api_location: "" # Api source code path - optional
+          # The audit form posts to /api/audit, a managed Function in this
+          # directory. Oryx runs its npm install and `npm run build` (tsc);
+          # the runtime is platform.apiRuntime in staticwebapp.config.json.
+          # Empty, the form's endpoint does not exist and every request 404s.
+          api_location: "viis-site/api"
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 

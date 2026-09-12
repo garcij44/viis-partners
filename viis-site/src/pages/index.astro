@@ -1,169 +1,136 @@
 ---
+/**
+ * Homepage — redesign brief §2, built in the brief's order (§6).
+ * All ten sections are in place: 1 (hero), 2 (capability row), 3 (reframe),
+ * 4 (method), 5 (proof), 6 (comparison), 7 (packages), 8 (the audit),
+ * 9 (FAQ), and 10 (closing CTA). The head carries the ProfessionalService
+ * graph from the layout plus FAQPage from the FAQ data.
+ *
+ * Chrome is SiteHeader (logotype, nav to the four service pages, audit
+ * CTA) and SiteFooter (carried over; the brief specifies no footer).
+ */
+import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
-import ContactForm from '../components/ContactForm.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import HeroBand from '../components/sections/HeroBand.astro';
+import CapabilityRow from '../components/sections/CapabilityRow.astro';
+import Reframe from '../components/sections/Reframe.astro';
+import Method from '../components/sections/Method.astro';
+import Proof from '../components/sections/Proof.astro';
+import Comparison from '../components/sections/Comparison.astro';
+import Packages from '../components/sections/Packages.astro';
+import Audit from '../components/sections/Audit.astro';
+import Faq from '../components/sections/Faq.astro';
+import { faqSchema } from '../data/faq';
+import { AUDIT_POINT_COUNT } from '../data/audit';
+import { SAMPLE_REPORT, SAMPLE_REPORT_FILE } from '../data/report';
+import SiteFooter from '../components/SiteFooter.astro';
+import { Image } from 'astro:assets';
+import reportSummary from '../assets/report/summary.png';
 
-// The four parallel services. ENGAGE is deliberately NOT in this array: it is
-// process, not an offering, and gets a structurally different treatment below.
-const services = [
-	{
-		label: 'SECURE',
-		title: "Secure what you've built",
-		text: "Most small businesses run on systems no one has reviewed in years: access left open, backups never tested, accounts never closed. We find the gaps and close them, then give you a security posture you can stand behind — identity and access done right, monitoring that means something, and a plan for the day something goes wrong.",
-	},
-	{
-		label: 'ADOPT',
-		title: 'Adopt AI without the exposure',
-		text: "AI is the fastest way for a small business to move quicker — and the fastest way to leak everything it knows. We help you put it to work safely: what's safe to feed it, where your data goes, which tools earn their place, and how to stay in control as you grow. Set up, governed, and managed, so you get the upside without becoming the cautionary tale.",
-	},
-	{
-		label: 'BUILD',
-		title: "Build what you can't buy",
-		text: 'When off-the-shelf won\'t do, we design and build it — applications, internal tools, and sites, engineered properly and owned entirely by you. This is premium custom work: it costs what real software costs, and at the end it is yours, source and all. No lock-in, no per-seat tax, no rented platform holding your business hostage.',
-	},
-	{
-		label: 'ADVISE',
-		title: 'Stay in the room',
-		text: 'Technology decisions don\'t stop at launch. We stay on as your senior technical bench — the people you call before you sign the vendor contract, wire the money, or click the link. On-call judgment, without the cost of a full-time hire.',
-	},
-];
-
-// Full-lifecycle capability. Structured from the owner's provided taxonomy;
-// wording is intentionally terse and factual, pending final owner sign-off.
-// Middle phase is "Deliver" (not "Build") to avoid colliding with the BUILD
-// service label above.
-const lifecycle = [
-	{
-		label: 'DEFINE',
-		lede: 'Before anything is built.',
-		items: 'Technical discovery and requirements. Risk assessment. Architecture and technology selection.',
-	},
-	{
-		label: 'DELIVER',
-		lede: 'Built securely from the start.',
-		items: 'Secure implementation. Cloud and platform configuration. Identity and access. Data handling. Integration and testing.',
-	},
-	{
-		label: 'LAUNCH',
-		lede: 'Into production, and beyond.',
-		items: 'Production-readiness and security review. Deployment and monitoring. Operational handoff and post-launch support.',
-	},
-];
-
-const engageText =
-	'We take on a few clients at a time and commit fully for the length of the need: senior attention instead of a junior team learning on your budget, a fixed monthly engagement instead of a meter running on every question, outcomes instead of tickets. When the work is done, it is genuinely done — documented, handed over, and yours to run.';
+// WHY the page image is rendered from the PDF, not the report's HTML: the
+// artifact must be the page a client receives. It is the summary page's
+// upper half, cropped to the slot's 16:10 so the tally is the last thing in
+// frame (the cover is mostly empty paper and says less). Eager: it is the
+// largest element in the first viewport, so a lazy load would push LCP out
+// by one image request. `sizes` mirrors --container and --gutter; it is a
+// resource hint and paints nothing.
+const pageSizes = '(min-width: 1168px) 1120px, calc(100vw - 48px)';
+const pageWidths = [480, 960, 1440];
 ---
 
+{/* Title and description are the homepage's own (brief §4: unique per page).
+    The title leads with what the business does and where, and ends on the
+    brand; the description names the four service lines and the free audit.
+    Both are provisional copy until Jadrin confirms them. */}
 <Layout
-	title="VIIS — A technology practice for owner-led businesses"
-	description="VIIS secures the systems you depend on, helps you adopt AI without exposing your business, and builds the software you can't buy off the shelf. One senior team, a few clients at a time."
+	title="Websites and the systems under them | VIIS Partners, San Antonio"
+	description={`Websites you own, and the DNS, email, Google Workspace, search, and automation underneath them. Technology consulting in San Antonio. Free ${AUDIT_POINT_COUNT}-point audit.`}
+	schema={[faqSchema()]}
 >
-	<header class="site-header">
-		<div class="bar header-inner">
-			<a class="logotype" href="/">VIIS</a>
-			<span class="header-meta">San Antonio, Texas</span>
-		</div>
-	</header>
+	<SiteHeader />
 
 	<main id="main">
-		<section class="hero grid">
-			<div class="col-1-9">
-				<h1 class="type-h1 hero-lead">
-					VIIS is a technology practice for businesses that have outgrown guesswork.
-				</h1>
-				<p class="type-body hero-support measure">
-					<span class="hero-support-lead">One senior team. A few clients at a time.</span>
-					<span class="hero-support-sub">Embedded fully, for as long as the work demands.</span>
-				</p>
-				<hr class="hero-rule" />
-			</div>
-		</section>
+		<HeroBand variant="hero" id="hero">
+			{/* The artifact (brief §2.1): one page of the real report, as the
+			    client receives it, and one link to the PDF. The caption is the
+			    link's visible name, so the frame reads as a link and says what it
+			    is at widths where the page itself is too small to read. */}
+			<a slot="artifact" class="artifact-report" href={SAMPLE_REPORT.href}>
+				<Image
+					src={reportSummary}
+					alt={`Summary page of the report: fifteen checks, three findings, twelve passed.`}
+					widths={pageWidths}
+					sizes={pageSizes}
+					loading="eager"
+					fetchpriority="high"
+					class="page"
+				/>
+				<span class="caption t-mono">
+					<span class="link">Read the sample report</span>
+					<span class="fg-3">
+						{`${SAMPLE_REPORT.business} · ${SAMPLE_REPORT.date} · ${SAMPLE_REPORT_FILE}`}
+					</span>
+				</span>
+			</a>
+		</HeroBand>
 
-		{
-			services.map((service) => (
-				<section class="section grid">
-					<div class="col-1-3 section-label">
-						<span class="type-label">{service.label}</span>
-					</div>
-					<div class="col-4-11">
-						<h2 class="type-h3 section-heading">{service.title}</h2>
-						<p class="type-body measure">{service.text}</p>
-					</div>
-				</section>
-			))
-		}
+		<CapabilityRow />
+		<Reframe />
+		<Method />
+		<Proof />
+		<Comparison />
+		<Packages />
+		<Audit />
+		<Faq />
 
-		<section class="lifecycle grid">
-			<div class="col-1-9 lifecycle-head">
-				<span class="type-label lifecycle-label">APPROACH</span>
-				<h2 class="type-h2">From first decision to production.</h2>
-				<p class="type-body measure lifecycle-sub">
-					One disciplined arc for every engagement, whether we're hardening what you already run or
-					building something new: decisions made responsibly, execution done securely, and the work
-					carried all the way to launch and handoff.
-				</p>
-			</div>
-			<div class="col-1-12 phases">
-				{
-					lifecycle.map((phase) => (
-						<div class="phase">
-							<span class="type-label phase-label">{phase.label}</span>
-							<p class="type-h3 phase-lede">{phase.lede}</p>
-							<p class="type-body phase-items">{phase.items}</p>
-						</div>
-					))
-				}
-			</div>
-		</section>
-
-		<section class="engage">
-			<div class="grid">
-				<div class="col-1-9">
-					<span class="type-label engage-label">ENGAGE</span>
-					<h2 class="type-h2 engage-heading">How we work</h2>
-					<p class="type-body measure">{engageText}</p>
-				</div>
-			</div>
-		</section>
-
-		<section class="closing grid">
-			<div class="col-1-9">
-				<p class="type-h2 closing-statement">
-					For owner-led businesses that take their systems seriously — and would rather pay once
-					for something done right than repeatedly for something done cheap.
-				</p>
-			</div>
-		</section>
-
-		<section class="contact grid" id="contact">
-			<div class="col-1-3 section-label">
-				<span class="type-label">CONTACT</span>
-			</div>
-			<div class="col-4-11">
-				<h2 class="type-h2 contact-lede" id="inquiry-heading">Start a conversation.</h2>
-				<p class="type-body measure contact-intro">
-					Tell us what you're working on. If it's a fit, we'll set up a call to talk it through;
-					if it isn't, we'll say so and point you somewhere better.
-				</p>
-
-				<ContactForm />
-
-				<p class="type-small contact-alt">
-					Prefer email?{' '}
-					<a class="cta cta-inline" href="mailto:jgarcia@viispartners.com">
-						jgarcia@viispartners.com
-						<svg class="cta-arrow" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-							<path d="M1 7.5h11M8 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" />
-						</svg>
-					</a>
-				</p>
-			</div>
-		</section>
+		<HeroBand variant="closing" id="closing" />
 	</main>
 
-	<footer class="site-footer">
-		<div class="bar footer-inner">
-			<p class="footer-line">VIIS · Jadrin Garcia, Principal · San Antonio, Texas</p>
-			<p class="footer-line">viispartners.com</p>
-		</div>
-	</footer>
+	<SiteFooter />
 </Layout>
+
+<style>
+	/* The frame: the page on the card surface at --radius-lg (brief §2.1),
+	   the caption beneath it. The link's hover is the caption's underline,
+	   the same treatment as every inline link on the site; the frame's own
+	   edge is too faint on the field to carry a state on its own. */
+	.artifact-report {
+		display: flex;
+		flex-direction: column;
+		gap: var(--sp-4);
+		padding: var(--sp-5);
+		background: var(--surface);
+		border: 1px solid var(--hairline);
+		border-radius: var(--radius-lg);
+		text-decoration: none;
+	}
+
+	.page {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: var(--radius-sm);
+	}
+
+	.caption {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: var(--sp-3);
+		row-gap: var(--sp-1);
+	}
+
+	@media (hover: hover) {
+		.artifact-report:hover .link {
+			text-decoration-color: var(--link-rule-hover);
+			text-decoration-thickness: 2px;
+		}
+	}
+
+	@media (max-width: 767px) {
+		.artifact-report {
+			gap: var(--sp-3);
+			padding: var(--sp-4);
+		}
+	}
+</style>

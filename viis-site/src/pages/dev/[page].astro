@@ -1,0 +1,204 @@
+---
+/**
+ * Design-system specimen at /dev/design-system. Dev only.
+ * WHY: a 404 Response from a static page still emits an HTML file at
+ * build, so gating is done in getStaticPaths — in production it returns
+ * no paths and nothing is written to dist. Tokens, type scale, spacing,
+ * and base components rendered against the real fonts.
+ */
+import '../../styles/system.css';
+import Button from '../../components/Button.astro';
+import Card from '../../components/Card.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import Swatches from '../../components/dev/Swatches.astro';
+import TypeScale from '../../components/dev/TypeScale.astro';
+import FieldVariants from '../../components/dev/FieldVariants.astro';
+
+export function getStaticPaths() {
+  return import.meta.env.PROD ? [] : [{ params: { page: 'design-system' } }];
+}
+
+const spacing = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#121319" />
+    <title>VIIS design system</title>
+    <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <main class="container spec-page">
+      <header class="stack" style="--stack-gap: var(--sp-4)">
+        <Eyebrow>Design system · Redesign brief §1</Eyebrow>
+        <h1>Tokens and type scale.</h1>
+        <p class="t-lead fg-2 measure">
+          Everything below is read from <code>src/styles/tokens.css</code>. Ratios are computed at
+          build time; type specs are read from the browser at load.
+        </p>
+      </header>
+
+      <section class="spec-section" aria-labelledby="colour">
+        <Eyebrow>Colour</Eyebrow>
+        <h2 id="colour">Palette and contrast.</h2>
+        <Swatches />
+      </section>
+
+      <section class="spec-section" aria-labelledby="type">
+        <Eyebrow>Type</Eyebrow>
+        <h2 id="type">Nine styles, three faces.</h2>
+        <TypeScale />
+      </section>
+
+      <section class="spec-section" aria-labelledby="space">
+        <Eyebrow>Space</Eyebrow>
+        <h2 id="space">4px base, eleven steps.</h2>
+        <ol class="space-scale">
+          {
+            spacing.map((n) => (
+              <li class="space-row">
+                <span class="t-mono fg-2">--sp-{n}</span>
+                <span class="space-bar" style={`width: var(--sp-${n})`} />
+              </li>
+            ))
+          }
+        </ol>
+        <p class="t-small fg-2 measure">
+          Section padding 160 / 96 / 72 by breakpoint. Container 1120px. Measure 68ch. Gutter 48px,
+          24px under 768px. Radii 8 / 12 / 16.
+        </p>
+      </section>
+
+      <section class="spec-section" aria-labelledby="components">
+        <Eyebrow>Components</Eyebrow>
+        <h2 id="components">Button, eyebrow, card, link.</h2>
+        <div class="component-row">
+          <Button href="#audit">Get your free site audit</Button>
+          <Button href="#work" variant="secondary">See the work</Button>
+          <Button type="submit">Talk it through</Button>
+        </div>
+        <div class="component-row">
+          <Eyebrow dot>Free audit · No obligation · Results in 3 business days</Eyebrow>
+          <Eyebrow>What we check for</Eyebrow>
+          <Eyebrow muted>Proof</Eyebrow>
+        </div>
+        <div class="component-grid">
+          <Card>
+            <p class="t-label fg-2">02 · Foundation</p>
+            <h3>Fix the foundation</h3>
+            <p class="t-small fg-2">
+              DNS, email authentication, Google Workspace, licenses, security. The parts nobody
+              audited.
+            </p>
+          </Card>
+          <Card>
+            <h3>Nested panel</h3>
+            <Card nested>
+              <p class="t-mono">SPF/DKIM/DMARC missing</p>
+              <p class="t-mono fg-2">Invoices land in spam. Severity: high.</p>
+            </Card>
+          </Card>
+          <div class="prose">
+            <p>
+              Inline links keep the cream and let the jade do the work underneath: <a
+                href="#audit">read the audit checklist</a> or <a href="#websites"
+              >see how a build runs</a>.
+            </p>
+            <hr />
+            <p class="t-small fg-3">A hairline and a caption in cream-faint, at 5.17:1.</p>
+          </div>
+          <div class="field-swatch">
+            <span class="t-label">--accent-field-a → --accent-field-b</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spec-section" aria-labelledby="field">
+        <Eyebrow>Hero field</Eyebrow>
+        <h2 id="field">The adopted field, at full height.</h2>
+        <p class="t-small fg-2 measure">
+          What the hero and closing CTA render. Dashed lines mark the header's foot and the 40%
+          stop where the fade begins. The three variants it was chosen over are recorded in
+          FieldVariants.astro.
+        </p>
+        <FieldVariants />
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  .spec-page {
+    padding-block: var(--sp-9);
+  }
+
+  .spec-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-6);
+    margin-top: var(--sp-10);
+  }
+
+  .spec-section > :global(.eyebrow) + h2 {
+    margin-top: calc(-1 * var(--sp-4));
+  }
+
+  .space-scale {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .space-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .space-bar {
+    display: block;
+    height: var(--sp-3);
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .component-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4) var(--sp-6);
+  }
+
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-5);
+    align-items: start;
+  }
+
+  .component-grid :global(.card) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .field-swatch {
+    display: flex;
+    align-items: flex-end;
+    min-height: 200px;
+    padding: var(--sp-5);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--hairline);
+    background: linear-gradient(180deg, var(--accent-field-a), var(--accent-field-b));
+    color: var(--accent-dim);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+</style>
