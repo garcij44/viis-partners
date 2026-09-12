@@ -84,7 +84,7 @@ The stated fear is an ugly, noisy site. Noise comes from indecision, not decorat
 
 - No stock photography of people at laptops.
 - No icon on every heading — icons only in the four-up row.
-- No more than two font sizes per section.
+- No more than two display or body sizes per section. The mono utility steps (eyebrow labels, data, captions) are a third role and do not count; the nine-step scale in `tokens.css` is the design system, and this rule is read against it (amended 2026-09-12).
 - No gradient outside the hero field.
 - Nothing blinks, bounces, auto-plays, or counts up.
 
@@ -147,7 +147,7 @@ Close the section with the connective line: *Most clients start with a website. 
 - **Eyebrow:** `PROOF`
 - **H2:** Every audit ships with a report.
 - Show a **real audit report** — findings, severity, and what each one costs in plain language. Canopy's quality-report receipt is the pattern: the deliverable proves the service.
-- Beneath it, the pattern and the client outcome. **Client name requires written permission before publishing — confirm first, and use "a San Antonio medical practice" until you have it. No client is named anywhere on the site.**
+- Beneath it, the pattern and the client outcome. **Client name requires written permission before publishing — confirm first, and use "a San Antonio medical practice" until you have it.** The audit subject of report 001, Athlon Jiu Jitsu, is named on the report and the receipt with the owner's written approval (2026-09-12). No other client is named anywhere on the site; the two businesses in the pattern and outcome below stay anonymous.
   - **The pattern**, as two specific observations, not a market-wide claim: *Two unrelated San Antonio businesses were each paying a monthly fee to a website service.* · *A medical practice, for a site bundled with their records vendor.* · *A second business, for a marketing platform with ad services attached.* · *Both got a basic site, then stopped getting replies.*
   - **Outcome**, which applies to the practice only: *The practice hired us. We rebuilt the site, moved them onto infrastructure they own, and found a half-configured Workspace and missing DNS records along the way. They now own the site and have someone who answers.*
   - Do not state what either business was paying: the argument is ownership and responsiveness, not price. The second business is evidence of the pattern, not a VIIS engagement — never a client or a case study, and no results are invented for it.
