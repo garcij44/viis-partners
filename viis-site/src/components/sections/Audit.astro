@@ -55,8 +55,18 @@ const paidGroups: Group[] = [
     </Card>
 
     <Card class="checks">
-      <h3>What's checked — free</h3>
-      <p class="tier-note t-small fg-3">All we need is your domain and your email address.</p>
+      {/* Each tier is one heading: the name, then the price, as a separate
+          element sat on the same baseline and pushed right by the receipt's
+          dotted leader. Both live inside the h3 so a screen reader hears the
+          tier and its price together; the names match the process spec, the
+          report, and the acknowledgment email, so a prospect requests the
+          thing they receive. Stacked below 640px (see media query). */}
+      <h3 class="tier">
+        <span class="tier-name">Website &amp; Domain Audit</span>
+        <span class="leader" aria-hidden="true"></span>
+        <span class="tier-price t-mono fg-2">Free</span>
+      </h3>
+      <p class="tier-note t-small fg-3">All we need is your domain and email address.</p>
       <dl class="groups">
         {
           freeGroups.map((group) => (
@@ -72,9 +82,13 @@ const paidGroups: Group[] = [
         }
       </dl>
 
-      <h3 class="tier-heading">What needs access — Systems Audit, $1,450</h3>
+      <h3 class="tier tier-second">
+        <span class="tier-name">Systems Audit</span>
+        <span class="leader" aria-hidden="true"></span>
+        <span class="tier-price t-mono fg-2">$1,450</span>
+      </h3>
       <p class="tier-note t-small fg-3">
-        These can't be seen from outside. They require read access you grant us.
+        Requires read access to the systems below. Read only, and you revoke it when we're done.
       </p>
       <dl class="groups">
         {
@@ -124,8 +138,36 @@ const paidGroups: Group[] = [
     order: 1;
   }
 
-  .tier-heading {
+  /* Name, leader, price on one baseline. WHY baseline: the price is mono at
+     the receipt's size, the name is the heading face; aligning their
+     baselines is what makes them read as one line rather than two boxes. */
+  .tier {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    text-wrap: initial;
+  }
+
+  .tier-second {
     margin-top: var(--sp-7);
+  }
+
+  .tier-name {
+    flex: none;
+    min-width: 0;
+  }
+
+  /* The receipt's dotted leader (Proof.astro): an empty flex item whose
+     bottom edge sits on the baseline, and the border is that edge. */
+  .leader {
+    flex: 1;
+    min-width: var(--sp-4);
+    height: 1px;
+    border-bottom: 1px dotted var(--fg-3);
+  }
+
+  .tier-price {
+    flex: none;
   }
 
   .tier-note {
@@ -182,6 +224,20 @@ const paidGroups: Group[] = [
 
     .form-card {
       order: 0;
+    }
+  }
+
+  /* Phones: the price stacks under the name. No leader when there is no
+     gap for it to bridge. */
+  @media (max-width: 640px) {
+    .tier {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--sp-1);
+    }
+
+    .leader {
+      display: none;
     }
   }
 </style>
