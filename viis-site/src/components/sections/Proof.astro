@@ -37,7 +37,7 @@ import { SAMPLE_REPORT, SAMPLE_REPORT_FILE } from '../../data/report';
 
 const cover = [
   { key: 'Prepared for', value: SAMPLE_REPORT.business },
-  { key: 'Website', value: SAMPLE_REPORT.website },
+  { key: 'Website', value: SAMPLE_REPORT.website, href: SAMPLE_REPORT.websiteHref },
   { key: 'Date', value: SAMPLE_REPORT.date },
 ];
 const tally = `${SAMPLE_REPORT.checks} checks · ${SAMPLE_REPORT.findingCount} findings · ${SAMPLE_REPORT.passed} passed`;
@@ -62,13 +62,22 @@ const tally = `${SAMPLE_REPORT.checks} checks · ${SAMPLE_REPORT.findingCount} f
 
       <dl class="rows t-mono">
         {
-          cover.map(({ key, value }) => (
+          cover.map(({ key, value, href }) => (
             <div class="row">
               <dt>
                 <span>{key}</span>
                 <span class="leader" aria-hidden="true" />
               </dt>
-              <dd>{value}</dd>
+              <dd>
+                {href ? (
+                  <a class="link" href={href} target="_blank" rel="noopener">
+                    {value}
+                    <span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ) : (
+                  value
+                )}
+              </dd>
             </div>
           ))
         }

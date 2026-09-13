@@ -32,6 +32,9 @@ export const SAMPLE_REPORT = {
   number: '001',
   business: 'Athlon Jiu Jitsu',
   website: 'athlonjiujitsu.com',
+  /** The live site. The receipt links to it: a real client, so the link is
+   *  followed on purpose (no nofollow) and the small equity is Athlon's. */
+  websiteHref: 'https://athlonjiujitsu.com',
   date: 'September 12, 2026',
   dateIso: '2026-09-12',
   /** Who the subject is to VIIS, stated on the receipt so a reader does not
