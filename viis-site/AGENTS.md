@@ -28,6 +28,8 @@ surface that carries text (cream on the brief's `#2F7F5E` is 3.94:1 and fails AA
 The token and type specimen renders at `/dev/design-system` in dev only; it is excluded
 from production builds.
 
+`public/favicon.svg` and `favicon.ico` are the VIIS mark; never regenerate them from the Astro scaffold.
+
 ## Development
 
 When starting the dev server, use background mode:
