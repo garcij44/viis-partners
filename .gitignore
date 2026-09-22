@@ -15,6 +15,7 @@ viis-site/api/local.settings.json
 
 # Local operating docs — never committed
 /.local/
+/Claude outputs/
 
 .astro/
 node_modules/
