@@ -200,6 +200,8 @@ Its own section, styled like Canopy's Toolkit — this is the lead magnet and it
 - **Form fields:** name, business name, email, website URL, *"what's bothering you about it?"* (optional, one line). Nothing else — every extra field costs conversions.
 - **CTA:** `Get your free site audit`
 
+**Systems Audit (paid tier).** The Systems Audit is $1,450 (base: up to 25 seats, one domain, one location; +$400 per additional 25 seats, +$350 per additional location). 50% of the fee credits against project work of $2,500 or more, measured before the credit, started within 90 days of the report's delivery. Never against a monthly plan. Site copy states the credit in one line under the price; the proposal and report carry the full terms. Source of truth is the VIIS Partners rate card §3.
+
 **Delivery constraint — build this before promoting it.** The audit must be a templated, partly automated process with a fixed checklist and a report template. At 20 hours a week, an unbounded manual audit will consume the month if ten referrals convert. The automation is reusable across every future client, so it's delivery infrastructure, not overhead.
 
 **Speed to lead:** requests must trigger an immediate acknowledgement and notify Jadrin at once. Response inside the hour is the differentiator this whole positioning rests on.

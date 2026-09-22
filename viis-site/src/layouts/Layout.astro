@@ -96,7 +96,9 @@ const siteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION as stri
 		{siteVerification && <meta name="google-site-verification" content={siteVerification} />}
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<!-- WHY sizes: with no sizes, Chrome takes the last icon link, the ICO,
+		     and never shows the SVG's light/dark switch. -->
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 
 		<!-- OpenGraph -->
 		<meta property="og:type" content={ogType} />
