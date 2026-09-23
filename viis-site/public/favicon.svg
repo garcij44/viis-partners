@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128">
-    <!-- Fraunces "V" outlined from public/fonts/fraunces-variable.woff2 at
-         wght 460 (the h1 weight) and opsz 9. WHY opsz 9, not the display 144:
-         at 144 the right hairline is ~0.2px at 16px and breaks up, so the mark
-         reads as a backslash; the small-size master holds both strokes. -->
-    <path d="M84.29 11.19Q84.29 9.67 85.37 8.84Q86.45 8 88.63 8H114.12Q116.43 8 117.49 8.81Q118.54 9.63 118.54 11.11Q118.54 12.21 117.82 12.96Q117.1 13.71 115.24 14.4L112.01 15.48Q109.7 16.4 108.17 18.37Q106.64 20.33 105.19 24.79L77.17 105.68Q76.36 108.12 75.97 109.69Q75.58 111.26 75.58 112.94V116.39Q75.58 118.09 74.61 119.05Q73.63 120 72 120H55.68Q53.96 120 53 119.05Q52.04 118.09 52.04 116.28V112.86Q52.04 111.55 51.67 110.14Q51.3 108.74 50.62 106.8L20.19 20.52Q19.41 18.21 18.44 17.2Q17.47 16.19 15.78 15.54L12.42 14.55Q9.46 13.48 9.46 11.19Q9.46 9.67 10.56 8.84Q11.65 8 13.88 8H49.38Q51.64 8 52.7 8.84Q53.75 9.67 53.75 11.19Q53.75 12.42 52.93 13.16Q52.1 13.91 50.46 14.44L44.36 15.51Q42.32 16.08 41.87 17.45Q41.42 18.83 42.53 22.02L72.86 108.7L66.11 113.27L96.86 24.25Q98.14 20.51 97.37 18.52Q96.6 16.53 93.03 15.43L87.55 14.4Q85.98 13.87 85.14 13.16Q84.29 12.45 84.29 11.19Z" />
+    <!-- Montserrat "V" outlined from public/fonts/montserrat-variable.woff2 at
+         wght 600, cap top y 8 and baseline y 120 so both land on the 16/32/48
+         pixel grid, centred. WHY 600, not the headings' 500: rendered at 16px,
+         500's 1.3px strokes turn half the V into grey antialiasing; 600 gives
+         37% more solid pixels while the counter stays open to row 9 of 16.
+         700 fills the counter from row 8 and reads as a wedge. -->
+    <path d="M53.8 120 4.91 8H27.44L71.15 109.25H58.14L102.41 8H123.09L74.34 120Z" />
     <style>
         /* Palette tokens, not #000/#FFF — "pure white text or pure black
            anything" is a verbatim anti-pattern, and this mark is on screen in

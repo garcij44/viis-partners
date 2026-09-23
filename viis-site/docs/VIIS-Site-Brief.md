@@ -65,7 +65,7 @@ Three roles, no more.
 | Body | **Geist** | paragraphs, list items, buttons, nav |
 | Utility | **Geist Mono** | eyebrow labels, table headers, data, captions, the audit-report artifact |
 
-**Why Montserrat (changed September 22, 2026, from a rendered comparison).** The display face was Fraunces. It read as an AI-default serif, and its opsz-144 setting thinned the "e" crossbar at hero size. Montserrat 500 replaces it on every h1 and h2. The favicon, `favicon.ico` and the OG image keep the Fraunces V.
+**Why Montserrat (changed September 22, 2026, from a rendered comparison).** The display face was Fraunces. It read as an AI-default serif, and its opsz-144 setting thinned the "e" crossbar at hero size. Montserrat 500 replaces it on every h1 and h2. The marks followed on September 23, 2026: the favicon and `favicon.ico` are a Montserrat 600 V (heavier for legibility at 16px), and the OG image's headline is Montserrat 500.
 
 Eyebrow labels: Geist Mono, uppercase, ~0.72rem, letter-spacing ~0.12em, `--accent-dim`. Both reference sites do this; it's the cheapest way to make a page look considered.
 
