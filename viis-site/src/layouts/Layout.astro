@@ -126,6 +126,9 @@ const siteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION as stri
 
 		{graphs.map((graph) => <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />)}
 		{gaId && <script is:inline src="/scripts/analytics.js" data-measurement-id={gaId} defer />}
+		<!-- First-touch campaign tags for the audit form (public/scripts/source.js).
+		     Same-origin module, so script-src 'self' covers it. -->
+		<script is:inline type="module" src="/scripts/source.js"></script>
 	</head>
 	<body>
 		<a class="skip" href="#main">Skip to content</a>

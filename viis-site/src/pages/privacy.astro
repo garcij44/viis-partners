@@ -11,6 +11,9 @@
  * property's user-data acknowledgement can be signed against it. May still
  * go to a lawyer. Two facts are not in the repo and are stated as such in
  * the copy: a retention period for audit requests, and a postal address.
+ *
+ * Updated 2026-09-22 for lead source: campaign tags carried from the landing
+ * link (public/scripts/source.js, api/src/lib/validate.ts sourceFrom).
  */
 import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
@@ -19,7 +22,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import Section from '../components/Section.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 
-const updated = 'September 12, 2026';
+const updated = 'September 22, 2026';
 const gaId = 'G-MHQNGNC9YY';
 ---
 
@@ -34,8 +37,9 @@ const gaId = 'G-MHQNGNC9YY';
 			<Eyebrow class="kicker">Privacy</Eyebrow>
 			<h1 id="privacy-heading" class="headline">What this site collects, and what we do with it.</h1>
 			<p class="t-lead fg-2 measure sub">
-				Short version: the audit form collects five things you type and we store them in our own
-				Azure account to run your audit and reply; Google Analytics counts visits and records when a
+				Short version: the audit form collects five things you type, plus the campaign tag of the
+				link that brought you here if it carried one, and we store them in our own Azure account to
+				run your audit and reply; Google Analytics counts visits and records when a
 				request is accepted, without advertising features; nothing is sold or shared with anyone.
 			</p>
 			<p class="t-mono fg-3 updated">Last updated {updated}</p>
@@ -57,12 +61,22 @@ const gaId = 'G-MHQNGNC9YY';
 					until the hour is up.
 				</p>
 				<p>
+					If the link that brought you to the site carried campaign tags (the
+					<span class="t-mono">utm_source</span>, <span class="t-mono">utm_medium</span>, and
+					<span class="t-mono">utm_campaign</span> parts of a web address, which name the campaign a
+					link belongs to), the form sends those too, so we know which link a request came from.
+					Only the first tagged link you open in a browser tab counts. A tag longer than 60
+					characters, or with anything other than lowercase letters, digits, hyphens, and
+					underscores, is dropped. A request with no tag is recorded as direct.
+				</p>
+				<p>
 					The form carries a hidden checkbox that a person never sees. Automated submissions that
 					tick it are discarded without being stored.
 				</p>
 				<p>
 					Two emails go out when a request is accepted: a confirmation to the address you gave,
-					and a notification to us. Both contain what you typed and nothing else.
+					and a notification to us. The confirmation contains what you typed and nothing else; the
+					notification adds the campaign tag, if there was one.
 				</p>
 
 				<h2>Where it is stored</h2>
@@ -114,7 +128,9 @@ const gaId = 'G-MHQNGNC9YY';
 
 				<h2>Cookies</h2>
 				<p>
-					The site sets no cookies of its own. Google Analytics sets two first-party cookies,
+					The site sets no cookies of its own. It keeps a link's campaign tags in your browser's
+					session storage, which stays on your device, is read only when you send the form, and
+					clears when you close the tab. Google Analytics sets two first-party cookies,
 					<span class="t-mono">_ga</span> and <span class="t-mono">_ga_MHQNGNC9YY</span>, each
 					lasting up to two years, to tell a returning visit from a new one. They are set when a
 					page loads; there is no consent banner. Blocking or deleting them in your browser does
@@ -127,7 +143,7 @@ const gaId = 'G-MHQNGNC9YY';
 					<li>We do not sell, rent, trade, or share your details with anyone.</li>
 					<li>We do not send marketing email. A request gets a confirmation and a reply, and that is all.</li>
 					<li>We do not embed social media, advertising pixels, chat widgets, or any third-party script other than Google Analytics.</li>
-					<li>We do not collect anything from you that the form does not show you.</li>
+					<li>We do not collect anything through the form beyond what this page describes.</li>
 				</ul>
 
 				<h2>Your choices</h2>

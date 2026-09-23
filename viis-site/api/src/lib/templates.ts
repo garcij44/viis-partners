@@ -55,6 +55,14 @@ export function ackMessage(lead: LeadRecord, replyTo: string): Message {
   };
 }
 
+/** "google, medium cpc, campaign fall-launch"; absent tags are left out. */
+export function sourceLine(lead: LeadRecord): string {
+  const parts = [lead.utmSource || '(none)'];
+  if (lead.utmMedium) parts.push(`medium ${lead.utmMedium}`);
+  if (lead.utmCampaign) parts.push(`campaign ${lead.utmCampaign}`);
+  return parts.join(', ');
+}
+
 export function notifyMessage(lead: LeadRecord, to: string): Message {
   const rows: Array<[string, string]> = [
     ['Name', lead.name],
@@ -62,6 +70,7 @@ export function notifyMessage(lead: LeadRecord, to: string): Message {
     ['Email', lead.email],
     ['Website', lead.website],
     ['Note', lead.note || '(none)'],
+    ['Source', sourceLine(lead)],
     ['Received', lead.receivedAt],
   ];
   const text = ['New audit request', '', ...rows.map(([k, v]) => `${k}: ${v}`), '', 'Reply to this email to answer them directly.'].join('\n');

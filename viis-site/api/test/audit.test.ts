@@ -114,6 +114,53 @@ describe('POST /api/audit', () => {
     assert.equal((await handler(formRequest(validFields), context)).status, 500);
   });
 
+  it('records campaign tags and names them in the notification only', async () => {
+    const tags = { utm_source: 'linkedin', utm_medium: 'social', utm_campaign: 'fall_audit-2026' };
+    const { deps, response } = run(makeDeps(), formRequest({ ...validFields, ...tags }));
+    assert.equal((await response).status, 200);
+    const lead = deps.store.leads[0]!;
+    assert.equal(lead.utmSource, 'linkedin');
+    assert.equal(lead.utmMedium, 'social');
+    assert.equal(lead.utmCampaign, 'fall_audit-2026');
+    const notify = deps.mailer.sent.find((m) => m.to === 'owner@test.local')!;
+    assert.match(notify.text, /^Source: linkedin, medium social, campaign fall_audit-2026$/m);
+    assert.ok(notify.html.includes('<th align="left" style="padding:4px 12px 4px 0">Source</th>'));
+    const ack = deps.mailer.sent.find((m) => m.to === 'ada@example.com')!;
+    assert.doesNotMatch(ack.text, /linkedin|Source/);
+  });
+
+  it('records an untagged lead as direct', async () => {
+    const { deps, response } = run();
+    assert.equal((await response).status, 200);
+    const lead = deps.store.leads[0]!;
+    assert.deepEqual([lead.utmSource, lead.utmMedium, lead.utmCampaign], ['direct', '', '']);
+    const notify = deps.mailer.sent.find((m) => m.to === 'owner@test.local')!;
+    assert.match(notify.text, /^Source: direct$/m);
+  });
+
+  it('drops malformed tags silently and keeps the valid ones', async () => {
+    const tags = { utm_source: 'Google', utm_medium: 'email', utm_campaign: 'x'.repeat(61) };
+    const { deps, lines, response } = run(makeDeps(), formRequest({ ...validFields, ...tags }));
+    assert.equal((await response).status, 200);
+    const lead = deps.store.leads[0]!;
+    assert.deepEqual([lead.utmSource, lead.utmMedium, lead.utmCampaign], ['', 'email', '']);
+    const notify = deps.mailer.sent.find((m) => m.to === 'owner@test.local')!;
+    assert.match(notify.text, /^Source: \(none\), medium email$/m);
+    const dropped = lines.find((line) => line.includes('"audit.source.dropped"'))!;
+    assert.deepEqual(JSON.parse(dropped).tags, ['utm_source', 'utm_campaign']);
+    assert.ok(!dropped.includes('Google'));
+  });
+
+  it('never rejects a lead over its tags, and falls back to direct when all are malformed', async () => {
+    const tags = { utm_source: '<script>', utm_medium: 'a b', utm_campaign: 'fall\r\nBcc: x@y.z' };
+    const { deps, response } = run(makeDeps(), formRequest({ ...validFields, ...tags }));
+    const res = await response;
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.jsonBody, { ok: true });
+    const lead = deps.store.leads[0]!;
+    assert.deepEqual([lead.utmSource, lead.utmMedium, lead.utmCampaign], ['direct', '', '']);
+  });
+
   it('fails open on rate limiting when the counter store is down', async () => {
     const deps = makeDeps();
     deps.store.failRate = true;

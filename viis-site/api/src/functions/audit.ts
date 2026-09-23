@@ -15,7 +15,7 @@ import { AcsMailer, LogMailer, type Mailer } from '../lib/mail';
 import { clientIp, hashIp, hourBucket, readForm, UNKNOWN_IP } from '../lib/request';
 import { failure, invalid, RATE_LIMITED, SERVER_ERROR, success, wantsJson } from '../lib/respond';
 import { ackMessage, hostOf, notifyMessage } from '../lib/templates';
-import { fieldsFrom, isHoneypotTripped, oneLine, validateLead, type Lead } from '../lib/validate';
+import { fieldsFrom, isHoneypotTripped, oneLine, sourceFrom, validateLead, type Lead, type LeadSource } from '../lib/validate';
 
 export interface Deps {
   config: Config;
@@ -46,9 +46,17 @@ async function overLimit(deps: Deps, context: InvocationContext, ip: string): Pr
   }
 }
 
-async function capture(deps: Deps, context: InvocationContext, lead: Lead, request: HttpRequest, ip: string): Promise<Outcome> {
+interface Submission {
+  lead: Lead;
+  source: LeadSource;
+  ip: string;
+}
+
+async function capture(deps: Deps, context: InvocationContext, submission: Submission, request: HttpRequest): Promise<Outcome> {
+  const { lead, source, ip } = submission;
   const record: LeadRecord = {
     ...lead,
+    ...source,
     receivedAt: deps.now().toISOString(),
     ipHash: hashIp(ip),
     userAgent: oneLine(request.headers.get('user-agent') ?? '').slice(0, 200),
@@ -61,6 +69,7 @@ async function capture(deps: Deps, context: InvocationContext, lead: Lead, reque
   ]);
   logEvent(context, 'audit.received', {
     host: hostOf(record.website),
+    source: record.utmSource,
     saved,
     notified,
     acknowledged,
@@ -89,7 +98,9 @@ export function createHandler(getDeps: () => Deps) {
     if (!result.ok) return invalid(asJson, result.errors);
     const ip = clientIp(request);
     if (await overLimit(deps, context, ip)) return failure(asJson, 429, RATE_LIMITED);
-    const outcome = await capture(deps, context, result.lead, request, ip);
+    const { source, dropped } = sourceFrom(form);
+    if (dropped.length > 0) logEvent(context, 'audit.source.dropped', { tags: dropped });
+    const outcome = await capture(deps, context, { lead: result.lead, source, ip }, request);
     if (!outcome.saved && !outcome.notified) return failure(asJson, 500, SERVER_ERROR);
     return success(asJson, deps.config.thanksPath);
   };

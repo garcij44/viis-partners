@@ -8,9 +8,9 @@
  */
 import { TableClient } from '@azure/data-tables';
 import { randomUUID } from 'node:crypto';
-import type { Lead } from './validate';
+import type { Lead, LeadSource } from './validate';
 
-export interface LeadRecord extends Lead {
+export interface LeadRecord extends Lead, LeadSource {
   receivedAt: string;
   ipHash: string;
   userAgent: string;

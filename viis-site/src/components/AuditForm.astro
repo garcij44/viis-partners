@@ -5,7 +5,9 @@
  * managed function at /api/audit, which answers a navigation submit with a
  * redirect to /thanks/ and a fetch submit with JSON. public/scripts/audit.js
  * only enhances it: inline errors, inline states, no browser bubbles, and
- * never a client-side bot gate.
+ * never a client-side bot gate. With JS on it also carries the landing
+ * link's campaign tags (public/scripts/source.js) in the POST body; they are
+ * not fields, never render, and cannot fail a submission.
  *
  * SECURITY: every check here is usability. api/src/lib/validate.ts is the
  * boundary; it normalises, length-limits, rejects, and rate-limits.

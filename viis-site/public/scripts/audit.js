@@ -106,12 +106,32 @@ if (form) {
     heading.focus();
   };
 
+  // WHY a guarded dynamic import: a static one that failed to load would take
+  // this whole module down with it. The page already loaded source.js, so the
+  // module map hands back the same instance with no second fetch.
+  const sourceTags = async () => {
+    try {
+      const { storedSource } = await import('./source.js');
+      return storedSource();
+    } catch {
+      return {};
+    }
+  };
+
+  // Campaign tags ride in the POST body only. They never become inputs, so
+  // the form's five fields and the validation loop above are untouched.
+  const payload = async () => {
+    const data = new FormData(form);
+    for (const [key, value] of Object.entries(await sourceTags())) data.set(key, value);
+    return data;
+  };
+
   // A 2xx is not acceptance on its own: the body must say ok. Anything else
   // surfaces so nobody is thanked for a request that was not received.
   const deliver = async () => {
     const response = await fetch(form.action, {
       method: 'POST',
-      body: new FormData(form),
+      body: await payload(),
       headers: { Accept: 'application/json' },
     });
     let body = null;

@@ -103,6 +103,50 @@ export function isHoneypotTripped(form: FormData): boolean {
   return value !== null && value !== '';
 }
 
+/**
+ * Campaign tags from the landing URL, carried by public/scripts/source.js.
+ * Not part of the Lead: the visitor never typed them, so they sit outside
+ * the five-field schema and can never fail a submission.
+ */
+export interface LeadSource {
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+}
+
+export const DIRECT = 'direct';
+
+const TAG = /^[a-z0-9_-]{1,60}$/;
+
+const SOURCE_KEYS = {
+  utmSource: 'utm_source',
+  utmMedium: 'utm_medium',
+  utmCampaign: 'utm_campaign',
+} as const satisfies Record<keyof LeadSource, string>;
+
+export interface SourceResult {
+  source: LeadSource;
+  /** Posted tag names whose values failed the pattern; never the values. */
+  dropped: string[];
+}
+
+/**
+ * WHY drop rather than reject: a malformed tag is a broken campaign link,
+ * not a visitor error, and must never cost the lead. With no valid tag at
+ * all the lead is recorded as direct.
+ */
+export function sourceFrom(form: FormData): SourceResult {
+  const source: LeadSource = { utmSource: '', utmMedium: '', utmCampaign: '' };
+  const dropped: string[] = [];
+  for (const [key, name] of Object.entries(SOURCE_KEYS) as Array<[keyof LeadSource, string]>) {
+    const value = asText(form.get(name));
+    if (TAG.test(value)) source[key] = value;
+    else if (value !== '') dropped.push(name);
+  }
+  if (!source.utmSource && !source.utmMedium && !source.utmCampaign) source.utmSource = DIRECT;
+  return { source, dropped };
+}
+
 export function validateLead(fields: Record<LeadField, string>): ValidationResult {
   const result = LeadSchema.safeParse(fields);
   if (result.success) return { ok: true, lead: result.data };
