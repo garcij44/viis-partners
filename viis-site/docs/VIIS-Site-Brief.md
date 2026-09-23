@@ -25,7 +25,7 @@ Do not build a "contact us" site. Build a site whose job is to produce audit req
 
 ### What to take from the references
 
-**From Canopy:** the green gradient field behind the hero fading into near-black; serif display against sans body; the reframe section placed before any feature content; the free-tools section; the comparison table; generous vertical rhythm.
+**From Canopy:** the green gradient field behind the hero fading into near-black; serif display against sans body (since September 22, 2026 the display face is Montserrat; see Typography); the reframe section placed before any feature content; the free-tools section; the comparison table; generous vertical rhythm.
 
 **From Simeon:** monochrome restraint everywhere the accent isn't doing a job; monospace for eyebrows, labels, and data; the four-up capability row directly under the hero; one product artifact as the hero centerpiece; the closing CTA that restates the hero verbatim.
 
@@ -51,7 +51,7 @@ Dark theme. The green is an accent and a hero field — it is not a brand takeov
 --accent-field-b: #121319;  /* hero gradient bottom (= ink) */
 ```
 
-**Why this green and not Canopy's.** Canopy's emerald is cool; `#ECE7DB` is a warm cream. Cool green against warm cream fights. `#2F7F5E` is pulled slightly yellow so it agrees with the cream and with Fraunces, which is a warm typeface. Keep the cream, warm the green — not the other way round.
+**Why this green and not Canopy's.** Canopy's emerald is cool; `#ECE7DB` is a warm cream. Cool green against warm cream fights. `#2F7F5E` is pulled slightly yellow so it agrees with the cream and with Fraunces, which is a warm typeface. (Fraunces was the display face when this was written; it was replaced by Montserrat on September 22, 2026. The green was not re-derived.) Keep the cream, warm the green — not the other way round.
 
 Verify contrast: cream on ink, cream on accent, and `--cream-dim` on ink must all clear WCAG AA (4.5:1 body, 3:1 large). Fix by adjusting the cream steps, never by brightening the green past `--accent-bright`.
 
@@ -61,9 +61,11 @@ Three roles, no more.
 
 | Role | Face | Use |
 |---|---|---|
-| Display | **Fraunces** | h1, h2, section headlines. Optical size high, weight ~400–500. Never for body. |
+| Display | **Montserrat** | h1, h2, section headlines. Weight 500. Never for body. |
 | Body | **Geist** | paragraphs, list items, buttons, nav |
 | Utility | **Geist Mono** | eyebrow labels, table headers, data, captions, the audit-report artifact |
+
+**Why Montserrat (changed September 22, 2026, from a rendered comparison).** The display face was Fraunces. It read as an AI-default serif, and its opsz-144 setting thinned the "e" crossbar at hero size. Montserrat 500 replaces it on every h1 and h2. The favicon, `favicon.ico` and the OG image keep the Fraunces V.
 
 Eyebrow labels: Geist Mono, uppercase, ~0.72rem, letter-spacing ~0.12em, `--accent-dim`. Both reference sites do this; it's the cheapest way to make a page look considered.
 
@@ -245,7 +247,7 @@ Later additions once the four are live: San Antonio local landing pages, and com
 
 - **Astro**, static output, existing repo, deployed as an Azure Static Web App.
 - **Lighthouse ≥ 95** on performance, accessibility, best practices, SEO. The site sells SEO; a mediocre score is disqualifying and a prospect can check it in thirty seconds.
-- **Fonts self-hosted** (Fraunces, Geist, Geist Mono) — woff2, `font-display: swap`, preload the display face only.
+- **Fonts self-hosted** (Montserrat, Geist, Geist Mono) — woff2, `font-display: swap`, preload the display face only.
 - **Semantic HTML**, one `<h1>`, correct heading order, visible focus states, keyboard-navigable accordion and form.
 - **Structured data:** `LocalBusiness` / `ProfessionalService` with San Antonio address and service area, plus `FAQPage` on the FAQ.
 - **Meta:** unique title and description per page, Open Graph and Twitter cards, `sitemap.xml`, `robots.txt`, canonical URLs.

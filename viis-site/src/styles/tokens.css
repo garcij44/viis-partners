@@ -64,7 +64,11 @@
   --control-edge-hover: var(--fg-2);
 
   /* Type — three faces, three jobs (brief §1 "Typography"). */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  /* WHY Montserrat, not Fraunces (decided 2026-09-22 from a rendered
+     comparison): Fraunces read as the AI-default serif, and its opsz 144
+     setting thinned the "e" crossbar at hero size. Montserrat has no opsz
+     axis, so display text carries no variation setting. */
+  --font-display: 'Montserrat', 'Montserrat Fallback', sans-serif;
   --font-body: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
@@ -89,10 +93,11 @@
   --lh-mono: 1.5;
   --lh-label: 1.4;
 
-  /* WHY: light text on dark reads heavier than the reverse, so the serif
-     stays under 500 and body text gets a hair of positive tracking. */
-  --wt-display-1: 460;
-  --wt-display-2: 480;
+  /* WHY: light text on dark reads heavier than the reverse, so display
+     holds at 500, never bold, and body text gets a hair of positive
+     tracking. */
+  --wt-display-1: 500;
+  --wt-display-2: 500;
   --wt-heading: 500;
   --wt-body: 400;
   --wt-ui: 500;
@@ -103,10 +108,6 @@
   --track-heading: -0.005em;
   --track-body: 0.005em;
   --track-label: 0.12em;
-
-  /* Fraunces optical size. High opsz = sharper serifs, tighter fit — the
-     Canopy look. Applied only on the two display styles. */
-  --opsz-display: 144;
 
   /* Space — 4px base. Section padding is its own token because the
      brief fixes it per breakpoint (160 / 96 / 72). */

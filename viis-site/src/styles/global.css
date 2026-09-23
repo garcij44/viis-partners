@@ -6,11 +6,25 @@
    browser render real 440/500/etc. instead of synthesizing (faux) bold from
    a single 400 master, which smears on dark backgrounds. */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/fraunces-variable.woff2') format('woff2');
+  src: url('/fonts/montserrat-variable.woff2') format('woff2');
+}
+
+/* WHY: Arial stretched to Montserrat's width, for the moment before the
+   webfont arrives. Unadjusted, Arial sets about 14% narrower (measured on
+   every h1 and h2 on the site), so a slow font load rewrapped the hero and
+   shifted the page. size-adjust matches the width; the overrides are
+   Montserrat's own ascent 968 / descent 251 per 1000, divided by it. */
+@font-face {
+  font-family: 'Montserrat Fallback';
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 113.8%;
+  ascent-override: 85.1%;
+  descent-override: 22.1%;
+  line-gap-override: 0%;
 }
 
 @font-face {
@@ -43,7 +57,7 @@
      that closes the hero (see .hero-rule). Never a fill, never used twice. */
   --brass: #b79663;
 
-  --font-display: 'Fraunces', Georgia, serif;
+  --font-display: 'Montserrat', 'Montserrat Fallback', sans-serif;
   --font-body: 'Geist', -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', 'IBM Plex Mono', ui-monospace, monospace;
 
@@ -205,7 +219,7 @@ button:focus-visible {
 
 .type-h1 {
   font-family: var(--font-display);
-  font-weight: 440;
+  font-weight: 500;
   font-size: 56px;
   line-height: 1.08;
   letter-spacing: -0.015em;
@@ -215,7 +229,7 @@ button:focus-visible {
 
 .type-h2 {
   font-family: var(--font-display);
-  font-weight: 440;
+  font-weight: 500;
   font-size: 30px;
   line-height: 1.15;
   letter-spacing: -0.01em;

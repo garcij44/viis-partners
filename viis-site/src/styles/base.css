@@ -4,14 +4,30 @@
 
 /* Self-hosted variable fonts. Declaring the real weight range lets the
    browser render true intermediate weights instead of faux-bolding a
-   single master, which smears on dark ground. Preload Fraunces only
-   (brief §4); the sans and mono arrive with the first paint of body text. */
+   single master, which smears on dark ground. Preload Montserrat only
+   (brief §4); the sans and mono arrive with the first paint of body text.
+   Montserrat is the Google Fonts latin subset, wght axis only; its OFL
+   licence sits beside it in public/fonts. */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/fraunces-variable.woff2') format('woff2');
+  src: url('/fonts/montserrat-variable.woff2') format('woff2');
+}
+
+/* WHY: Arial stretched to Montserrat's width, for the moment before the
+   webfont arrives. Unadjusted, Arial sets about 14% narrower (measured on
+   every h1 and h2 on the site), so a slow font load rewrapped the hero and
+   shifted the page. size-adjust matches the width; the overrides are
+   Montserrat's own ascent 968 / descent 251 per 1000, divided by it. */
+@font-face {
+  font-family: 'Montserrat Fallback';
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 113.8%;
+  ascent-override: 85.1%;
+  descent-override: 22.1%;
+  line-gap-override: 0%;
 }
 
 @font-face {

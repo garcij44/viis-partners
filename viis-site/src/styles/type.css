@@ -4,7 +4,7 @@
 /* heading level and the visual size have to (h3 set as display-2 etc). */
 /* ------------------------------------------------------------------ */
 
-/* Display — Fraunces, h1 and h2 only. Never body. */
+/* Display — Montserrat 500, h1 and h2 only. Never body. */
 .t-display-1,
 h1 {
   font-family: var(--font-display);
@@ -12,7 +12,6 @@ h1 {
   line-height: var(--lh-display-1);
   font-weight: var(--wt-display-1);
   letter-spacing: var(--track-display-1);
-  font-variation-settings: 'opsz' var(--opsz-display);
   text-wrap: balance;
 }
 
@@ -23,12 +22,11 @@ h2 {
   line-height: var(--lh-display-2);
   font-weight: var(--wt-display-2);
   letter-spacing: var(--track-display-2);
-  font-variation-settings: 'opsz' var(--opsz-display);
   text-wrap: balance;
 }
 
-/* Heading — Geist. Card titles, method steps, FAQ questions. Serif is
-   reserved for the section-level moments so it keeps its weight. */
+/* Heading — Geist. Card titles, method steps, FAQ questions. The display
+   face is reserved for the section-level moments so it keeps its weight. */
 .t-heading,
 h3 {
   font-family: var(--font-body);
