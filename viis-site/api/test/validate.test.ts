@@ -34,7 +34,14 @@ describe('sourceFrom', () => {
     }));
   it('accepts exactly 60 characters', () => assert.equal(sourceFrom(formOf({ utm_source: 'a'.repeat(60) })).source.utmSource, 'a'.repeat(60)));
   it('drops 61 characters', () => assert.deepEqual(sourceFrom(formOf({ utm_source: 'a'.repeat(61) })).dropped, ['utm_source']));
-  for (const bad of ['Google', 'fall launch', ' cpc', 'a.b', 'e%20mail', 'caf\u00e9', '\u0661\u0662']) {
+  it('lowercases before validating', () =>
+    assert.deepEqual(sourceFrom(formOf({ utm_source: 'LinkedIn', utm_medium: 'CPC', utm_campaign: 'Fall_Audit-2026' })), {
+      source: { utmSource: 'linkedin', utmMedium: 'cpc', utmCampaign: 'fall_audit-2026' },
+      dropped: [],
+    }));
+  it('still drops a mixed-case tag with a disallowed character', () =>
+    assert.deepEqual(sourceFrom(formOf({ utm_source: 'Google Ads' })).dropped, ['utm_source']));
+  for (const bad of ['fall launch', ' cpc', 'a.b', 'e%20mail', 'caf\u00e9', '\u0661\u0662']) {
     it(`drops ${JSON.stringify(bad)}`, () => assert.deepEqual(sourceFrom(formOf({ utm_medium: bad })).dropped, ['utm_medium']));
   }
   it('keeps tagged medium without a source and does not invent direct', () =>

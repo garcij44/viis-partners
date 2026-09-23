@@ -7,8 +7,8 @@
 // private window, blocked site data, or a sandbox can make the accessor
 // itself throw, and attribution must never break the page or the form.
 //
-// SECURITY: nothing here is trusted. api/src/lib/validate.ts drops any tag
-// outside [a-z0-9_-]{1,60} and never rejects a lead over one.
+// SECURITY: nothing here is trusted. api/src/lib/validate.ts lowercases each
+// tag, drops any outside [a-z0-9_-]{1,60}, and never rejects a lead over one.
 
 const KEYS = ['utm_source', 'utm_medium', 'utm_campaign'];
 const PREFIX = 'viis:';

@@ -65,9 +65,9 @@ const gaId = 'G-MHQNGNC9YY';
 					<span class="t-mono">utm_source</span>, <span class="t-mono">utm_medium</span>, and
 					<span class="t-mono">utm_campaign</span> parts of a web address, which name the campaign a
 					link belongs to), the form sends those too, so we know which link a request came from.
-					Only the first tagged link you open in a browser tab counts. A tag longer than 60
-					characters, or with anything other than lowercase letters, digits, hyphens, and
-					underscores, is dropped. A request with no tag is recorded as direct.
+					Only the first tagged link you open in a browser tab counts. Tags are lowercased first;
+					then a tag with anything other than letters, digits, hyphens, and underscores, or longer
+					than 60 characters, is dropped. A request with no tag is recorded as direct.
 				</p>
 				<p>
 					The form carries a hidden checkbox that a person never sees. Automated submissions that
@@ -141,7 +141,7 @@ const gaId = 'G-MHQNGNC9YY';
 				<h2>What we do not do</h2>
 				<ul>
 					<li>We do not sell, rent, trade, or share your details with anyone.</li>
-					<li>We do not send marketing email. A request gets a confirmation and a reply, and that is all.</li>
+					<li>Submitting the form does not add you to any mailing list. A request gets a confirmation and a reply, and that is all.</li>
 					<li>We do not embed social media, advertising pixels, chat widgets, or any third-party script other than Google Analytics.</li>
 					<li>We do not collect anything through the form beyond what this page describes.</li>
 				</ul>

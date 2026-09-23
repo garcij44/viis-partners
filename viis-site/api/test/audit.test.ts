@@ -129,6 +129,16 @@ describe('POST /api/audit', () => {
     assert.doesNotMatch(ack.text, /linkedin|Source/);
   });
 
+  it('lowercases mixed-case tags before recording them', async () => {
+    const tags = { utm_source: 'LinkedIn', utm_medium: 'Social', utm_campaign: 'FALL-Audit' };
+    const { deps, response } = run(makeDeps(), formRequest({ ...validFields, ...tags }));
+    assert.equal((await response).status, 200);
+    const lead = deps.store.leads[0]!;
+    assert.deepEqual([lead.utmSource, lead.utmMedium, lead.utmCampaign], ['linkedin', 'social', 'fall-audit']);
+    const notify = deps.mailer.sent.find((m) => m.to === 'owner@test.local')!;
+    assert.match(notify.text, /^Source: linkedin, medium social, campaign fall-audit$/m);
+  });
+
   it('records an untagged lead as direct', async () => {
     const { deps, response } = run();
     assert.equal((await response).status, 200);
@@ -139,7 +149,7 @@ describe('POST /api/audit', () => {
   });
 
   it('drops malformed tags silently and keeps the valid ones', async () => {
-    const tags = { utm_source: 'Google', utm_medium: 'email', utm_campaign: 'x'.repeat(61) };
+    const tags = { utm_source: 'Google Ads', utm_medium: 'email', utm_campaign: 'x'.repeat(61) };
     const { deps, lines, response } = run(makeDeps(), formRequest({ ...validFields, ...tags }));
     assert.equal((await response).status, 200);
     const lead = deps.store.leads[0]!;
@@ -148,7 +158,7 @@ describe('POST /api/audit', () => {
     assert.match(notify.text, /^Source: \(none\), medium email$/m);
     const dropped = lines.find((line) => line.includes('"audit.source.dropped"'))!;
     assert.deepEqual(JSON.parse(dropped).tags, ['utm_source', 'utm_campaign']);
-    assert.ok(!dropped.includes('Google'));
+    assert.ok(!dropped.includes('Google Ads'));
   });
 
   it('never rejects a lead over its tags, and falls back to direct when all are malformed', async () => {

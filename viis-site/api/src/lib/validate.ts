@@ -134,12 +134,15 @@ export interface SourceResult {
  * WHY drop rather than reject: a malformed tag is a broken campaign link,
  * not a visitor error, and must never cost the lead. With no valid tag at
  * all the lead is recorded as direct.
+ *
+ * WHY lowercase first: link builders and hand-typed links capitalise
+ * freely, and "LinkedIn" and "linkedin" are one source in the table.
  */
 export function sourceFrom(form: FormData): SourceResult {
   const source: LeadSource = { utmSource: '', utmMedium: '', utmCampaign: '' };
   const dropped: string[] = [];
   for (const [key, name] of Object.entries(SOURCE_KEYS) as Array<[keyof LeadSource, string]>) {
-    const value = asText(form.get(name));
+    const value = asText(form.get(name)).toLowerCase();
     if (TAG.test(value)) source[key] = value;
     else if (value !== '') dropped.push(name);
   }
