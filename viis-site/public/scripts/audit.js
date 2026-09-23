@@ -19,7 +19,7 @@ if (form) {
   const idleLabel = submitLabel ? submitLabel.textContent : '';
   const inputs = [...form.querySelectorAll('.input')];
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const CONTACT = 'jgarcia@viispartners.com';
+  const CONTACT = 'hello@viispartners.com';
 
   const setStatus = (message, tone) => {
     if (!status) return;

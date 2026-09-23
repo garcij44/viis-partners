@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { HttpRequest } from '@azure/functions';
 import { createHandler } from '../src/functions/audit';
 import { ConfigError } from '../src/lib/config';
 import { formRequest, makeContext, makeDeps, validFields, type TestDeps } from './fakes';
@@ -103,7 +104,24 @@ describe('POST /api/audit', () => {
     deps.mailer.fail = true;
     const res = await run(deps).response;
     assert.equal(res.status, 500);
-    assert.equal((res.jsonBody as { ok: boolean }).ok, false);
+    const body = res.jsonBody as { ok: boolean; message: string };
+    assert.equal(body.ok, false);
+    assert.match(body.message, /hello@viispartners\.com/);
+  });
+
+  it('names the public address, never the notify inbox, when the form cannot be read', async () => {
+    const { context } = makeContext();
+    const request = new HttpRequest({
+      method: 'POST',
+      url: 'http://localhost:7071/api/audit',
+      headers: { 'content-type': 'multipart/form-data', accept: 'application/json' },
+      body: { string: 'not multipart' },
+    });
+    const res = await createHandler(() => makeDeps())(request, context);
+    assert.equal(res.status, 400);
+    const message = (res.jsonBody as { message: string }).message;
+    assert.match(message, /hello@viispartners\.com/);
+    assert.doesNotMatch(message, /owner@test\.local/);
   });
 
   it('reports a configuration error instead of pretending', async () => {

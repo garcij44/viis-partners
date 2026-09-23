@@ -253,7 +253,7 @@ Later additions once the four are live: San Antonio local landing pages, and com
 - **Meta:** unique title and description per page, Open Graph and Twitter cards, `sitemap.xml`, `robots.txt`, canonical URLs.
 - **Analytics:** GA4 plus Search Console, and conversion tracking on the audit form. VIIS's own site must demonstrate the tracking it sells.
 - **Form handling:** Azure Function or Power Automate endpoint → lead log → immediate autoresponder → notification to Jadrin. Honeypot field for spam; no CAPTCHA.
-- **Contact:** jgarcia@viispartners.com. Sign-off and legal entity name render as **VIIS, LLC (d/b/a VIIS Partners)** until the Texas assumed-name filing is complete.
+- **Contact:** hello@viispartners.com, on the site and in every message a visitor sees. The acknowledgement email is signed by Jadrin from jgarcia@viispartners.com, and lead notifications go there. Sign-off and legal entity name render as **VIIS, LLC (d/b/a VIIS Partners)** until the Texas assumed-name filing is complete.
 - **Responsive:** 375 / 768 / 1440 verified. No horizontal scroll at any width.
 - **Dark theme only** is acceptable for this design — but set `color-scheme` and paint an explicit background so nothing inherits.
 

@@ -8,7 +8,9 @@ import type { HttpRequest, HttpResponseInit } from '@azure/functions';
 import { escapeHtml } from './templates';
 import type { FieldErrors } from './validate';
 
-export const CONTACT = 'jgarcia@viispartners.com';
+// WHY the public alias, not DEFAULT_NOTIFY_TO: every message a visitor sees
+// names the public address; the notify inbox is internal routing.
+export const CONTACT = 'hello@viispartners.com';
 export const SERVER_ERROR = `Something went wrong on our side. Email ${CONTACT} and we will run the audit from there.`;
 export const RATE_LIMITED = `Too many requests from this connection. Try again in an hour, or email ${CONTACT}.`;
 

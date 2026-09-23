@@ -13,7 +13,7 @@ import { TableLeadStore, type LeadRecord, type LeadStore } from '../lib/leadLog'
 import { attempt, logError, logEvent } from '../lib/logging';
 import { AcsMailer, LogMailer, type Mailer } from '../lib/mail';
 import { clientIp, hashIp, hourBucket, readForm, UNKNOWN_IP } from '../lib/request';
-import { failure, invalid, RATE_LIMITED, SERVER_ERROR, success, wantsJson } from '../lib/respond';
+import { CONTACT, failure, invalid, RATE_LIMITED, SERVER_ERROR, success, wantsJson } from '../lib/respond';
 import { ackMessage, hostOf, notifyMessage } from '../lib/templates';
 import { fieldsFrom, isHoneypotTripped, oneLine, sourceFrom, validateLead, type Lead, type LeadSource } from '../lib/validate';
 
@@ -89,7 +89,7 @@ export function createHandler(getDeps: () => Deps) {
       return failure(asJson, 500, SERVER_ERROR);
     }
     const form = await readForm(request);
-    if (!form) return failure(asJson, 400, `The form could not be read. Try again, or email ${deps.config.notifyTo}.`);
+    if (!form) return failure(asJson, 400, `The form could not be read. Try again, or email ${CONTACT}.`);
     if (isHoneypotTripped(form)) {
       logEvent(context, 'audit.dropped', { reason: 'honeypot' });
       return success(asJson, deps.config.thanksPath);
