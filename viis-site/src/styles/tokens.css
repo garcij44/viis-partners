@@ -73,7 +73,13 @@
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Size steps. Two sizes per section is the rule, so the scale is short. */
-  --text-display-1: clamp(2.6rem, 6vw, 4.4rem);   /* h1 — 41.6px → 70.4px */
+  /* WHY 2.375rem floor, not the brief's 2.6rem: Montserrat sets wider than
+     Fraunces. At 2.6rem the hero and closing headline ran to four lines at
+     375px and /websites left "outright." alone on its last line at 320px;
+     2.375rem holds both headlines at three lines at 375 and ends the orphan.
+     The 6vw slope and 4.4rem cap are unchanged, so nothing moves from
+     ~634px up. */
+  --text-display-1: clamp(2.375rem, 6vw, 4.4rem); /* h1 — 38px → 70.4px */
   --text-display-2: clamp(1.9rem, 3.4vw, 2.6rem); /* h2 — 30.4px → 41.6px */
   --text-heading: 1.375rem;   /* 22px — h3, card and method titles */
   --text-lead: 1.3125rem;     /* 21px — hero subhead, reframe body */
