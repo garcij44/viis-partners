@@ -36,9 +36,13 @@ const siteName = 'VIIS Partners';
 
 // ProfessionalService (a LocalBusiness subtype) structured data, brief §4.
 // Only facts the business supports: names, locality, service area, contact
-// email, the service lines. No street address, phone, hours, prices, or
-// ratings — none exist to state. The legal entity is VIIS, LLC doing
-// business as VIIS Partners until the Texas assumed-name filing completes.
+// email, the service lines. No phone, hours, prices, or ratings — none exist
+// to state. The legal entity is VIIS, LLC doing business as VIIS Partners
+// until the Texas assumed-name filing completes.
+// WHY city and region only, though a mailing address exists (privacy page):
+// it is a PO box at the downtown post office, 615 E Houston St #331. A
+// streetAddress in a ProfessionalService node tells Google the business
+// operates from that building, which it does not.
 const origin = new URL('/', Astro.site).href;
 const business = {
   '@context': 'https://schema.org',

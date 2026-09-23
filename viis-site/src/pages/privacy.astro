@@ -9,11 +9,15 @@
  * event retention, Google Signals off, user-provided data collection off,
  * ads personalization off, granular location and device data on) so the
  * property's user-data acknowledgement can be signed against it. May still
- * go to a lawyer. Two facts are not in the repo and are stated as such in
- * the copy: a retention period for audit requests, and a postal address.
+ * go to a lawyer. One fact is not in the repo and is stated as such in the
+ * copy: a retention period for audit requests.
  *
  * Updated 2026-09-22 for lead source: campaign tags carried from the landing
  * link (public/scripts/source.js, api/src/lib/validate.ts sourceFrom).
+ *
+ * Updated 2026-09-23 with the business mailing address, a USPS box with
+ * street addressing. It appears here only; see the structured-data note in
+ * Layout.astro for why it stays out of the ProfessionalService node.
  */
 import '../styles/system.css';
 import Layout from '../layouts/Layout.astro';
@@ -22,7 +26,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import Section from '../components/Section.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 
-const updated = 'September 22, 2026';
+const updated = 'September 23, 2026';
 const gaId = 'G-MHQNGNC9YY';
 ---
 
@@ -156,6 +160,7 @@ const gaId = 'G-MHQNGNC9YY';
 
 				<h2>Contact</h2>
 				<p>VIIS, LLC (d/b/a VIIS Partners), San Antonio, Texas.</p>
+				<p>Mailing address: 615 E Houston St #331, San Antonio, TX 78292</p>
 				<p><a href="mailto:hello@viispartners.com">hello@viispartners.com</a></p>
 			</div>
 		</Section>
