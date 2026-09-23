@@ -69,7 +69,7 @@ Three roles, no more.
 
 Eyebrow labels: Geist Mono, uppercase, ~0.72rem, letter-spacing ~0.12em, `--accent-dim`. Both reference sites do this; it's the cheapest way to make a page look considered.
 
-Hero h1 clamps roughly `clamp(2.6rem, 6vw, 4.4rem)`, line-height ~1.05, and must not exceed two lines on desktop.
+Hero h1 clamps `clamp(2.375rem, 6vw, 4.4rem)`, line-height ~1.05, and must not exceed two lines on desktop. The 2.375rem floor (lowered from 2.6rem on September 22, 2026) keeps the Montserrat hero at three lines at 375px.
 
 ### Layout rules
 
