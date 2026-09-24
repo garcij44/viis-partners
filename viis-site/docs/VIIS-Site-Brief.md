@@ -175,9 +175,9 @@ Keep it factual and unsmug. The table should read as orientation, not as an atta
 
 The rate card's four recurring tiers. What's included, and each tier's price on the audit section's dotted-leader line. CTA on each: `Talk it through`. Builds are projects, not plans: they are not listed here, and the Websites line in §4 covers design, build, migration, and launch.
 
-**Watch** — *A simple site with nothing automated behind it.* Hosting, DNS and SSL monitoring, backups, updates, break/fix response, quarterly report.
+**Watch** — *A simple site with nothing automated behind it.* Hosting monitoring, DNS and SSL monitoring, backups, updates, break/fix response, quarterly report.
 
-**Care** — *A standard build, with Workspace or automations in the picture.* Everything in Watch, plus a monthly report, a set allowance of changes each month, Google Workspace and Microsoft 365 management, DNS and email-authentication monitoring, automation health checks, quarterly call.
+**Care** — *A standard build, with Workspace or automations in the picture.* Everything in Watch, plus a monthly report, a set allowance of changes each month, Google Workspace and Microsoft 365 monitoring, DNS and email-authentication monitoring, automation health checks, quarterly call.
 
 **Growth** — *A larger site, live automations, and content going out.* Everything in Care, plus a larger monthly allowance, priority response, quarterly audit and roadmap, monthly call.
 
@@ -189,7 +189,7 @@ The rate card's four recurring tiers. What's included, and each tier's price on 
 
 Why plan prices are shown and builds are not (decided by Jadrin 2026-09-23 from a rendered mockup, reversing the earlier "no numbers" rule): a plan is a set monthly price per tier on the rate card, the same for every client. A build is chosen from the audit's findings and quoted after it, so no build price appears. Partner shows no number because its monthly project capacity is defined per client. The takeover line names Watch or Care only because the rate card routes takeovers there; larger setups take the Systems Audit first.
 
-> Reconciled with the rate card on 2026-09-06 (previously Build / Care / Partner). Inclusions and the "who it's for" lines are the rate card's, as written; add nothing to them here.
+> Reconciled with the rate card on 2026-09-06 (previously Build / Care / Partner). Inclusions and the "who it's for" lines are the rate card's, as written; add nothing to them here. Corrected 2026-09-23, once prices sat beside them: Watch's "Hosting" became "Hosting monitoring" (hosting is billed to the client, never resold), and Care's Workspace and Microsoft 365 line became monitoring, not management (changes come out of the monthly allowance or are scoped as work).
 
 ### 8 — The audit
 

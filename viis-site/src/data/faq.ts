@@ -58,7 +58,7 @@ export const faq: FaqItem[] = [
     id: 'after-launch',
     question: 'What happens after launch?',
     answer:
-      'The site keeps working because someone is looking after it. Watch covers hosting, monitoring, backups, updates, and break/fix response. Care adds a monthly allowance of changes and management of Google Workspace and Microsoft 365. Growth adds priority response and a quarterly audit and roadmap. Partner adds defined project capacity each month, with VIIS as your technical lead.',
+      'The site keeps working because someone is looking after it. Watch covers monitoring of your hosting, DNS, and SSL, plus backups, updates, and break/fix response. Care adds a monthly allowance of changes and monitoring of Google Workspace and Microsoft 365. Growth adds priority response and a quarterly audit and roadmap. Partner adds defined project capacity each month, with VIIS as your technical lead.',
   },
   {
     id: 'response',

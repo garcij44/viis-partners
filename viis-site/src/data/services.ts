@@ -131,7 +131,7 @@ export const services: Service[] = [
     faq: [
       { id: 'spam', question: 'Why is my email going to spam?', answer: 'Usually because your domain has no SPF, DKIM, or DMARC records, or they were set up for a mail service you no longer use. Receiving servers cannot tell your mail from a forgery, so they file it as one. It is a fix, not a rebuild, once someone looks.' },
       { id: 'it-person', question: 'We already have an IT person. Why does this matter?', answer: "It often does not overlap. IT keeps laptops and networks running; this is the domain, the mail, and the accounts a website depends on, and it is usually nobody's job. We work alongside whoever you have." },
-      { id: 'tenants', question: 'What do you do inside Google Workspace and Microsoft 365?', answer: 'Setup, security settings, shared drives, license audits, backups, and access control, in either one or both. Ongoing management is part of the Care plan and above.' },
+      { id: 'tenants', question: 'What do you do inside Google Workspace and Microsoft 365?', answer: "Setup, security settings, shared drives, license audits, backups, and access control, in either one or both. Monitoring is part of the Care plan and above, and changes come out of the plan's monthly allowance or are scoped as work." },
     ],
   },
   {
