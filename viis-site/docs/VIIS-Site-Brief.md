@@ -29,7 +29,7 @@ Do not build a "contact us" site. Build a site whose job is to produce audit req
 
 **From Simeon:** monochrome restraint everywhere the accent isn't doing a job; monospace for eyebrows, labels, and data; the four-up capability row directly under the hero; one product artifact as the hero centerpiece; the closing CTA that restates the hero verbatim.
 
-**From neither:** SaaS pricing tables with numbers, integration logo grids, free-trial mechanics. VIIS is a services firm.
+**From neither:** SaaS pricing tables, integration logo grids, free-trial mechanics. VIIS is a services firm. Plan prices appear as one line per tier in Packages (§2.7); builds carry no price anywhere on the site (amended 2026-09-23).
 
 ### Palette
 
@@ -171,9 +171,9 @@ Canopy's structure, VIIS's honest columns.
 
 Keep it factual and unsmug. The table should read as orientation, not as an attack.
 
-### 7 — Packages *(named tiers, no numbers)*
+### 7 — Packages *(named tiers, plan prices shown, builds not)*
 
-The rate card's four recurring tiers. What's included, no pricing. CTA on each: `Talk it through`. Builds are projects, not plans: they are not listed here, and the Websites line in §4 covers design, build, migration, and launch.
+The rate card's four recurring tiers. What's included, and each tier's price on the audit section's dotted-leader line. CTA on each: `Talk it through`. Builds are projects, not plans: they are not listed here, and the Websites line in §4 covers design, build, migration, and launch.
 
 **Watch** — *A simple site with nothing automated behind it.* Hosting, DNS and SSL monitoring, backups, updates, break/fix response, quarterly report.
 
@@ -183,7 +183,11 @@ The rate card's four recurring tiers. What's included, no pricing. CTA on each: 
 
 **Partner** — *You want a technical lead, not a vendor.* Everything in Growth, plus defined project capacity each month, systems architecture, vendor management, automation maintenance.
 
-No footer line: plans are priced by tier regardless of audit findings, and each tier's `Talk it through` is how pricing happens.
+**Prices** (rate card §2): Watch `From $149/mo`, Care `From $299/mo`, Growth `From $650/mo`, Partner `Scoped with you`.
+
+**Line under the panel** (t-small, fg-3): Already have a site you like? We can take it over as is: a one-time $500 onboarding, then Watch or Care.
+
+Why plan prices are shown and builds are not (decided by Jadrin 2026-09-23 from a rendered mockup, reversing the earlier "no numbers" rule): a plan is a set monthly price per tier on the rate card, the same for every client. A build is chosen from the audit's findings and quoted after it, so no build price appears. Partner shows no number because its monthly project capacity is defined per client. The takeover line names Watch or Care only because the rate card routes takeovers there; larger setups take the Systems Audit first.
 
 > Reconciled with the rate card on 2026-09-06 (previously Build / Care / Partner). Inclusions and the "who it's for" lines are the rate card's, as written; add nothing to them here.
 

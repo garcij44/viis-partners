@@ -1,20 +1,30 @@
 ---
 /**
- * Section 7 — packages (brief §2.7): the rate card's four recurring tiers,
- * what each includes, no pricing anywhere. Builds are projects, not plans,
- * so they are not here; the Websites line in the method covers design,
- * build, migration, and launch, and pricing is quoted after the audit.
+ * Section 7, packages (brief §2.7): the rate card's four recurring tiers,
+ * each with its price and what it includes. Builds are projects, not plans,
+ * so they are not here and carry no price; the Websites line in the method
+ * covers design, build, migration, and launch, and builds are quoted after
+ * the audit.
+ *
+ * Plan prices shown (decided by Jadrin 2026-09-23 from a rendered mockup,
+ * reversing the earlier "no numbers" rule). A plan is a set monthly price
+ * per tier on the Notion rate card (§2), the same for every client. A
+ * build is chosen from the audit's findings and quoted after it, so no
+ * build price appears. Partner shows no number: its monthly project
+ * capacity is defined per client.
  *
  * Read against docs/canopy-05-pricing-toolkit.png: one panel divided into
- * columns by hairlines, a name, a short list, and the footnote beneath the
- * panel. Canopy's price line and its check icons are left out (brief §1:
- * no numbers, no icons outside the four-up row); the list mark is the
+ * columns by hairlines, a name with its price, a short list, and a line
+ * beneath the panel. The price uses the audit section's treatment (mono,
+ * fg-2, the receipt's dotted leader, name and price inside one h3 so a
+ * screen reader hears them together). Canopy's check icons are left out
+ * (brief §1: no icons outside the four-up row); the list mark is the
  * site's jade dot, as in the reframe's findings.
  *
  * Inclusions and the "who it's for" lines are the rate card's, as Jadrin
- * supplied them on 2026-09-06, and nothing is added to them. Plans are
- * priced by tier, so there is no pricing line under the panel: each tier's
- * "Talk it through" is how pricing happens.
+ * supplied them on 2026-09-06, and nothing is added to them. The line under
+ * the panel is the rate card's takeover onboarding, which leads into Watch
+ * or Care only; larger setups take the Systems Audit instead.
  *
  * "Talk it through" goes to the audit form: the brief's secondary
  * conversion is a call, and no booking mechanism exists yet.
@@ -33,6 +43,7 @@ import Button from '../Button.astro';
 interface Tier {
   id: string;
   name: string;
+  price: string;
   audience: string;
   included: string[];
 }
@@ -41,6 +52,7 @@ const tiers: Tier[] = [
   {
     id: 'tier-watch',
     name: 'Watch',
+    price: 'From $149/mo',
     audience: 'A simple site with nothing automated behind it.',
     included: [
       'Hosting',
@@ -54,6 +66,7 @@ const tiers: Tier[] = [
   {
     id: 'tier-care',
     name: 'Care',
+    price: 'From $299/mo',
     audience: 'A standard build, with Workspace or automations in the picture.',
     included: [
       'Everything in Watch',
@@ -68,6 +81,7 @@ const tiers: Tier[] = [
   {
     id: 'tier-growth',
     name: 'Growth',
+    price: 'From $650/mo',
     audience: 'A larger site, live automations, and content going out.',
     included: [
       'Everything in Care',
@@ -80,6 +94,7 @@ const tiers: Tier[] = [
   {
     id: 'tier-partner',
     name: 'Partner',
+    price: 'Scoped with you',
     audience: 'You want a technical lead, not a vendor.',
     included: [
       'Everything in Growth',
@@ -103,9 +118,13 @@ const tiers: Tier[] = [
   <Card class="panel">
     <ul class="tiers">
       {
-        tiers.map(({ id, name, audience, included }) => (
+        tiers.map(({ id, name, price, audience, included }) => (
           <li class="tier">
-            <h3 id={id} class="name">{name}</h3>
+            <h3 id={id} class="name">
+              <span class="name-text">{name}</span>
+              <span class="leader" aria-hidden="true"></span>
+              <span class="price t-mono fg-2">{price}</span>
+            </h3>
             <p class="t-small fg-2 audience">{audience}</p>
             <ul class="included t-small">
               {included.map((item) => <li>{item}</li>)}
@@ -119,6 +138,10 @@ const tiers: Tier[] = [
       }
     </ul>
   </Card>
+  <p class="takeover t-small fg-3">
+    Already have a site you like? We can take it over as is: a one-time $500 onboarding, then
+    Watch or Care.
+  </p>
 </Section>
 
 <style>
@@ -156,10 +179,60 @@ const tiers: Tier[] = [
     align-items: flex-start;
     padding: var(--sp-5);
     border-left: 1px solid var(--hairline);
+    container-type: inline-size;
   }
 
+  /* WHY transparent, not 0: every column keeps the same 1px, so all four
+     have the same content width and cross the container query below at
+     the same viewport. With border-left: 0 the first column was 1px wider
+     and stayed on one line at 1200 while the other three stacked. */
   .tier:first-child {
-    border-left: 0;
+    border-left-color: transparent;
+  }
+
+  /* Name, leader, price on one baseline: the audit section's tier heading
+     (Audit.astro), so both prices on the page read the same way.
+     WHY --sp-2 and not the audit's --sp-3: at 1440 a column holds 231px, and
+     "Partner" with "Scoped with you" needs 226px at --sp-2. At --sp-3 it
+     overflowed by 3px. */
+  .name {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    align-self: stretch;
+    text-wrap: initial;
+  }
+
+  .name-text,
+  .price {
+    flex: none;
+  }
+
+  .leader {
+    flex: 1;
+    min-width: var(--sp-4);
+    height: 1px;
+    border-bottom: 1px dotted var(--fg-3);
+  }
+
+  .takeover {
+    margin-top: var(--sp-5);
+  }
+
+  /* WHY a container query, not a media query: the column narrows at three
+     different viewport ranges (four-up just past 1024, two-up near 640, one
+     column at 320). Every tier is the same width, so all four stack
+     together, never one alone. 227px is the widest single line, Partner's,
+     measured. Stacked, there is no gap for a leader to bridge. */
+  @container (max-width: 227px) {
+    .name {
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    .leader {
+      display: none;
+    }
   }
 
   .audience {
@@ -204,7 +277,7 @@ const tiers: Tier[] = [
     }
 
     .tier:nth-child(2n + 1) {
-      border-left: 0;
+      border-left-color: transparent;
     }
 
     .tier:nth-child(n + 3) {
@@ -218,7 +291,7 @@ const tiers: Tier[] = [
     }
 
     .tier {
-      border-left: 0;
+      border-left-color: transparent;
     }
 
     .tier:nth-child(n + 2) {
