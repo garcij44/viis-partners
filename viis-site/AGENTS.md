@@ -27,6 +27,7 @@ surface that carries text (cream on the brief's `#2F7F5E` is 3.94:1 and fails AA
 - Never use a colour, font size, or spacing value that isn't in `tokens.css`. Add a
   token first, with a `WHY:` comment, if one is genuinely missing.
 - Never ship anything on the brief's anti-noise list (§1) or banned-word list (§5).
+- No em dashes or en dashes in visitor-facing copy or email. Use a comma, period, colon, or parentheses.
 - If a requested change would conflict with either file, stop and flag it instead of
   working around it.
 - Verify contrast with `src/lib/contrast.ts` before adding a colour: 4.5:1 for text,

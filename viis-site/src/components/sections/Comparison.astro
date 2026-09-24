@@ -25,15 +25,12 @@ interface Row {
   cells: string[];
 }
 
-// WHY: the brief's em dash under Template DIY is kept as written; the
-// sr-only text gives it a spoken meaning ("—" alone is read as "dash" or not
-// at all). The rendered mark is not a claim about DIY, only an empty cell.
 const rows: Row[] = [
   { label: 'Who owns the site', cells: ['You', 'They do', 'You', 'Varies'] },
   { label: 'After launch', cells: ['Maintained', 'Replies stop', 'You manage', 'Billed hourly'] },
   { label: 'DNS, email, Workspace', cells: ['Included in scope', 'Out of scope', 'Out of scope', 'Usually out of scope'] },
   { label: 'When something breaks', cells: ['Named person responds', 'Ticket queue', 'Forum search', 'Account manager'] },
-  { label: 'Cost of leaving', cells: ['Take everything', 'Rebuild from zero', '—', 'Rebuild from zero'] },
+  { label: 'Cost of leaving', cells: ['Take everything', 'Rebuild from zero', 'Not applicable', 'Rebuild from zero'] },
 ];
 ---
 
@@ -71,14 +68,7 @@ const rows: Row[] = [
               <th scope="row" class="t-mono">{label}</th>
               {cells.map((cell, i) => (
                 <td class:list={['t-small', { us: i === 0 }]}>
-                  {cell === '—' ? (
-                    <>
-                      <span aria-hidden="true">—</span>
-                      <span class="sr-only">Not applicable</span>
-                    </>
-                  ) : (
-                    cell
-                  )}
+                  {cell}
                 </td>
               ))}
             </tr>

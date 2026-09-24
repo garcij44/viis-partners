@@ -102,7 +102,7 @@ Green gradient field (`--accent-field-a` → `--accent-field-b`), fading to flat
 
 - **Eyebrow:** `TECHNOLOGY CONSULTING · SAN ANTONIO`
 - **H1:** Your website, and the systems that hold it up.
-- **Subhead (one paragraph, ≤45 words):** A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. DNS records missing since the last vendor. VIIS builds the website and fixes what's underneath it — then stays on to keep it working.
+- **Subhead (one paragraph, ≤45 words):** A site that loads slowly. Email landing in spam. A Google Workspace nobody ever configured. DNS records missing since the last vendor. VIIS builds the website and fixes what's underneath it, then stays on to keep it working.
 - **Trust line** (mono, small, with a small accent dot): `Free audit · No obligation · Results in 3 business days`
 - **Primary CTA:** `Get your free site audit`
 - **Secondary CTA:** `See the work`
@@ -167,7 +167,7 @@ Canopy's structure, VIIS's honest columns.
 | After launch | Maintained | Replies stop | You manage | Billed hourly |
 | DNS, email, Workspace | Included in scope | Out of scope | Out of scope | Usually out of scope |
 | When something breaks | Named person responds | Ticket queue | Forum search | Account manager |
-| Cost of leaving | Take everything | Rebuild from zero | — | Rebuild from zero |
+| Cost of leaving | Take everything | Rebuild from zero | Not applicable | Rebuild from zero |
 
 Keep it factual and unsmug. The table should read as orientation, not as an attack.
 
@@ -262,6 +262,8 @@ Later additions once the four are live: San Antonio local landing pages, and com
 ## 5. Voice
 
 Plain professional. Concrete over clever.
+
+No em dashes or en dashes in visitor-facing copy or email. Use a comma, period, colon, or parentheses.
 
 **Banned:** unlock, elevate, seamless, empower, transform, leverage (as a verb), robust, cutting-edge, in today's digital landscape, we're passionate about, solutions provider.
 
