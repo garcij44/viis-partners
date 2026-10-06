@@ -1,15 +1,21 @@
 /**
- * The published sample report: report 001, the audit of athlonjiujitsu.com.
- * It is the hero artifact (brief §2.1) and the object of the proof section
- * (brief §2.5), so its facts live here once and both render from it.
+ * The published sample report: report 002, the audit of athlonjiujitsu.com
+ * dated October 6, 2026. It is the hero artifact (brief §2.1) and the object
+ * of the proof section (brief §2.5), so its facts live here once and both
+ * render from it.
  *
  * Every statement about the audit is transcribed from the report itself,
- * never derived: the count of checks, the tally, the three finding
- * headlines, and each finding's cost line (the first sentence of its "What
- * it costs you" paragraph, verbatim). The page count and file size are
- * properties of the PDF file, decimal kilobytes as Finder reports them. Athlon Jiu Jitsu is named with
- * the owner's approval (2026-09-12); before that, no client was named on
- * the site. The date is the one printed on the report.
+ * never derived: the business name as the cover prints it, the count of
+ * checks, the tally, the three finding headlines, and each finding's cost
+ * line (the first sentence of its "What it costs you" paragraph, verbatim).
+ * The page count and file size are properties of the PDF file, decimal
+ * kilobytes as Finder reports them. The date is the one printed on the report.
+ *
+ * Report 002 replaced report 001 (September 12, 2026) because a sent report
+ * is frozen: 001 carried the template's old speed wording, so the fix ships
+ * as a new dated audit, never a regenerated old one. The 001 PDF redirects
+ * here (public/staticwebapp.config.json). Athlon is named with the owner's
+ * approval; no other client is named on the site.
  *
  * The PDF is a static file in public/reports/, named by domain and date so
  * a second report for the same site cannot overwrite it.
@@ -28,20 +34,20 @@ export interface ReportArea {
 }
 
 export const SAMPLE_REPORT = {
-  href: '/reports/viis-audit-athlonjiujitsu.com-2026-09-12.pdf',
-  number: '001',
-  business: 'Athlon Jiu Jitsu',
+  href: '/reports/viis-audit-athlonjiujitsu.com-2026-10-06.pdf',
+  number: '002',
+  business: 'Athlon Jiu-Jitsu',
   website: 'athlonjiujitsu.com',
   /** The live site. The receipt links to it: a real client, so the link is
    *  followed on purpose (no nofollow) and the small equity is Athlon's. */
   websiteHref: 'https://athlonjiujitsu.com',
-  date: 'September 12, 2026',
-  dateIso: '2026-09-12',
+  date: 'October 6, 2026',
+  dateIso: '2026-10-06',
   /** Who the subject is to VIIS, stated on the receipt so a reader does not
    *  merge Athlon with the anonymous practice in the outcome beside it. */
-  relationship: 'Athlon Jiu Jitsu is a site VIIS built and maintains. Published with the owner\'s approval.',
-  pages: 8,
-  sizeKb: 358,
+  relationship: 'Athlon Jiu-Jitsu is a site VIIS built and maintains. Published with the owner\'s approval.',
+  pages: 9,
+  sizeKb: 296,
   checks: 15,
   findingCount: 3,
   passed: 12,
@@ -54,7 +60,7 @@ export const SAMPLE_REPORT = {
   findings: [
     {
       severity: 'Medium',
-      title: 'Your site takes 3.1 seconds to become usable on a phone',
+      title: 'Your site takes 3.3 seconds to become usable on a phone',
       cost: 'Most visitors arriving from a phone leave before the page finishes rendering.',
     },
     {

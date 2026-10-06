@@ -3,6 +3,13 @@
   "platform": {
     "apiRuntime": "node:22"
   },
+  "routes": [
+    {
+      "route": "/reports/viis-audit-athlonjiujitsu.com-2026-09-12.pdf",
+      "redirect": "/reports/viis-audit-athlonjiujitsu.com-2026-10-06.pdf",
+      "statusCode": 301
+    }
+  ],
   "responseOverrides": {
     "404": {
       "rewrite": "/404.html"
